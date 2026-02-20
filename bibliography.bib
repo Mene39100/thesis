@@ -1,47 +1,16 @@
-% Website
-% Required fields: 'title' | 'author' | 'howpublished' | 'note'
-% Optional fields: 'month' | 'year'
-@misc{misc,
-  title = {{Title}},
-  author = {{Name Surname, Name Surname and Name Surname}},
-  howpublished = {\url{https://www.google.com}},
-  note = {{Accessed 31/01/2000}}
-}
-
-
-% Book
-% Required fields: 'author' or 'editor' | 'title' | 'publisher' | 'year'.
-% Optional fields: 'volume' or 'number' | 'series' | 'address' | 'edition' | 'month' | 'note'
-@book{book,
-  author = {{Name Surname, Name Surname and Name Surname}},
-  title = {{Title}},
-  publisher = {{University of Trento}},
-  year = 1994,
-  edition = 2
-}
-
-% Conference
-% Required fields: 'author' | 'title' | 'booktitle' | 'year'
-% Optional fields: 'editor' | 'volume' or 'number' | 'series' | 'pages' | 'address' | 'month' | 'organization' | 'publisher' | 'note'
-@conference{conference,
-  author = {{Name Surname, Name Surname and Name Surname}},
-  title = {{Title}},
-  booktitle = {{University of Trento}},
-  address = {{Trento | ITA}},
-  year = 2005,
+@techreport{techprova,
+  type = {Request for {{Comments}}},
+  title = {Network {{Time Protocol Version}} 4: {{Protocol}} and {{Algorithms Specification}}},
+  shorttitle = {Network {{Time Protocol Version}} 4},
+  author = {Martin, Jim and Burbank, Jack and Kasch, William and Mills, Professor David L.},
+  year = 2010,
   month = jun,
-  pages = {886-893}
+  number = {RFC 5905},
+  institution = {Internet Engineering Task Force},
+  doi = {10.17487/RFC5905},
+  urldate = {2026-02-20},
+  abstract = {The Network Time Protocol (NTP) is widely used to synchronize computer clocks in the Internet. This document describes NTP version 4 (NTPv4), which is backwards compatible with NTP version 3 (NTPv3), described in RFC 1305, as well as previous versions of the protocol. NTPv4 includes a modified protocol header to accommodate the Internet Protocol version 6 address family. NTPv4 includes fundamental improvements in the mitigation and discipline algorithms that extend the potential accuracy to the tens of microseconds with modern workstations and fast LANs. It includes a dynamic server discovery scheme, so that in many cases, specific server configuration is not required. It corrects certain errors in the NTPv3 design and implementation and includes an optional extension mechanism.},
+  file = {/Users/gabriele/Zotero/storage/DZ6RIDTD/Martin et al. - 2010 - Network Time Protocol Version 4 Protocol and Algorithms Specification.pdf}
 }
 
-% Article
-% Required fields: 'author' | 'title' | 'journal' | 'year'
-% Optional fields: 'volume' | 'number' | 'pages' | 'month' | 'note'
-@article{article,
-  author = {{Name Surname, Name Surname and Name Surname}},
-  title = {{Title}},
-  journal = {{University of Trento}},
-  volume = 52,
-  number = 4,
-  pages = {1289-1306},
-  year = 2006
-}
+

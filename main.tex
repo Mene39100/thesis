@@ -38,6 +38,9 @@
 \usepackage{lipsum}
 % END: DELETE ME
 
+\usepackage[backend=biber, style=numeric]{biblatex}
+\addbibresource{bibliography.bib}
+
 % Document
 \begin{document}
   % Cover
@@ -83,9 +86,7 @@
 
   % Bibliography
   \addcontentsline{toc}{chapter}{Bibliography}
-  % Alphabetical order of authors
-  \bibliographystyle{plain}
-  \bibliography{bibliography.bib}
+  \printbibliography
 
   % Attachments
   \titleformat{\chapter} {\normalfont\Huge\bfseries}{Appendix \thechapter}{1em}{}

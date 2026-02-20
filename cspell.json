@@ -9,10 +9,16 @@
     "@cspell/dict-markdown/cspell-ext.json",
     "@cspell/dict-npm/cspell-ext.json"
   ],
-  "ignorePaths": ["**/build/", "**/node_modules/", "**/package-lock.json"],
+  "ignorePaths": [
+    "**/build/",
+    "**/node_modules/",
+    "**/package-lock.json"
+  ],
   "words": [
     "booktitle",
     "howpublished",
+    "Incollection",
+    "Inproceedings",
     "latexmk",
     "nonstopmode",
     "outdir",
