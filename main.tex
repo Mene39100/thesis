@@ -1,5 +1,5 @@
 \documentclass[a4paper, 11pt, titlepage, twoside, openany]{book}
-\usepackage{plain}
+% \usepackage{plain}
 \usepackage{setspace}
 % Layout
 \usepackage[
@@ -30,15 +30,19 @@
 % Hyperlink
 \usepackage{xurl}
 \usepackage[pdfa]{hyperref}
+\usepackage{subcaption}
 \hypersetup{breaklinks=true}
 % List
 \usepackage{enumitem}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
 
 % START: DELETE ME
 \usepackage{lipsum}
 % END: DELETE ME
 
-\usepackage[backend=biber, style=authoryear, sorting=nyt]{biblatex}
+\usepackage[backend=biber, style=numeric, sorting=nyt]{biblatex}
 \addbibresource{bibliography.bib}
 
 % Document
@@ -77,7 +81,7 @@
   \input{etc/abstract.tex}
 
   % Chapters
-  \input{chapters/examples.tex}
+  \input{chapters/analyisisChrony.tex}
 
   % Conclusions
   \input{etc/conclusions.tex}
