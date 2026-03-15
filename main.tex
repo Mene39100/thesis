@@ -38,6 +38,8 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.6em}
 
+\usepackage{float}
+
 % START: DELETE ME
 \usepackage{lipsum}
 % END: DELETE ME
@@ -78,22 +80,22 @@
   \titlespacing*{\subsubsection}{0pt}{0.05in}{0.02in}
 
   % Abstract
-  \input{etc/abstract.tex}
+  % \input{etc/abstract.tex}
 
   % Chapters
-  \input{chapters/analyisisChrony.tex}
+  \input{chapters/analyisisNTPsec.tex}
 
   % Conclusions
-  \input{etc/conclusions.tex}
+  %  \input{etc/conclusions.tex}
 
   \endgroup
 
   % Bibliography
-  \addcontentsline{toc}{chapter}{Bibliography}
-  \printbibliography
+  % \addcontentsline{toc}{chapter}{Bibliography}
+  % \printbibliography
 
   % Attachments
-  \titleformat{\chapter} {\normalfont\Huge\bfseries}{Appendix \thechapter}{1em}{}
-  \appendix
-  \input{attachments/attachment.tex}
+  % \titleformat{\chapter} {\normalfont\Huge\bfseries}{Appendix \thechapter}{1em}{}
+  % \appendix
+  % \input{attachments/attachment.tex}
 \end{document}
