@@ -2,12 +2,12 @@
 \label{cha:NTPsec} \label{cha:NTPsec}
 
 Il presente capitolo è dedicato all’analisi dei dati raccolti per il demone
-\textbf{NTPsec}, con l’obiettivo di valutarne il comportamento al variare delle
-condizioni di rete introdotte nei tre scenari sperimentali. L’attenzione è rivolta
-all’esame delle principali metriche di sincronizzazione temporale osservate durante
-la fase di testing, al fine di evidenziare l’eventuale impatto del progressivo
-incremento degli impairment di rete sulla stabilità del sistema e sulla qualità
-del processo di sincronizzazione.
+\texttt{\textbf{NTPsec}}, con l’obiettivo di valutarne il comportamento al
+variare delle condizioni di rete introdotte nei tre scenari sperimentali. L’attenzione
+è rivolta all’esame delle principali metriche di sincronizzazione temporale osservate
+durante la fase di testing, al fine di evidenziare l’eventuale impatto del
+progressivo incremento degli impairment di rete sulla stabilità del sistema e
+sulla qualità del processo di sincronizzazione.
 
 L’analisi è organizzata per metrica. Per ciascuna grandezza considerata viene condotto
 un confronto sistematico tra i tre scenari sperimentali definiti in precedenza,
@@ -20,7 +20,7 @@ variabilità delle misurazioni e dinamica di convergenza.
 \vspace{0,2 cm}
 \begin{table}[h]
   \centering
-  \caption{Matrice di scenario - fase 3 (topologia T2 + NETEM)}
+  \caption{Matrice di scenario - fase 3 (topologia T2 + tc/netem)}
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     \textbf{Scenario} & \textbf{Delay} & \textbf{Jitter} & \textbf{Loss} & \textbf{Reorder} & \textbf{Rate Limit} \\
@@ -36,22 +36,23 @@ variabilità delle misurazioni e dinamica di convergenza.
 \end{table}
 \section{\texttt{NTPsec}}
 
-Nel caso di \textbf{NTPsec}, l’analisi si concentra su tre metriche principali:
-\textbf{delay}, \textbf{jitter} e \textbf{offset}. Tali grandezze consentono di caratterizzare,
-rispettivamente, il tempo di propagazione dei pacchetti NTP, la variabilità
-temporale delle misurazioni e lo scostamento tra il clock locale e il clock di
-riferimento. La loro evoluzione nei diversi scenari permette quindi di valutare la
-robustezza del demone rispetto al degrado delle condizioni di rete e di analizzare
-la qualità del processo di sincronizzazione in termini sia di stabilità sia di accuratezza.
+Nel caso di \texttt{\textbf{NTPsec}}, l’analisi si concentra su tre metriche principali:
+\texttt{\textbf{delay}}, \texttt{\textbf{jitter}} e \texttt{\textbf{offset}}. Tali
+grandezze consentono di caratterizzare, rispettivamente, il tempo di propagazione
+dei pacchetti NTP, la variabilità temporale delle misurazioni e lo scostamento
+tra il clock locale e il clock di riferimento. La loro evoluzione nei diversi scenari
+permette quindi di valutare la robustezza del demone rispetto al degrado delle condizioni
+di rete e di analizzare la qualità del processo di sincronizzazione in termini sia
+di stabilità sia di accuratezza.
 
 I dati oggetto dell’analisi sono stati raccolti secondo la metodologia sperimentale
 illustrata nei capitoli precedenti. In questa sede, pertanto, non vengono
 ripresi gli aspetti relativi alla configurazione dell’ambiente di prova o alla
 disposizione della topologia, ma si assume come riferimento l’insieme delle misurazioni
 già ottenute per ciascuna metrica e per ciascuno scenario di rete. Nel caso
-specifico di \textbf{NTPsec}, le misurazioni considerate sono state rilevate sui
-nodi \texttt{clientntp} e \texttt{boundary} della topologia, in coerenza con il ruolo
-da essi ricoperto nel processo di sincronizzazione.
+specifico di \texttt{\textbf{NTPsec}}, le misurazioni considerate sono state
+rilevate sui nodi \texttt{clientntp} e \texttt{boundary} della topologia, in coerenza
+con il ruolo da essi ricoperto nel processo di sincronizzazione.
 
 Ciascuna sezione seguente è quindi dedicata a una singola metrica e presenta,
 per i tre scenari sperimentali, i risultati osservati e il relativo confronto interpretativo,
@@ -102,11 +103,12 @@ condotto a partire dal primo campione valido, corrispondente in tutti i casi a c
   \label{fig:scenario_comparison}
 \end{figure}
 
-L’analisi del \textbf{delay} misurato sul nodo \texttt{clientntp} per il demone \textbf{NTPsec}
-evidenzia una dipendenza marcata dal livello di impairment introdotto nei tre
-scenari sperimentali. Il risultato mette in evidenzia un consistente e progressivo
-degrado al crescere della severità dello scenario di rete. Si evidenzia un
-marcato incremento dia del livello della metrica sia della sua dispersione.
+L’analisi del \texttt{\textbf{delay}} misurato sul nodo \texttt{clientntp} per il
+demone \texttt{\textbf{NTPsec}} evidenzia una dipendenza marcata dal livello di
+impairment introdotto nei tre scenari sperimentali. Il risultato mette in evidenzia
+un consistente e progressivo degrado al crescere della severità dello scenario di
+rete. Si evidenzia un marcato incremento dia del livello della metrica sia della
+sua dispersione.
 
 Nello scenario \texttt{low}, il delay assume valori contenuti e presenta un
 andamento fortemente regolare. Sui campioni validi si osserva un valore medio pari
@@ -182,10 +184,10 @@ del clientntp NTPsec.
   \label{fig:scenario_comparison}
 \end{figure}
 
-L’analisi del \textbf{jitter} rilevato sul nodo \texttt{clientntp} per il demone
-\textbf{NTPsec} evidenzia un peggioramento progressivo della regolarità temporale
-delle misurazioni al crescere della severità dello scenario di rete. Il
-confronto tra i tre casi mostra infatti un incremento marcato sia del livello
+L’analisi del \texttt{\textbf{jitter}} rilevato sul nodo \texttt{clientntp} per
+il demone \texttt{\textbf{NTPsec}} evidenzia un peggioramento progressivo della regolarità
+temporale delle misurazioni al crescere della severità dello scenario di rete.
+Il confronto tra i tre casi mostra infatti un incremento marcato sia del livello
 della metrica sia della sua dispersione, con un passaggio netto da un regime stabile
 nello scenario \texttt{low} a una condizione fortemente degradata nello scenario
 \texttt{high}.
@@ -224,7 +226,7 @@ a 7.1985 ms. Il jitter si conferma pertanto una metrica particolarmente efficace
 mettere in evidenza l’impatto del degrado della rete sulla stabilità temporale delle
 misurazioni osservate dal clientntp NTPsec.
 
-\subsubsection{Analisi matrica: \texttt{offset}}
+\subsubsection{Analisi metrica: \texttt{offset}}
 \begin{figure}[H]
   \centering
 
@@ -259,13 +261,13 @@ misurazioni osservate dal clientntp NTPsec.
   \label{fig:scenario_comparison}
 \end{figure}
 
-L’analisi dell’\textbf{offset} misurato sul nodo \texttt{clientntp} per il demone
-\textbf{NTPsec} evidenzia una progressiva perdita di accuratezza della
-sincronizzazione al crescere della severità dello scenario di rete. Dopo la fase iniziale
-di inizializzazione, in tutti e tre i casi il clientntp entra in un regime
-operativo in cui l’offset assume valori sistematicamente negativi; al crescere degli
-impairment, tali valori si allontanano progressivamente dallo zero e mostrano
-una dispersione crescente.
+L’analisi dell’\texttt{\textbf{offset}} misurato sul nodo \texttt{clientntp} per il
+demone \texttt{\textbf{NTPsec}} evidenzia una progressiva perdita di accuratezza
+della sincronizzazione al crescere della severità dello scenario di rete. Dopo la
+fase iniziale di inizializzazione, in tutti e tre i casi il clientntp entra in
+un regime operativo in cui l’offset assume valori sistematicamente negativi; al crescere
+degli impairment, tali valori si allontanano progressivamente dallo zero e
+mostrano una dispersione crescente.
 
 Nello scenario \texttt{low}, l’offset si mantiene entro una banda relativamente
 ristretta, con media pari a -2.6458 ms e mediana pari a -2.4823 ms. I quartili
@@ -303,7 +305,7 @@ processo di sincronizzazione del clientntp NTPsec.
 \subsection{\texttt{boundary}}
 Nel caso del nodo \texttt{boundary}, l’interpretazione dei risultati richiede
 una precisazione preliminare. A differenza di quanto osservato sul nodo \texttt{clientntp},
-gli impairment di rete introdotti mediante \texttt{NETEM} non agiscono
+gli impairment di rete introdotti mediante \texttt{tc/netem} non agiscono
 direttamente sul collegamento \texttt{upstream} tra il nodo \texttt{boundary} e
 il nodo di riferimento, bensì sul ramo \texttt{downstream} tra \texttt{boundary} e
 \texttt{clientntp}. Ne consegue che le metriche rilevate sul \texttt{boundary}
@@ -429,7 +431,7 @@ di per sé, l’oggetto principale del confronto tra scenari.
 Nel caso del nodo \texttt{boundary}, il confronto tra scenari non evidenzia un
 degrado sistematico e paragonabile a quello osservato precedentemente nel
 \texttt{clientntp}. Tale risultato è coerente con la configurazione sperimentale
-adottata: gli impairment di rete introdotti mediante \texttt{NETEM} agiscono
+adottata: gli impairment di rete introdotti mediante \texttt{tc/netem} agiscono
 infatti sul ramo \texttt{downstream} tra \texttt{boundary} e \texttt{clientntp},
 mentre le metriche qui considerate descrivono il comportamento del nodo \texttt{boundary}
 rispetto al proprio riferimento \texttt{upstream} con il nodo \texttt{servergm},
@@ -461,3 +463,346 @@ solamente sul nodo \texttt{clientntp} che non sul \texttt{boundary}. Le variazio
 residue osservate nelle metriche del \texttt{boundary} possono pertanto essere
 interpretate come oscillazioni contenute del processo di sincronizzazione, piuttosto
 che come evidenza di un deterioramento strutturale legato allo scenario sperimentale.
+
+\section{\texttt{ptp4l}}
+L’analisi dei dati relativa al demone \texttt{\textbf{ptp4l}} è articolata in
+funzione dei nodi della topologia sui quali sono state rilevate le metriche di
+interesse. In particolare, l’attenzione è rivolta ai nodi \texttt{clientptp} e \texttt{boundary},
+per i quali sono disponibili misurazioni direttamente riconducibili al comportamento
+del protocollo in termini di sincronizzazione e ritardo.
+
+Il nodo \texttt{servergm}, al contrario, non fornisce una serie di metriche
+comparabili a quelle osservate sugli altri nodi, poiché il relativo output è limitato
+essenzialmente allo stato di inizializzazione del demone e alla selezione del clock
+locale come \texttt{best master}. Per tale ragione, esso non viene incluso
+nell’analisi quantitativa presentata in questa sezione.
+
+Anche nel caso di \texttt{\textbf{ptp4l}}, gli impairment di rete introdotti
+mediante \texttt{tc/netem} sono applicati sul ramo \texttt{downstream} a valle
+del nodo \texttt{boundary}. Ne consegue che il confronto tra scenari assume un
+significato diverso a seconda del nodo osservato: nel caso del \texttt{clientptp},
+le metriche possono riflettere in modo diretto il degrado introdotto sulla rete,
+mentre nel caso del \texttt{boundary} ci si attende, in linea teorica, un impatto
+più contenuto, poiché il collegamento verso il nodo di riferimento non è quello
+direttamente soggetto agli impairment configurati.
+
+Alla luce di ciò, l’analisi viene sviluppata separatamente per i nodi \texttt{clientptp}
+e \texttt{boundary}, così da evidenziare sia gli effetti diretti del degrado di
+rete sul nodo terminale, sia l’eventuale presenza di variazioni indirette sul nodo
+intermedio della topologia.
+
+\subsection{\texttt{clientptp}}
+Nel caso del nodo \texttt{clientptp}, l’analisi quantitativa delle metriche non può
+essere estesa in modo uniforme a tutti e tre gli scenari sperimentali. In
+particolare, nello scenario \texttt{high} non viene raggiunta una condizione
+operativa stabile tale da produrre una serie di campioni utilizzabile per il
+calcolo delle metriche considerate. Per tale ragione, i confronti quantitativi
+sul nodo \texttt{clientptp} sono necessariamente limitati ai soli scenari \texttt{low}
+e \texttt{medium}.
+
+In questo caso, per lo scenario \texttt{high} non è disponibile una serie metrica
+valida, poiché il nodo non raggiunge una condizione di sincronizzazione stabile: il
+log mostra ripetute selezioni del clock locale come miglior master e un solo tentativo
+transitorio di passaggio verso un master esterno, seguito tuttavia da ritorno
+allo stato di \texttt{LISTENING}. L’assenza di campioni numerici confrontabili
+nello scenario \texttt{high} rappresenta dunque un risultato sperimentale, e
+segnala un livello di degrado tale da impedire la normale operatività del client
+PTP. Il relativo output grezzo viene comunque richiamato a supporto di tale evidenza
+qualitativa.
+
+\subsubsection{Analisi metrica: \texttt{Path Delay}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/client_low_path_delay_ns.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/client_medium_path_delay_ns.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientptp}}
+  \label{fig:scenario_comparison}
+\end{figure}
+
+Nei due scenari per cui sono disponibili misurazioni, il comportamento del \texttt{path
+delay} evidenzia una differenza netta tra \texttt{low} e \texttt{medium}. Nel caso
+\texttt{low}, il segnale si mantiene per gran parte del tempo in una banda relativamente
+contenuta, centrata attorno a valori prossimi a mezzo millisecondo. Il grafico mostra
+oscillazioni presenti ma non strutturalmente divergenti, con alcuni picchi
+locali e alcune discese temporanee, che tuttavia non alterano il quadro complessivo
+di moderata variabilità. Le statistiche confermano tale andamento: la media è pari
+a 524322.76 ns, la mediana a 524299 ns e la deviazione standard a 135730.23 ns, con
+coefficiente di variazione pari a 0.259. Anche la distanza interquartile, pari a 135604
+ns, risulta coerente con una dispersione contenuta. In altri termini, nello
+scenario \texttt{low} il client stima un ritardo di percorso abbastanza stabile,
+pur in presenza di normali fluttuazioni campionarie.
+
+Nel caso \texttt{medium}, il comportamento cambia in modo evidente. Il livello centrale
+della serie si sposta verso l’alto, con media pari a 720708.99 ns e mediana pari
+a 654933 ns, quindi con un incremento sensibile rispetto allo scenario \texttt{low}.
+Anche la dispersione cresce in maniera marcata: la deviazione standard sale a
+340459.97 ns e il coefficiente di variazione raggiunge 0.472, quasi il doppio del
+caso \texttt{low}. Il grafico mostra infatti una dinamica più irregolare,
+caratterizzata da escursioni ampie, da una fase centrale con valori elevati e da un
+picco massimo di 2686221 ns, molto superiore a quello osservato nello scenario
+\texttt{low} (862114 ns). Anche l’intervallo interquartile aumenta fino a
+275275.25 ns, confermando che l’incremento di variabilità non è dovuto solo a pochi
+valori estremi, ma riguarda più in generale l’intera distribuzione delle misure.
+
+Il confronto tra i due scenari mostra quindi che, sul nodo \texttt{clientptp}, il
+passaggio da \texttt{low} a \texttt{medium} determina sia un aumento del ritardo stimato
+lungo il percorso sia una riduzione della sua stabilità. Il risultato è coerente
+con un peggioramento della qualità del cammino di rete osservato dal client: il \texttt{path
+delay} non soltanto cresce in valore medio, ma diventa anche meno prevedibile e più
+soggetto a variazioni impulsive. In questo senso, la metrica risulta sensibile al
+degrado delle condizioni sperimentali già nel passaggio intermedio, mentre nello
+scenario \texttt{high} il deterioramento è tale da impedire del tutto la costruzione
+di una serie metrica analizzabile.
+
+\subsubsection{Analisi metrica: \texttt{RMS offset}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/client_low_rms_ns.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/client_medium_rms_ns.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientptp}}
+  \label{fig:scenario_comparison}
+\end{figure}
+
+Nel caso \texttt{low}, l’\texttt{RMS offset} presenta una dinamica variabile ma
+complessivamente contenuta. Il grafico mostra una serie oscillante attorno a valori
+moderati, con numerosi picchi locali ma senza una tendenza persistente alla
+crescita. Le statistiche confermano tale quadro: la media è pari a 333758.44 ns, la
+mediana a 248869 ns e il terzo quartile a 367184.5 ns. La deviazione standard è
+305485.19 ns, quindi elevata in valore assoluto ma ancora confrontabile con il livello
+centrale della serie. Il massimo raggiunge 1643285 ns, a fronte di un minimo di 35456
+ns; ciò indica la presenza di spike anche marcati, che però nel grafico rimangono
+episodici e non ridefiniscono il comportamento prevalente della metrica. In
+sostanza, nello scenario \texttt{low} il client mantiene un errore RMS
+generalmente sotto controllo, pur con irregolarità non trascurabili.
+
+Nel caso \texttt{medium}, il comportamento peggiora in modo evidente. La media
+sale a 495222.80 ns, mentre la mediana aumenta a 289519 ns; cresce quindi sia il
+livello medio sia il valore centrale della distribuzione. L’aspetto più rilevante
+riguarda però la dispersione: la deviazione standard raggiunge 754809.35 ns e il
+coefficiente di variazione è pari a 1.524, valore molto superiore a quello osservato
+nello scenario \texttt{low} (0.915). Questo significa che la variabilità relativa
+della metrica diventa estremamente elevata. Il grafico conferma chiaramente tale
+instabilità, mostrando alcune escursioni molto pronunciate, tra cui un picco
+massimo di 5374528 ns, nettamente superiore al massimo del caso \texttt{low}. Anche
+l’intervallo interquartile cresce da 219077.5 ns a 293159.75 ns, segnalando che
+l’aumento di dispersione non è dovuto soltanto a pochi valori anomali, ma interessa
+più in generale l’intera distribuzione dei campioni.
+
+Il confronto tra \texttt{low} e \texttt{medium} mostra quindi che l’\texttt{RMS
+offset} del nodo \texttt{clientptp} è fortemente sensibile al peggioramento
+delle condizioni sperimentali. Nel passaggio a \texttt{medium} non si osserva
+soltanto un incremento dell’errore medio, ma soprattutto una perdita di stabilità
+molto marcata, con spike ampi e una dispersione complessiva nettamente superiore.
+Dal punto di vista sperimentale, questa metrica evidenzia quindi che il client
+PTP, pur riuscendo ancora a produrre misure nello scenario intermedio, lo fa con
+una qualità di sincronizzazione significativamente più degradata rispetto al
+caso \texttt{low}. Nel caso \texttt{high}, infine, il degrado non si traduce in un
+semplice ulteriore peggioramento quantitativo, ma nell’impossibilità stessa di
+ottenere una serie RMS analizzabile.
+
+\subsection{\texttt{boundary}}
+L'analisi relativa al nodo \texttt{boundary} deve essere interpretata in modo differente
+rispetto a quella del client. Le metriche osservate in questo caso descrivono
+infatti il comportamento della sincronizzazione del boundary rispetto al \texttt{master
+upstream (servergm)}, e non il collegamento downstram vero il \texttt{clientptp},
+sul quale è stato introdotto il degrado di rete. Di conseguenza, in linea
+teorica, non ci si attende un impatto diretto e strutturale degli impairment applicati
+nei tre scenari sulle misure di offset e path delay rilevate sul boundary.
+
+Occorre tuttavia considerare che il demone \texttt{ptp4l} opera sul nodo in modo
+unitario, gestendo contemporaneamente più porte della topologia. Per questo
+motivo, eventuali fault o transizioni di stato osservate sulla porta downstream possono
+comunque rilfettersi indirettamente sulla stabilità complessiva del processo di sincronizzazione,
+introducendo fluttazioni o anomalie anche nelle metriche riferite al tratto
+upstream. L'analisi che segue è quindi finalizzata a verificare se i dati confermino
+una sostanziale stabilitàdel boundary nei tre scenari oppure se emergano effetti indiretti
+riconducibili alle criticità operative osservate durante il testing.
+
+Per ciasuna metrica saranno inoltre considerati sia i dati complessivi sia quelli
+relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
+
+\subsubsection{Analisi metrica: \texttt{path delay}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_low_path_delay_ns.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_medium_path_delay_ns.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_high_path_delay_ns.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{boundary}}
+  \label{fig:scenario_comparison}
+\end{figure}
+L’analisi del \texttt{path delay} del nodo \texttt{boundary} mostra delle
+leggere differenze tra i tre scenari, ma non una crescita monotona e sistematica al
+crescere dello stress di rete. Nello scenario \texttt{low} si osserva il valore centrale
+più contenuto, con mediana pari a 476428 ns e media pari a 547340 ns; tuttavia,
+la serie presenta una variabilità non trascurabile, con picchi fino a 1498267 ns,
+che contribuiscono ad aumentare la media.
+
+Nello scenario \texttt{medium} il livello centrale del \texttt{path delay}
+aumenta, con mediana pari a 697914 ns e media pari a 714604 ns, mentre la
+dispersione relativa risulta più contenuta rispetto al caso \texttt{low}, come
+indicato da una deviazione standard di 208788 ns e da un coefficiente di
+variazione pari a $0.292$.
+
+Lo scenario \texttt{high} presenta valori centrali molto simili al caso \texttt{medium},
+con mediana pari a 678988 ns e media pari a 707771 ns, ma mostra un massimo
+superiore, pari a 1820002 ns, evidenziando la presenza di escursioni più marcate.
+
+Nel complesso, i dati indicano che il \texttt{path delay} del \texttt{boundary} non
+rimane perfettamente invariato tra gli scenari, ma l’effetto osservato consiste
+soprattutto in un aumento del livello centrale passando da \texttt{low} a \texttt{medium},
+mentre il passaggio da \texttt{medium} a \texttt{high} non produce un ulteriore incremento
+stabile, bensì una maggiore presenza di valori estremi. L’andamento osservato non
+conferma quindi una differenza strutturale nettamente attribuibile alle diverse condizioni
+di rete, ma suggerisce piuttosto un’influenza di fattori secondari e della
+variabilità interna delle misurazioni.
+
+\subsubsection{Analisi metrica: \texttt{offset}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_low_offset_ns.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_medium_offset_ns.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_high_offset_ns.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{boundary} - dati
+  completi}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_low_offset_ns_postlock_s2.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_medium_offset_ns_postlock_s2.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_ptp/boundary_high_offset_ns_postlock_s2.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{boundary} - dati
+  filtrati: \texttt{servo\_state:s2}}
+  \label{fig:scenario_comparison}
+\end{figure}
+L’analisi dell’\texttt{offset} del nodo \texttt{boundary}, considerato sia
+sull’intera serie sia nel solo intervallo \texttt{post-lock} (\texttt{s2}), non evidenzia
+una degradazione monotona al crescere dello stress di rete. In tutti e tre gli
+scenari la distribuzione rimane infatti centrata in prossimità dello zero, con mediane
+sempre leggermente negative: pari a $-43836$ ns in \texttt{low}, $-100004$ ns in
+\texttt{medium} e $-59229$ ns in \texttt{high}. Anche limitando l’osservazione alla
+sola fase \texttt{post-lock}, il quadro resta sostanzialmente invariato, con
+mediane pari rispettivamente a $-45273.5$ ns, $-88836.5$ ns e $-56328.5$ ns.
+
+Le differenze principali tra gli scenari riguardano soprattutto la presenza di escursioni
+impulsive. Lo scenario \texttt{medium} è quello che mostra gli eventi più estremi,
+con massimo pari a $11064269$ ns e deviazione standard pari a $1007806$ ns
+sull’intera serie, valori che rimangono elevati anche nel \texttt{post-lock}. Lo scenario
+\texttt{low} presenta picchi meno pronunciati, ma comunque rilevanti, fino a
+$5533287$ ns, mentre lo scenario \texttt{high} mostra massimi inferiori rispetto
+a \texttt{medium}, pari a $3244309$ ns, pur mantenendo una dispersione centrale non
+trascurabile, come indicato dall’\texttt{IQR} più ampio tra i tre casi.
+
+Il confronto tra serie complete e serie \texttt{post-lock} mostra inoltre che l’esclusione
+della fase iniziale di acquisizione del sincronismo modifica solo in misura limitata
+gli indicatori descrittivi. Ciò suggerisce che la variabilità dell’\texttt{offset}
+non sia concentrata esclusivamente nella fase transitoria, ma permanga anche durante
+il funzionamento stabilizzato del servo, sotto forma di oscillazioni attorno
+allo zero e di sporadici valori anomali.
+
+Nel complesso, i dati non confermano una differenza sistematica dell’\texttt{offset}
+attribuibile alle diverse condizioni di rete imposte nei tre scenari. L’effetto
+osservato appare piuttosto dominato da fluttuazioni locali e da picchi isolati, più
+che da un peggioramento strutturale e progressivo associato all’aumento dello stress
+di rete.
