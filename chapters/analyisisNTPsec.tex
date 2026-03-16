@@ -776,33 +776,358 @@ variabilità interna delle misurazioni.
   filtrati: \texttt{servo\_state:s2}}
   \label{fig:scenario_comparison}
 \end{figure}
-L’analisi dell’\texttt{offset} del nodo \texttt{boundary}, considerato sia
-sull’intera serie sia nel solo intervallo \texttt{post-lock} (\texttt{s2}), non evidenzia
-una degradazione monotona al crescere dello stress di rete. In tutti e tre gli
-scenari la distribuzione rimane infatti centrata in prossimità dello zero, con mediane
-sempre leggermente negative: pari a $-43836$ ns in \texttt{low}, $-100004$ ns in
-\texttt{medium} e $-59229$ ns in \texttt{high}. Anche limitando l’osservazione alla
-sola fase \texttt{post-lock}, il quadro resta sostanzialmente invariato, con
-mediane pari rispettivamente a $-45273.5$ ns, $-88836.5$ ns e $-56328.5$ ns.
+L’analisi dell'\texttt{offset} del nodo \texttt{boundary}, considerato sia sull’intera
+serie sia nel solo intervallo \texttt{post-lock} (\texttt{s2}), non evidenzia
+una degradazione monotona al crescere dello stress di rete. In tutti e tre gli scenari
+la distribuzione rimane infatti centrata in prossimità dello zero, con mediane
+sempre leggermente negative: pari a $-43836$ ns in \texttt{low}, $-100004$ ns in \texttt{medium}
+e $-59229$ ns in \texttt{high}. Anche limitando l’osservazione alla sola fase
+\texttt{post-lock}, il quadro resta sostanzialmente invariato, con mediane pari rispettivamente
+a $-45273.5$ ns, $-88836.5$ ns e $-56328.5$ ns.
 
-Le differenze principali tra gli scenari riguardano soprattutto la presenza di escursioni
-impulsive. Lo scenario \texttt{medium} è quello che mostra gli eventi più estremi,
-con massimo pari a $11064269$ ns e deviazione standard pari a $1007806$ ns
-sull’intera serie, valori che rimangono elevati anche nel \texttt{post-lock}. Lo scenario
-\texttt{low} presenta picchi meno pronunciati, ma comunque rilevanti, fino a
-$5533287$ ns, mentre lo scenario \texttt{high} mostra massimi inferiori rispetto
-a \texttt{medium}, pari a $3244309$ ns, pur mantenendo una dispersione centrale non
-trascurabile, come indicato dall’\texttt{IQR} più ampio tra i tre casi.
+Le differenze principali tra gli scenari riguardano soprattutto la presenza di
+escursioni impulsive. Lo scenario \texttt{medium} è quello che mostra gli eventi
+più estremi, con massimo pari a $11064269$ ns e deviazione standard pari a $10078
+06$ ns sull’intera serie, valori che rimangono elevati anche nel \texttt{post-lock}.
+Lo scenario \texttt{low} presenta picchi meno pronunciati, ma comunque rilevanti,
+fino a $5533287$ ns, mentre lo scenario \texttt{high} mostra massimi inferiori rispetto
+a \texttt{medium}, pari a $3244309$ ns, pur mantenendo una dispersione centrale
+non trascurabile, come indicato dall’\texttt{IQR} più ampio tra i tre casi.
 
-Il confronto tra serie complete e serie \texttt{post-lock} mostra inoltre che l’esclusione
-della fase iniziale di acquisizione del sincronismo modifica solo in misura limitata
-gli indicatori descrittivi. Ciò suggerisce che la variabilità dell’\texttt{offset}
-non sia concentrata esclusivamente nella fase transitoria, ma permanga anche durante
-il funzionamento stabilizzato del servo, sotto forma di oscillazioni attorno
+Il confronto tra serie complete e serie \texttt{post-lock} mostra inoltre che
+l’esclusione della fase iniziale di acquisizione del sincronismo modifica solo
+in misura limitata gli indicatori descrittivi. Ciò suggerisce che la variabilità dell’\texttt{offset}
+non sia concentrata esclusivamente nella fase transitoria, ma permanga anche
+durante il funzionamento stabilizzato del servo, sotto forma di oscillazioni attorno
 allo zero e di sporadici valori anomali.
 
 Nel complesso, i dati non confermano una differenza sistematica dell’\texttt{offset}
-attribuibile alle diverse condizioni di rete imposte nei tre scenari. L’effetto
-osservato appare piuttosto dominato da fluttuazioni locali e da picchi isolati, più
-che da un peggioramento strutturale e progressivo associato all’aumento dello stress
+attribuibile alle diverse condizioni di rete imposte nei tre scenari. L’effetto osservato
+appare piuttosto dominato da fluttuazioni locali e da picchi isolati, più che da
+un peggioramento strutturale e progressivo associato all’aumento dello stress di
+rete.
+
+\section{\texttt{chronyd}}
+Nel caso di \texttt{Chrony}, l’analisi è stata svolta su una topologia composta
+dal solo collegamento tra \texttt{servergm} e \texttt{clientchrony}, senza la presenza
+di nodi \texttt{boundary}. In questo contesto, il degrado di rete tramite
+\texttt{tc}/\texttt{netem} è stato applicato in due configurazioni distinte: in un
+primo caso sull’interfaccia del \texttt{clientchrony}, in un secondo caso sull’interfaccia
+del \texttt{servergm}.
+
+Questa doppia configurazione consente di osservare separatamente gli effetti del
+degrado introdotto lungo le due direzioni logiche della comunicazione tra client
+e server. Poiché il meccanismo di sincronizzazione di \texttt{Chrony} si basa
+sullo scambio di messaggi tra i due estremi, applicare l’alterazione su un lato oppure
+sull’altro permette di valutare se il posizionamento del disturbo lungo il percorso
+influenzi in modo differente le metriche osservate.
+
+Nel seguito verranno quindi confrontati non solo i diversi livelli di stress di rete,
+ma anche i risultati ottenuti nelle due configurazioni di applicazione del
+degrado. È inoltre opportuno precisare che tutte le metriche analizzate sono state
+rilevate esclusivamente tramite interrogazione del nodo \texttt{clientchrony}, poiché
+è da esso che si ricavano le misure direttamente rilevanti per valutare la qualità
+della sincronizzazione dal punto di vista del client.
+
+\subsection{Analisi metrica: \texttt{offset}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_low_sourcestats_offset_us.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_medium_sourcestats_offset_us.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_high_sourcestats_offset_us.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
+  \texttt{clientchrony}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_low_sourcestats_offset_us.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_medium_sourcestats_offset_us.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_high_sourcestats_offset_us.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
+  \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\paragraph*{clientchrony - netem/tc:}
+L’analisi dell’\texttt{offset} ottenuto tramite \texttt{chronyc sourcestats},
+nel caso in cui il degrado di rete sia applicato sul lato \texttt{clientChrony},
+mostra un comportamento complessivamente stabile in tutti e tre gli scenari
+considerati. In termini temporali, dopo una possibile escursione iniziale, i valori
+si mantengono molto prossimi allo zero per tutta la durata dell’osservazione,
+senza evidenziare derive progressive né oscillazioni ampie e persistenti.
+
+Dal punto di vista quantitativo, nello scenario \texttt{low} si osserva la
+maggiore anomalia puntuale, con un minimo pari a $-43.0\,\mu s$, che influenza
+in modo marcato media e variabilità campionaria; infatti la media risulta pari a $-
+5.52\,\mu s$ e la deviazione standard a $13.60\,\mu s$. Tuttavia, il grafico mostra
+che tale comportamento è riconducibile a un singolo campione isolato, mentre i
+restanti valori si dispongono in prossimità dello zero.
+
+Negli scenari \texttt{medium} e \texttt{high} il comportamento risulta ancora
+più regolare. Nel caso \texttt{medium} la media è pari a $-1.05\,\mu s$, con mediana
+$-0.62\,\mu s$ e minimo $-5.30\,\mu s$; nel caso \texttt{high} la media è $-0.56\,
+\mu s$, con mediana $-0.16\,\mu s$ e minimo $-4.10\,\mu s$. In entrambi i casi,
+la serie temporale rimane vicina allo zero lungo tutto l’intervallo osservato, senza
+mostrare un peggioramento sistematico all’aumentare dello stress di rete.
+
+Nel complesso, i dati non evidenziano differenze strutturali tra i tre scenari
+per questa metrica. L’\texttt{offset} stimato da \texttt{sourcestats} resta
+infatti contenuto e sostanzialmente stabile anche al crescere del degrado
+applicato sul \texttt{client}, mentre l’unica deviazione rilevante compare nel
+caso \texttt{low} come evento isolato e non come effetto sistematico delle condizioni
 di rete.
+
+\paragraph*{servergm - netem/tc:}
+L’analisi dell’\texttt{offset} rilevato tramite \texttt{chronyc sourcestats},
+nel caso in cui il degrado di rete sia applicato sul nodo \texttt{servergm},
+evidenzia un comportamento differente nei tre scenari, ma senza una tendenza lineare
+univoca al crescere dello stress.
+
+Nello scenario \texttt{low} i valori risultano piuttosto dispersi e comprendono
+sia campioni negativi sia positivi, con media pari a $1.596~\mu s$, mediana pari
+a $1 .001~\mu s$ e massimo pari a $12.0~\mu s$. Il grafico mostra infatti una dinamica
+irregolare, caratterizzata da un picco positivo pronunciato nella parte centrale
+della serie, che incide in modo evidente sul valore medio.
+
+Nello scenario \texttt{medium} permane una variabilità apprezzabile, ma con centro
+della distribuzione spostato in campo negativo: la media è pari a
+$-2.087~ \mu s$ e la mediana a $-1.4~\mu s$, con valori compresi tra $-11.0~\mu s$
+e $5.819~\mu s$. Anche in questo caso la serie non mostra stabilità attorno a un
+livello costante, ma alterna scostamenti di segno opposto con ampiezza non trascurabile.
+
+Lo scenario \texttt{high} presenta invece un andamento nettamente più compatto. I
+campioni restano tutti prossimi allo zero e interamente in campo negativo, con
+media pari a $-0.279~\mu s$, mediana pari a $-0.140~\mu s$ e deviazione standard pari
+a $0.302~\mu s$, molto inferiore rispetto ai casi \texttt{low} e \texttt{medium}.
+Anche dal grafico emerge una serie quasi piatta, con oscillazioni molto
+contenute e assenza di picchi rilevanti.
+
+Nel complesso, i dati non mostrano un peggioramento progressivo dell’\texttt{offset}
+all’aumentare dello stress di rete. Al contrario, il caso \texttt{high} risulta
+il più regolare tra i tre, mentre le maggiori escursioni si osservano negli scenari
+\texttt{low} e \texttt{medium}. Pertanto, anche in questo caso non emerge una relazione
+diretta e sistematica tra intensità del degrado applicato su \texttt{servergm} e
+aumento dell’\texttt{offset} misurato sul client.
+
+\paragraph*{Confronto:}
+Confrontando i due casi di applicazione del degrado di rete, ossia sul nodo
+\texttt{clientchrony} e sul nodo \texttt{servergm}, emerge che l’\texttt{offset} misurato
+tramite \texttt{chronyc sourcestats} rimane in generale contenuto in entrambi i
+contesti, ma con differenze apprezzabili in termini di regolarità e sensibilità agli
+scenari.
+
+Nel caso in cui il degrado sia applicato su \texttt{clientchrony}, i valori dell’\texttt{offset}
+risultano quasi sempre molto prossimi allo zero nei tre scenari, con scostamenti
+medi pari a $-5.521~\mu s$ in \texttt{low}, $-1.051~\mu s$ in \texttt{medium} e $-
+0.564~\mu s$ in \texttt{high}. A parte un singolo campione anomalo nello scenario
+\texttt{low} e oscillazioni moderate nel caso \texttt{medium}, l’andamento
+osservato è sostanzialmente stabile e non mostra variazioni strutturali
+rilevanti al crescere dello stress.
+
+Quando invece il degrado è applicato su \texttt{servergm}, la serie appare in
+media più irregolare negli scenari \texttt{low} e \texttt{medium}. In particolare,
+nello scenario \texttt{low} si osservano escursioni fino a $12.0~\mu s$, mentre
+nel caso \texttt{medium} i valori variano tra $-11.0~\mu s$ e $5.819~\mu s$.
+Solo nello scenario \texttt{high} il comportamento torna ad essere molto compatto,
+con valori tutti vicini allo zero e deviazione standard pari a $0.302~\mu s$.
+
+Nel confronto diretto, quindi, l’applicazione del degrado sul lato \texttt{clientchrony}
+produce un comportamento complessivamente più stabile e più uniforme tra i tre scenari,
+mentre l’applicazione su \texttt{servergm} introduce una maggiore variabilità nei
+casi \texttt{low} e \texttt{medium}. Tuttavia, in nessuno dei due contesti emerge
+una crescita monotona dell’\texttt{offset} al crescere dello stress di rete. Di
+conseguenza, anche il confronto tra le due modalità di applicazione del \texttt{netem}
+non evidenzia un effetto sistematico delle condizioni di rete su questa metrica, ma
+piuttosto differenze di stabilità locale tra le due configurazioni sperimentali.
+
+\subsection{Analisi metrica: \texttt{stddev}}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_low_sourcestats_stddev_us.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_medium_sourcestats_stddev_us.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_clientchrony/chrony_high_sourcestats_stddev_us.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
+  \texttt{clientchrony}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_low_sourcestats_stddev_us.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_medium_sourcestats_stddev_us.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/data_plots/plots_chrony_servergm/chrony_high_sourcestats_stddev_us.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
+  \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\paragraph*{clientchrony - netem/tc:}
+L’analisi della metrica \texttt{std dev} restituita da \texttt{chronyc
+sourcestats} mostra un comportamento complessivamente stabile tra i tre scenari, pur
+in presenza di oscillazioni locali dovute al numero limitato di campioni disponibili.
+Nello scenario \texttt{low} si osservano valori compresi tra 45~$\mu s$ e 171~$\mu
+s$, con media pari a 110~$\mu s$ e mediana pari a 113.5~$\mu s$. Lo scenario \texttt{medium}
+presenta valori centrali molto simili, con media pari a 111.2~$\mu s$ e mediana pari
+a 109~$\mu s$, ma con una dispersione più elevata, evidenziata sia dal massimo di
+218~$\mu s$ sia dalla deviazione standard pari a 55.98~$\mu s$. Nello scenario
+\texttt{high}, invece, il livello centrale risulta leggermente più alto, con
+media pari a 135.8~$\mu s$ e mediana pari a 131.5~$\mu s$, mentre la variabilità relativa
+è più contenuta rispetto agli altri casi, come indicato dal coefficiente di
+variazione pari a 0.219.
+
+Dal punto di vista grafico non emerge un andamento monotono o una crescita netta
+e sistematica della metrica al crescere dello stress di rete applicato sul nodo
+\texttt{clientchrony}. Le differenze tra \texttt{low} e \texttt{medium}
+risultano infatti trascurabili nei valori centrali, mentre lo scenario \texttt{high}
+mostra un moderato incremento del livello medio della deviazione standard, senza però
+evidenziare una discontinuità marcata rispetto agli altri due casi. In termini
+oggettivi, i dati non indicano un effetto forte e chiaramente strutturale delle condizioni
+di rete su questa metrica, ma soltanto una lieve tendenza a valori più elevati
+nello scenario di stress massimo.
+
+\paragraph*{servergm - netem/tc:}
+L’analisi della metrica \texttt{std dev} con \texttt{netem/tc} applicato sul nodo
+\texttt{servergm} evidenzia differenze più marcate tra i tre scenari rispetto a
+quanto osservato nel caso di applicazione sul \texttt{clientchrony}. Nello
+scenario \texttt{low} la deviazione standard assume i valori più elevati dell’intera
+serie, con media pari a 214.9~$\mu s$, mediana pari a 217.5~$\mu s$ e valori compresi
+tra 170~$\mu s$ e 252~$\mu s$. Il profilo temporale mostra inoltre un andamento
+prevalentemente crescente, con oscillazioni limitate ma su livelli sistematicamente
+alti.
+
+Nello scenario \texttt{medium} si osserva invece una netta riduzione del livello
+centrale, con media pari a 120.5~$\mu s$ e mediana pari a 123.5~$\mu s$. Anche
+la dispersione risulta più contenuta, come indicato dalla deviazione standard pari
+a 9.76~$\mu s$ e dall’intervallo complessivo di 24~$\mu s$. I valori si
+mantengono quindi concentrati in una fascia relativamente stretta.
+
+Lo scenario \texttt{high} presenta un comportamento molto simile al caso \texttt{medium},
+con media pari a 118.7~$\mu s$ e mediana pari a 115~$\mu s$. La variabilità
+resta moderata, con minimo pari a 94~$\mu s$ e massimo pari a 159~$\mu s$, senza
+evidenziare incrementi sistematici rispetto allo scenario intermedio.
+
+Nel complesso, i dati non mostrano una crescita monotona della metrica al crescere
+dello stress di rete. Al contrario, lo scenario \texttt{low} risulta quello con
+i valori di \texttt{std dev} più elevati, mentre gli scenari \texttt{medium} e \texttt{high}
+si collocano su livelli sensibilmente inferiori e tra loro piuttosto vicini. In termini
+oggettivi, l’effetto osservato non è quindi coerente con una dipendenza diretta
+e progressiva dalle condizioni di rete imposte nei tre scenari.
+
+\paragraph*{Confronto:}
+Il confronto tra i due casi di applicazione di \texttt{netem} mostra una
+differenza abbastanza netta nel comportamento della metrica \texttt{std dev}.
+Quando il degrado è applicato sul \texttt{clientchrony}, i valori osservati si
+collocano su livelli medi inferiori negli scenari \texttt{low} e \texttt{medium},
+con medie pari rispettivamente a 110.0~$\mu s$ e 111.2~$\mu s$, mentre nello
+scenario \texttt{high} si osserva un incremento moderato fino a 135.8~$\mu s$.
+In questo caso, quindi, la metrica resta complessivamente contenuta, pur con una certa
+irregolarità temporale.
+
+Quando invece \texttt{netem} è applicato sul \texttt{servergm}, il comportamento
+risulta diverso. Lo scenario \texttt{low} presenta infatti valori molto più
+elevati, con media pari a 214.9~$\mu s$ e mediana pari a 217.5~$\mu s$,
+nettamente superiori a quelli ottenuti nel caso di degrado sul client. Negli scenari
+\texttt{medium} e \texttt{high}, invece, i livelli si riducono sensibilmente e tornano
+vicini a quelli misurati con \texttt{netem} sul \texttt{clientchrony}, con medie
+pari rispettivamente a 120.5~$\mu s$ e 118.7~$\mu s$.
+
+Dal confronto diretto emerge quindi che la differenza principale tra i due
+contesti non riguarda tanto gli scenari \texttt{medium} e \texttt{high}, che mostrano
+valori abbastanza simili, quanto piuttosto lo scenario \texttt{low}, nel quale
+il degrado applicato sul \texttt{servergm} produce una deviazione standard molto più
+elevata rispetto al degrado applicato sul \texttt{clientchrony}. In termini strettamente
+descrittivi, non si osserva dunque una relazione monotona e uniforme né rispetto
+all’intensità dello stress né rispetto al nodo su cui esso viene introdotto; si rileva
+piuttosto una forte sensibilità del caso \texttt{low} con \texttt{netem} applicato
+sul lato \texttt{servergm}, mentre negli altri scenari i due assetti forniscono risultati
+complessivamente più vicini.
