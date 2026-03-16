@@ -1,24 +1,23 @@
 \chapter{Analisi sperimentale}
 \label{cha:NTPsec} \label{cha:NTPsec}
 
-Il presente capitolo è dedicato all’analisi dei dati raccolti per il demone
-\texttt{\textbf{NTPsec}}, con l’obiettivo di valutarne il comportamento al
-variare delle condizioni di rete introdotte nei tre scenari sperimentali. L’attenzione
-è rivolta all’esame delle principali metriche di sincronizzazione temporale osservate
-durante la fase di testing, al fine di evidenziare l’eventuale impatto del
-progressivo incremento degli impairment di rete sulla stabilità del sistema e
-sulla qualità del processo di sincronizzazione.
+Il presente capitolo è dedicato all’analisi dei dati raccolti per i demoni
+\texttt{\textbf{NTPsec}}, \texttt{\textbf{ptp4l}}, \texttt{\textbf{Chronyd}} con l’obiettivo
+di valutarne il comportamento al variare delle condizioni di rete introdotte nei tre
+scenari sperimentali. L’attenzione è rivolta all’esame delle principali metriche
+di sincronizzazione temporale osservate durante la fase di testing, al fine di evidenziare
+l’eventuale impatto del progressivo incremento degli impairment di rete sulla stabilità
+del sistema e sulla qualità del processo di sincronizzazione.
 
-L’analisi è organizzata per metrica. Per ciascuna grandezza considerata viene condotto
-un confronto sistematico tra i tre scenari sperimentali definiti in precedenza,
-corrispondenti a differenti livelli di degrado della rete (\texttt{low}, \texttt{medium},
-\texttt{high}). Tale confronto si basa sull’osservazione dei dati raccolti e
-sulla loro rappresentazione grafica, con lo scopo di mettere in evidenza eventuali
-variazioni nel comportamento del demone in termini di accuratezza della sincronizzazione,
-variabilità delle misurazioni e dinamica di convergenza.
+L’analisi è organizzata per metrica. Per ciascuna grandezza considerata viene
+condotto un confronto sistematico tra i tre scenari sperimentali definiti in
+precedenza, corrispondenti a differenti livelli di degrado della rete (\texttt{low},
+\texttt{medium}, \texttt{high}). Tale confronto si basa sull’osservazione dei dati
+raccolti e sulla loro rappresentazione grafica, con lo scopo di mettere in
+evidenza eventuali variazioni nel comportamento del demone in termini di
+accuratezza della sincronizzazione, variabilità delle misurazioni e dinamica di convergenza.
 
-\vspace{0,2 cm}
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \caption{Matrice di scenario - fase 3 (topologia T2 + tc/netem)}
   \begin{tabular}{|c|c|c|c|c|c|}
@@ -36,38 +35,37 @@ variabilità delle misurazioni e dinamica di convergenza.
 \end{table}
 \section{\texttt{NTPsec}}
 
-Nel caso di \texttt{\textbf{NTPsec}}, l’analisi si concentra su tre metriche principali:
-\texttt{\textbf{delay}}, \texttt{\textbf{jitter}} e \texttt{\textbf{offset}}. Tali
-grandezze consentono di caratterizzare, rispettivamente, il tempo di propagazione
-dei pacchetti NTP, la variabilità temporale delle misurazioni e lo scostamento
-tra il clock locale e il clock di riferimento. La loro evoluzione nei diversi scenari
-permette quindi di valutare la robustezza del demone rispetto al degrado delle condizioni
-di rete e di analizzare la qualità del processo di sincronizzazione in termini sia
-di stabilità sia di accuratezza.
+Nel caso di \texttt{\textbf{NTPsec}}, l’analisi si concentra su tre metriche
+principali: \texttt{\textbf{delay}}, \texttt{\textbf{jitter}} e \texttt{\textbf{offset}}.
+Tali grandezze consentono di caratterizzare, rispettivamente, il tempo di
+propagazione dei pacchetti NTP, la variabilità temporale delle misurazioni e lo scostamento
+tra il clock locale e il clock di riferimento. La loro evoluzione nei diversi
+scenari permette quindi di valutare la robustezza del demone rispetto al degrado
+delle condizioni di rete e di analizzare la qualità del processo di
+sincronizzazione in termini sia di stabilità sia di accuratezza.
 
-I dati oggetto dell’analisi sono stati raccolti secondo la metodologia sperimentale
-illustrata nei capitoli precedenti. In questa sede, pertanto, non vengono
-ripresi gli aspetti relativi alla configurazione dell’ambiente di prova o alla
-disposizione della topologia, ma si assume come riferimento l’insieme delle misurazioni
-già ottenute per ciascuna metrica e per ciascuno scenario di rete. Nel caso
-specifico di \texttt{\textbf{NTPsec}}, le misurazioni considerate sono state
-rilevate sui nodi \texttt{clientntp} e \texttt{boundary} della topologia, in coerenza
-con il ruolo da essi ricoperto nel processo di sincronizzazione.
+I dati oggetto dell’analisi sono stati raccolti secondo la metodologia
+sperimentale illustrata nei capitoli precedenti. In questa sede, pertanto, non vengono
+ripresi gli aspetti relativi alla configurazione dell’ambiente di prova o alla disposizione
+della topologia, ma si assume come riferimento l’insieme delle misurazioni già
+ottenute per ciascuna metrica e per ciascuno scenario di rete. Nel caso specifico
+di \texttt{\textbf{NTPsec}}, le misurazioni considerate sono state rilevate sui nodi
+\texttt{clientntp} e \texttt{boundary} della topologia, in coerenza con il ruolo
+da essi ricoperto nel processo di sincronizzazione.
 
-Ciascuna sezione seguente è quindi dedicata a una singola metrica e presenta,
-per i tre scenari sperimentali, i risultati osservati e il relativo confronto interpretativo,
-con l’obiettivo di individuare eventuali differenze significative tra le
-condizioni di rete considerate e valutarne gli effetti sul comportamento del
+Ciascuna sezione seguente è quindi dedicata a una singola metrica e presenta, per
+i tre scenari sperimentali, i risultati osservati e il relativo confronto
+interpretativo, con l’obiettivo di individuare eventuali differenze significative
+tra le condizioni di rete considerate e valutarne gli effetti sul comportamento del
 demone.
 
-\newpage
 \subsection{\texttt{clientntp}}
-L'analisi condotta sul nodo \texttt{clientntp} è caratterizzata da uno stato di inizializzazione,
-identificato da \texttt{refid=.INIT.}, \texttt{stratum=16}, \texttt{selected=False}
-e \texttt{reach=0}. Tale intervallo non rappresenta il regime operativo della sincronizzazione
-e non viene quindi considerato nel confronto tra scenari, che viene invece
-condotto a partire dal primo campione valido, corrispondente in tutti i casi a circa
-601 secondi di tempo relativo.
+L'analisi condotta sul nodo \texttt{clientntp} è caratterizzata da uno stato di
+inizializzazione, identificato da \texttt{refid=.INIT.}, \texttt{stratum=16}, \texttt{selected=False}
+e \texttt{reach=0}. Tale intervallo non rappresenta il regime operativo della
+sincronizzazione e non viene quindi considerato nel confronto tra scenari, che viene
+invece condotto a partire dal primo campione valido, corrispondente in tutti i
+casi a +450 secondi di tempo relativo.
 \subsubsection{Analisi metrica: \texttt{delay}}
 \begin{figure}[H]
   \centering
@@ -500,15 +498,14 @@ calcolo delle metriche considerate. Per tale ragione, i confronti quantitativi
 sul nodo \texttt{clientptp} sono necessariamente limitati ai soli scenari \texttt{low}
 e \texttt{medium}.
 
-In questo caso, per lo scenario \texttt{high} non è disponibile una serie metrica
-valida, poiché il nodo non raggiunge una condizione di sincronizzazione stabile: il
-log mostra ripetute selezioni del clock locale come miglior master e un solo tentativo
-transitorio di passaggio verso un master esterno, seguito tuttavia da ritorno
-allo stato di \texttt{LISTENING}. L’assenza di campioni numerici confrontabili
-nello scenario \texttt{high} rappresenta dunque un risultato sperimentale, e
-segnala un livello di degrado tale da impedire la normale operatività del client
-PTP. Il relativo output grezzo viene comunque richiamato a supporto di tale evidenza
-qualitativa.
+Nello scenario \texttt{high} non si raggiunge una condizione di sincronizzazione
+stabile: il log mostra ripetute selezioni del clock locale come miglior master e un
+solo tentativo transitorio di passaggio verso un master esterno, seguito
+tuttavia da ritorno allo stato di \texttt{LISTENING}. L’assenza di campioni
+numerici confrontabili nello scenario \texttt{high} rappresenta dunque un risultato
+sperimentale, e segnala un livello di degrado tale da impedire la normale
+operatività del client PTP. Il relativo output grezzo viene comunque richiamato a
+supporto di tale evidenza qualitativa.
 
 \subsubsection{Analisi metrica: \texttt{path Delay}}
 \begin{figure}[H]
@@ -650,7 +647,7 @@ upstream. L'analisi che segue è quindi finalizzata a verificare se i dati confe
 una sostanziale stabilitàdel boundary nei tre scenari oppure se emergano effetti indiretti
 riconducibili alle criticità operative osservate durante il testing.
 
-Per ciasuna metrica saranno inoltre considerati sia i dati complessivi sia quelli
+Per la metrica del offset saranno inoltre considerati sia i dati complessivi sia quelli
 relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
 
 \subsubsection{Analisi metrica: \texttt{path delay}}
