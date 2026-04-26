@@ -787,7 +787,7 @@ supporto di tale evidenza qualitativa.
     {0.4\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/client_low_path_delay_ns.png
+      pars_plots/ptp/_aggregated/client/low/path_delay_ns_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -796,48 +796,77 @@ supporto di tale evidenza qualitativa.
     {0.4\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/client_medium_path_delay_ns.png
+      pars_plots/ptp/_aggregated/client/medium/path_delay_ns_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientptp}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientptp}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/client/low/path_delay_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/client/medium/path_delay_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientptp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-Nei due scenari per cui sono disponibili misurazioni, il comportamento del \texttt{path
-delay} evidenzia una differenza netta tra \texttt{low} e \texttt{medium}. Nel caso
-\texttt{low}, il segnale si mantiene per gran parte del tempo in una banda relativamente
-contenuta, centrata attorno a valori prossimi a mezzo millisecondo. Il grafico mostra
-oscillazioni presenti ma non strutturalmente divergenti, con alcuni picchi
-locali e alcune discese temporanee, che tuttavia non alterano il quadro complessivo
-di moderata variabilità. Le statistiche confermano tale andamento: la media è pari
-a 524322.76 ns, la mediana a 524299 ns e la deviazione standard a 135730.23 ns, con
-coefficiente di variazione pari a 0.259. Anche la distanza interquartile, pari a 135604
-ns, risulta coerente con una dispersione contenuta. In altri termini, nello
-scenario \texttt{low} il client stima un ritardo di percorso abbastanza stabile,
-pur in presenza di normali fluttuazioni campionarie.
+La metrica \texttt{path delay} sul nodo \texttt{clientptp} consente di valutare
+il ritardo stimato lungo il percorso di sincronizzazione tra il client e il
+master. Nel caso del demone PTP, l’analisi quantitativa di tale grandezza può
+essere condotta soltanto sugli scenari \texttt{low} e \texttt{medium}, poiché nello
+scenario \texttt{high} non viene raggiunta una condizione sufficientemente
+stabile da produrre una serie di campioni confrontabile con le altre due
+condizioni sperimentali.
 
-Nel caso \texttt{medium}, il comportamento cambia in modo evidente. Il livello centrale
-della serie si sposta verso l’alto, con media pari a 720708.99 ns e mediana pari
-a 654933 ns, quindi con un incremento sensibile rispetto allo scenario \texttt{low}.
-Anche la dispersione cresce in maniera marcata: la deviazione standard sale a
-340459.97 ns e il coefficiente di variazione raggiunge 0.472, quasi il doppio del
-caso \texttt{low}. Il grafico mostra infatti una dinamica più irregolare,
-caratterizzata da escursioni ampie, da una fase centrale con valori elevati e da un
-picco massimo di 2686221 ns, molto superiore a quello osservato nello scenario
-\texttt{low} (862114 ns). Anche l’intervallo interquartile aumenta fino a
-275275.25 ns, confermando che l’incremento di variabilità non è dovuto solo a pochi
-valori estremi, ma riguarda più in generale l’intera distribuzione delle misure.
+Nel caso \texttt{low}, il \texttt{path delay} presenta un andamento mediamente regolare
+e si colloca su valori dell’ordine di alcune centinaia di microsecondi. La curva
+aggregata assume un valore medio pari a circa $606.8\,\mu s$, con mediana pari a circa
+$602.5\,\mu s$. La distribuzione dei valori centrali della serie si concentra in
+una fascia relativamente contenuta, con intervallo interquartile compreso approssimativamente
+tra $575.8\,\mu s$ e $638.6\,\mu s$. Anche dal punto di vista grafico
+l’andamento risulta abbastanza stabile, pur con oscillazioni locali non trascurabili,
+ma complessivamente compatibili con una condizione di rete moderatamente
+controllata.
 
-Il confronto tra i due scenari mostra quindi che, sul nodo \texttt{clientptp}, il
-passaggio da \texttt{low} a \texttt{medium} determina sia un aumento del ritardo stimato
-lungo il percorso sia una riduzione della sua stabilità. Il risultato è coerente
-con un peggioramento della qualità del cammino di rete osservato dal client: il \texttt{path
-delay} non soltanto cresce in valore medio, ma diventa anche meno prevedibile e più
-soggetto a variazioni impulsive. In questo senso, la metrica risulta sensibile al
-degrado delle condizioni sperimentali già nel passaggio intermedio, mentre nello
-scenario \texttt{high} il deterioramento è tale da impedire del tutto la costruzione
-di una serie metrica analizzabile.
+Nel caso \texttt{medium}, il livello medio del \texttt{path delay} cresce, ma in
+misura contenuta. La curva aggregata assume infatti un valore medio pari a circa $6
+42.2\,\mu s$, con mediana pari a circa $645.5\,\mu s$. L’incremento rispetto allo
+scenario \texttt{low} è dunque dell’ordine di alcune decine di microsecondi, e non
+evidenzia una discontinuità marcata nel livello della metrica. Tuttavia, lo scenario
+\texttt{medium} mostra una dispersione più elevata: l’intervallo interquartile della
+curva centrale si colloca approssimativamente tra $613.0\,\mu s$ e $672.3\,\mu s$,
+mentre le bande di variabilità rappresentate nei grafici risultano mediamente
+più ampie rispetto al caso \texttt{low}. In particolare, aumentano sia l’ampiezza
+dell’IQR sia quella della fascia $p10$--$p90$, segnalando una minore regolarità della
+stima del ritardo di percorso.
+
+Nel complesso, il confronto tra \texttt{low} e \texttt{medium} mostra che, per il
+nodo \texttt{clientptp}, il degrado della rete non produce un forte aumento del valore
+medio del \texttt{path delay}, ma si riflette soprattutto in una maggiore variabilità
+delle misurazioni. La metrica risulta quindi sensibile al peggioramento dello
+scenario sperimentale, ma l’effetto osservato si manifesta principalmente come perdita
+di stabilità più che come incremento netto del livello centrale. Per lo scenario
+\texttt{high}, come già discusso, non è invece possibile formulare un confronto quantitativo,
+poiché il client non raggiunge una condizione operativa stabile tale da generare
+una serie di campioni omogenea e utilizzabile ai fini statistici, rafforzando un evidenza
+del degrado indotto dovuto a elevati parametri di congestione di rete.
 
 \subsubsection{Analisi metrica: \texttt{RMS offset}}
 \begin{figure}[H]
@@ -847,7 +876,7 @@ di una serie metrica analizzabile.
     {0.4\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/client_low_rms_ns.png
+      pars_plots/ptp/_aggregated/client/low/rms_ns_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -856,71 +885,95 @@ di una serie metrica analizzabile.
     {0.4\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/client_medium_rms_ns.png
+      pars_plots/ptp/_aggregated/client/medium/rms_ns_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientptp}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientptp}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/client/low/rms_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/client/medium/rms_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientptp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-Nel caso \texttt{low}, l’\texttt{RMS offset} presenta una dinamica variabile ma
-complessivamente contenuta. Il grafico mostra una serie oscillante attorno a valori
-moderati, con numerosi picchi locali ma senza una tendenza persistente alla
-crescita. Le statistiche confermano tale quadro: la media è pari a 333758.44 ns, la
-mediana a 248869 ns e il terzo quartile a 367184.5 ns. La deviazione standard è
-305485.19 ns, quindi elevata in valore assoluto ma ancora confrontabile con il livello
-centrale della serie. Il massimo raggiunge 1643285 ns, a fronte di un minimo di 35456
-ns; ciò indica la presenza di spike anche marcati, che però nel grafico rimangono
-episodici e non ridefiniscono il comportamento prevalente della metrica. In
-sostanza, nello scenario \texttt{low} il client mantiene un errore RMS
-generalmente sotto controllo, pur con irregolarità non trascurabili.
+La metrica \texttt{RMS} sul nodo \texttt{clientptp} sintetizza l’entità media
+dell’errore di sincronizzazione osservato dal client PTP e fornisce quindi una
+misura complessiva della qualità temporale raggiunta dal nodo nel corso
+dell’esperimento. Anche in questo caso, il confronto quantitativo può essere
+sviluppato soltanto sugli scenari \texttt{low} e \texttt{medium}, poiché nello scenario
+\texttt{high} il client non raggiunge una condizione operativa stabile tale da
+generare una serie numerica confrontabile.
 
-Nel caso \texttt{medium}, il comportamento peggiora in modo evidente. La media
-sale a 495222.80 ns, mentre la mediana aumenta a 289519 ns; cresce quindi sia il
-livello medio sia il valore centrale della distribuzione. L’aspetto più rilevante
-riguarda però la dispersione: la deviazione standard raggiunge 754809.35 ns e il
-coefficiente di variazione è pari a 1.524, valore molto superiore a quello osservato
-nello scenario \texttt{low} (0.915). Questo significa che la variabilità relativa
-della metrica diventa estremamente elevata. Il grafico conferma chiaramente tale
-instabilità, mostrando alcune escursioni molto pronunciate, tra cui un picco
-massimo di 5374528 ns, nettamente superiore al massimo del caso \texttt{low}. Anche
-l’intervallo interquartile cresce da 219077.5 ns a 293159.75 ns, segnalando che
-l’aumento di dispersione non è dovuto soltanto a pochi valori anomali, ma interessa
-più in generale l’intera distribuzione dei campioni.
+Nel caso \texttt{low}, la metrica RMS si mantiene su valori medi dell’ordine di
+alcune centinaia di microsecondi. La curva aggregata presenta infatti un valore medio
+pari a circa $406.7\,\mu s$, con mediana pari a circa $378.1\,\mu s$. La distribuzione
+dei valori centrali si colloca prevalentemente in una fascia compresa tra circa $3
+02.5\,\mu s$ e $493.2\,\mu s$, pur in presenza di alcuni picchi locali più
+elevati. L’andamento della serie risulta nel complesso irregolare ma ancora contenuto
+entro limiti compatibili con una condizione di rete relativamente favorevole.
 
-Il confronto tra \texttt{low} e \texttt{medium} mostra quindi che l’\texttt{RMS
-offset} del nodo \texttt{clientptp} è fortemente sensibile al peggioramento
-delle condizioni sperimentali. Nel passaggio a \texttt{medium} non si osserva
-soltanto un incremento dell’errore medio, ma soprattutto una perdita di stabilità
-molto marcata, con spike ampi e una dispersione complessiva nettamente superiore.
-Dal punto di vista sperimentale, questa metrica evidenzia quindi che il client
-PTP, pur riuscendo ancora a produrre misure nello scenario intermedio, lo fa con
-una qualità di sincronizzazione significativamente più degradata rispetto al
-caso \texttt{low}. Nel caso \texttt{high}, infine, il degrado non si traduce in un
-semplice ulteriore peggioramento quantitativo, ma nell’impossibilità stessa di
-ottenere una serie RMS analizzabile.
+Nel caso \texttt{medium}, la RMS aumenta in modo più evidente rispetto a quanto osservato
+per la metrica di \texttt{path delay}. Il valore medio della curva aggregata sale
+infatti a circa $514.9\,\mu s$, mentre la mediana si attesta intorno a
+$458.5\,\mu s$. Rispetto allo scenario \texttt{low}, si osserva quindi un incremento
+sensibile del livello della metrica, pari a poco più di $100\,\mu s$. Tuttavia,
+l’aspetto più rilevante è rappresentato dall’aumento della dispersione: l’intervallo
+interquartile dei valori centrali si amplia, le bande di variabilità nei grafici
+risultano più estese e la serie mostra una maggiore presenza di spike e
+oscillazioni ampie. In particolare, aumentano sia l’ampiezza dell’IQR sia quella
+della fascia $p10$--$p90$, indicando una minore stabilità della sincronizzazione.
+
+Nel complesso, la metrica RMS evidenzia in modo chiaro il peggioramento del comportamento
+del nodo \texttt{clientptp} nel passaggio da \texttt{low} a \texttt{medium}. A differenza
+di quanto osservato sul \texttt{path delay}, in questo caso il degrado non si manifesta
+soltanto come aumento della variabilità, ma anche come incremento apprezzabile
+del livello medio dell’errore temporale. La RMS risulta dunque una metrica particolarmente
+utile per mettere in evidenza la perdita di qualità della sincronizzazione PTP al
+crescere della severità dello scenario di rete. Per lo scenario \texttt{high},
+come già osservato, non è invece possibile sviluppare un confronto quantitativo,
+poiché il client non raggiunge una condizione di sincronizzazione stabile, confermando
+l'eccessivo degrado di rete che non permette a \texttt{clientptp} di
+stabilizarsi.
 
 \subsection{\texttt{boundary}}
 L'analisi relativa al nodo \texttt{boundary} deve essere interpretata in modo differente
-rispetto a quella del client. Le metriche osservate in questo caso descrivono
-infatti il comportamento della sincronizzazione del boundary rispetto al \texttt{master
-upstream (servergm)}, e non il collegamento downstram vero il \texttt{clientptp},
-sul quale è stato introdotto il degrado di rete. Di conseguenza, in linea
-teorica, non ci si attende un impatto diretto e strutturale degli impairment applicati
-nei tre scenari sulle misure di offset e path delay rilevate sul boundary.
+rispetto a quella condotta sul client. Le metriche osservate in questo caso
+descrivono infatti il comportamento della sincronizzazione del boundary rispetto
+al \texttt{master upstream} (\texttt{servergm}), e non il collegamento downstream
+verso il \texttt{clientptp}, sul quale è stato introdotto il degrado di rete. Di
+conseguenza, in linea teorica, non ci si attende un impatto diretto e
+strutturale degli impairment applicati nei tre scenari sulle misure di \texttt{offset}
+e \texttt{path delay} rilevate sul boundary.
 
-Occorre tuttavia considerare che il demone \texttt{ptp4l} opera sul nodo in modo
-unitario, gestendo contemporaneamente più porte della topologia. Per questo
-motivo, eventuali fault o transizioni di stato osservate sulla porta downstream possono
-comunque rilfettersi indirettamente sulla stabilità complessiva del processo di sincronizzazione,
-introducendo fluttazioni o anomalie anche nelle metriche riferite al tratto
-upstream. L'analisi che segue è quindi finalizzata a verificare se i dati confermino
-una sostanziale stabilitàdel boundary nei tre scenari oppure se emergano effetti indiretti
-riconducibili alle criticità operative osservate durante il testing.
-
-Per la metrica del offset saranno inoltre considerati sia i dati complessivi sia quelli
-relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
+Occorre tuttavia considerare che il demone \texttt{ptp4l} opera sul nodo in modo unitario,
+gestendo contemporaneamente più porte della topologia. Per tale ragione,
+eventuali fault, transizioni di stato o condizioni di instabilità osservate sulla
+porta downstream possono comunque riflettersi indirettamente sulla stabilità complessiva
+del processo di sincronizzazione, introducendo fluttuazioni o anomalie anche
+nelle metriche riferite al tratto upstream. L'analisi che segue è pertanto finalizzata
+a verificare se i dati confermino una sostanziale stabilità del nodo \texttt{boundary}
+nei tre scenari sperimentali, oppure se emergano effetti indiretti riconducibili alle
+criticità operative osservate durante il testing.
 
 \subsubsection{Analisi metrica: \texttt{path delay}}
 \begin{figure}[H]
@@ -930,7 +983,7 @@ relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_low_path_delay_ns.png
+      pars_plots/ptp/_aggregated/boundary/low/path_delay_ns_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -939,7 +992,7 @@ relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_medium_path_delay_ns.png
+      pars_plots/ptp/_aggregated/boundary/medium/path_delay_ns_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -947,38 +1000,73 @@ relativi alla sola fase \texttt{post-lock (servo\_state = s2)}.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_high_path_delay_ns.png
+      pars_plots/ptp/_aggregated/boundary/high/path_delay_ns_mean_ci95.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{boundary}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{boundary}}
   \label{fig:scenario_comparison}
 \end{figure}
-L’analisi del \texttt{path delay} del nodo \texttt{boundary} mostra delle
-leggere differenze tra i tre scenari, ma non una crescita monotona e sistematica al
-crescere dello stress di rete. Nello scenario \texttt{low} si osserva il valore centrale
-più contenuto, con mediana pari a 476428 ns e media pari a 547340 ns; tuttavia,
-la serie presenta una variabilità non trascurabile, con picchi fino a 1498267 ns,
-che contribuiscono ad aumentare la media.
+\begin{figure}[H]
+  \centering
 
-Nello scenario \texttt{medium} il livello centrale del \texttt{path delay}
-aumenta, con mediana pari a 697914 ns e media pari a 714604 ns, mentre la
-dispersione relativa risulta più contenuta rispetto al caso \texttt{low}, come
-indicato da una deviazione standard di 208788 ns e da un coefficiente di
-variazione pari a $0.292$.
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/boundary/low/path_delay_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/boundary/medium/path_delay_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/ptp/_aggregated/boundary/high/path_delay_ns_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}}
+  \label{fig:scenario_comparison}
+\end{figure}
+L'analisi del \texttt{path delay} misurato sul nodo \texttt{boundary} conferma,
+nel complesso, l'ipotesi di una sostanziale stabilità del collegamento verso il master
+upstream anche al variare dello scenario di degrado applicato sul ramo downstream.
+Le tre condizioni sperimentali presentano infatti valori medi dello stesso
+ordine di grandezza e profili temporali complessivamente regolari, senza evidenza
+di un deterioramento sistematico e monotono all'aumentare dell'impairment di rete.
 
-Lo scenario \texttt{high} presenta valori centrali molto simili al caso \texttt{medium},
-con mediana pari a 678988 ns e media pari a 707771 ns, ma mostra un massimo
-superiore, pari a 1820002 ns, evidenziando la presenza di escursioni più marcate.
+Dal punto di vista quantitativo, il valore medio aggregato del \texttt{path
+delay} risulta pari a circa 697.227~\textmu s nello scenario \texttt{low}, 687.669~\textmu
+s nello scenario \texttt{medium} e 740.415~\textmu s nello scenario \texttt{high}.
+Le differenze tra scenari sono quindi contenute e non indicano una variazione
+strutturale del comportamento del boundary. Anche le misure di dispersione confermano
+tale lettura: l'ampiezza interquartile media e la banda p10--p90 non mostrano infatti
+un incremento progressivo e coerente con il livello di stress applicato,
+evidenziando piuttosto oscillazioni moderate e non univocamente ordinate.
 
-Nel complesso, i dati indicano che il \texttt{path delay} del \texttt{boundary} non
-rimane perfettamente invariato tra gli scenari, ma l’effetto osservato consiste
-soprattutto in un aumento del livello centrale passando da \texttt{low} a \texttt{medium},
-mentre il passaggio da \texttt{medium} a \texttt{high} non produce un ulteriore incremento
-stabile, bensì una maggiore presenza di valori estremi. L’andamento osservato non
-conferma quindi una differenza strutturale nettamente attribuibile alle diverse condizioni
-di rete, ma suggerisce piuttosto un’influenza di fattori secondari e della
-variabilità interna delle misurazioni.
+A livello grafico, nello scenario \texttt{low} la curva media oscilla attorno a
+un livello pressoché stabile, con alcune fluttuazioni locali e una discontinuità più
+marcata nella parte finale della serie. Lo scenario \texttt{medium} mostra un andamento
+particolarmente regolare nel tratto centrale, mentre nello scenario \texttt{high}
+si osserva un innalzamento moderato del livello medio, comunque compatibile con
+una condizione di sincronizzazione ancora stabile. In nessun caso emerge un comportamento
+riconducibile a una degradazione diretta del tratto upstream.
+
+Nel complesso, i dati suggeriscono quindi che il \texttt{path delay} del \texttt{boundary}
+resti sostanzialmente robusto rispetto agli impairment introdotti sul
+collegamento downstream. Le variazioni osservate possono essere interpretate più plausibilmente
+come effetti indiretti del funzionamento complessivo del demone \texttt{ptp4l}
+sul nodo, piuttosto che come conseguenza diretta del degrado di rete imposto al client.
 
 \subsubsection{Analisi metrica: \texttt{offset}}
 \begin{figure}[H]
@@ -988,7 +1076,7 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_low_offset_ns.png
+      pars_plots/ptp/_aggregated/boundary/low/offset_ns_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -997,7 +1085,7 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_medium_offset_ns.png
+      pars_plots/ptp/_aggregated/boundary/medium/offset_ns_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1005,12 +1093,12 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_high_offset_ns.png
+      pars_plots/ptp/_aggregated/boundary/high/offset_ns_mean_ci95.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{boundary} - dati
-  completi}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{boundary} -
+  dati completi}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -1020,7 +1108,7 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_low_offset_ns_postlock_s2.png
+      pars_plots/ptp/_aggregated/boundary/low/offset_ns_mean_iqr_p10_p90.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1029,7 +1117,7 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_medium_offset_ns_postlock_s2.png
+      pars_plots/ptp/_aggregated/boundary/medium/offset_ns_mean_iqr_p10_p90.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1037,44 +1125,57 @@ variabilità interna delle misurazioni.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_ptp/boundary_high_offset_ns_postlock_s2.png
+      pars_plots/ptp/_aggregated/boundary/high/offset_ns_mean_iqr_p10_p90.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{boundary} - dati
-  filtrati: \texttt{servo\_state:s2}}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}}
   \label{fig:scenario_comparison}
 \end{figure}
-L’analisi dell'\texttt{offset} del nodo \texttt{boundary}, considerato sia sull’intera
-serie sia nel solo intervallo \texttt{post-lock} (\texttt{s2}), non evidenzia
-una degradazione monotona al crescere dello stress di rete. In tutti e tre gli scenari
-la distribuzione rimane infatti centrata in prossimità dello zero, con mediane
-sempre leggermente negative: pari a $-43836$ ns in \texttt{low}, $-100004$ ns in \texttt{medium}
-e $-59229$ ns in \texttt{high}. Anche limitando l’osservazione alla sola fase
-\texttt{post-lock}, il quadro resta sostanzialmente invariato, con mediane pari rispettivamente
-a $-45273.5$ ns, $-88836.5$ ns e $-56328.5$ ns.
+L'analisi dell'\texttt{offset} misurato sul nodo \texttt{boundary} conferma,
+anche in questo caso, l'assenza di un effetto diretto e sistematico degli impairment
+applicati sul collegamento downstream verso il client. I tre scenari mostrano
+infatti un andamento complessivamente centrato in prossimità dello zero, con oscillazioni
+di segno alterno e picchi sporadici, ma senza una progressione monotona
+riconducibile all'aumento del degrado di rete.
 
-Le differenze principali tra gli scenari riguardano soprattutto la presenza di
-escursioni impulsive. Lo scenario \texttt{medium} è quello che mostra gli eventi
-più estremi, con massimo pari a $11064269$ ns e deviazione standard pari a $10078
-06$ ns sull’intera serie, valori che rimangono elevati anche nel \texttt{post-lock}.
-Lo scenario \texttt{low} presenta picchi meno pronunciati, ma comunque rilevanti,
-fino a $5533287$ ns, mentre lo scenario \texttt{high} mostra massimi inferiori rispetto
-a \texttt{medium}, pari a $3244309$ ns, pur mantenendo una dispersione centrale
-non trascurabile, come indicato dall’\texttt{IQR} più ampio tra i tre casi.
+Dal punto di vista quantitativo, il valore medio aggregato dell'\texttt{offset}
+risulta pari a circa 87.809~\textmu s nello scenario \texttt{low}, 153.961~\textmu
+s nello scenario \texttt{medium} e 110.782~\textmu s nello scenario \texttt{high}.
+Anche considerando la mediana, i valori restano contenuti e pari rispettivamente
+a circa 45.375~\textmu s, 97.301~\textmu s e 65.087~\textmu s. Tali risultati
+indicano quindi una lieve prevalenza di offset positivo, ma non una crescita strutturale
+all'aumentare dello stress: lo scenario \texttt{medium} presenta il valore centrale
+più elevato, mentre lo scenario \texttt{high} torna su livelli più contenuti e più
+vicini a quelli del caso \texttt{low}.
 
-Il confronto tra serie complete e serie \texttt{post-lock} mostra inoltre che
-l’esclusione della fase iniziale di acquisizione del sincronismo modifica solo
-in misura limitata gli indicatori descrittivi. Ciò suggerisce che la variabilità dell’\texttt{offset}
-non sia concentrata esclusivamente nella fase transitoria, ma permanga anche
-durante il funzionamento stabilizzato del servo, sotto forma di oscillazioni attorno
-allo zero e di sporadici valori anomali.
+Anche le misure di dispersione confermano questa interpretazione. L'ampiezza interquartile
+media è pari a circa 279.114~\textmu s nello scenario \texttt{low}, 327.530~\textmu
+s nello scenario \texttt{medium} e 250.843~\textmu s nello scenario \texttt{high};
+analogamente, la banda p10--p90 media assume valori pari a circa 1017.673~\textmu
+s, 1243.040~\textmu s e 1122.148~\textmu s. Anche in questo caso non si osserva
+un incremento regolare e cumulativo della variabilità al crescere dell'impairment:
+lo scenario \texttt{medium} appare il più disperso, mentre lo scenario \texttt{high}
+non peggiora ulteriormente e mantiene una dispersione comparabile, se non in parte
+inferiore, rispetto al caso intermedio.
 
-Nel complesso, i dati non confermano una differenza sistematica dell’\texttt{offset}
-attribuibile alle diverse condizioni di rete imposte nei tre scenari. L’effetto osservato
-appare piuttosto dominato da fluttuazioni locali e da picchi isolati, più che da
-un peggioramento strutturale e progressivo associato all’aumento dello stress di
-rete.
+L'osservazione dei profili temporali porta alle stesse conclusioni. Nel caso \texttt{low}
+la serie è caratterizzata da oscillazioni contenute attorno allo zero, intervallate
+da alcuni spike isolati di maggiore ampiezza e da una parte finale leggermente più
+irregolare. Lo scenario \texttt{medium} mostra una dinamica molto simile, con
+una maggiore frequenza di escursioni positive e una variabilità lievemente più
+pronunciata in alcuni tratti centrali. Nel caso \texttt{high}, pur in presenza di
+picchi locali anche rilevanti, la curva media rimane comunque prossima allo zero
+e non evidenzia deriva persistente né instabilità sistematica.
+
+Nel complesso, l'\texttt{offset} del \texttt{boundary} conferma quindi una condizione
+di sostanziale stabilità della sincronizzazione sul tratto upstream. Le
+differenze osservate tra i tre scenari appaiono limitate, non monotone e non sufficienti
+a sostenere l'ipotesi di un impatto diretto del degrado downstream sulla sincronizzazione
+del \texttt{boundary} rispetto al \texttt{servergm}. Gli eventuali scostamenti
+locali sono più plausibilmente interpretabili come fluttuazioni operative del
+processo \texttt{ptp4l} o come effetti indiretti transitori, piuttosto che come
+conseguenza strutturale del livello di stress applicato al client.
 
 \section{\texttt{chronyd}}
 Nel caso di \texttt{Chrony}, l’analisi è stata svolta su una topologia composta
@@ -1106,7 +1207,7 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_low_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/offset_us_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1115,7 +1216,7 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_medium_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/medium/servergm/offset_us_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1123,12 +1224,12 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_high_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/high/servergm/offset_us_mean_ci95.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{clientchrony}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -1138,7 +1239,7 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_low_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/offset_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1147,7 +1248,7 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_medium_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/offset_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1155,105 +1256,224 @@ della sincronizzazione dal punto di vista del client.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_high_sourcestats_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/offset_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{servergm}}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \paragraph*{clientchrony - netem/tc:}
-L’analisi dell’\texttt{offset} ottenuto tramite \texttt{chronyc sourcestats},
-nel caso in cui il degrado di rete sia applicato sul lato \texttt{clientChrony},
-mostra un comportamento complessivamente stabile in tutti e tre gli scenari
-considerati. In termini temporali, dopo una possibile escursione iniziale, i valori
-si mantengono molto prossimi allo zero per tutta la durata dell’osservazione,
-senza evidenziare derive progressive né oscillazioni ampie e persistenti.
+Nel caso della metrica \texttt{offset\_us}, l'analisi relativa a \texttt{clientchrony}
+con degrado applicato sul nodo client evidenzia un peggioramento progressivo all'aumentare
+dell'intensità dello scenario, pur mantenendo valori complessivamente contenuti
+e senza compromettere il controllo della sincronizzazione verso la sorgente.
 
-Dal punto di vista quantitativo, nello scenario \texttt{low} si osserva la
-maggiore anomalia puntuale, con un minimo pari a $-43.0\,\mu s$, che influenza
-in modo marcato media e variabilità campionaria; infatti la media risulta pari a $-
-5.52\,\mu s$ e la deviazione standard a $13.60\,\mu s$. Tuttavia, il grafico mostra
-che tale comportamento è riconducibile a un singolo campione isolato, mentre i
-restanti valori si dispongono in prossimità dello zero.
+Nello scenario \texttt{low}, la curva delle medie rimane prossima allo zero, ma con
+prevalenza di valori leggermente negativi. L'aggregazione sulle curve fornisce
+infatti una media complessiva pari a \texttt{-2.958 \,$\mu$s}, con valori medi
+compresi tra \texttt{-10.250 \,$\mu$s} e \texttt{-0.481 \,$\mu$s}. Anche le statistiche
+globali sui campioni grezzi confermano un offset generalmente molto vicino allo zero:
+la media è \texttt{-2.958 \,$\mu$s}, la mediana è \texttt{-0.049 \,$\mu$s}, il
+primo quartile è \texttt{-0.927 \,$\mu$s} e il terzo quartile è \texttt{-0.002 \,$\mu$s}.
+Questo indica che, nella maggior parte dei campioni, lo scarto rispetto alla sorgente
+rimane molto ridotto, mentre le deviazioni più marcate risultano episodiche. La variabilità
+tra run non è trascurabile, come mostra l'ampiezza media dell'intervallo \texttt{p10-p90},
+pari a \texttt{7.971 \,$\mu$s}, ma la banda interquartile media è molto più
+contenuta, circa \texttt{1.095 \,$\mu$s}, segnalando che il comportamento tipico resta
+abbastanza stabile. In termini interpretativi, nello scenario \texttt{low} il
+degrado introdotto sul client produce soltanto un lieve sbilanciamento negativo
+dell'offset, senza alterare in modo significativo il regime di sincronizzazione.
 
-Negli scenari \texttt{medium} e \texttt{high} il comportamento risulta ancora
-più regolare. Nel caso \texttt{medium} la media è pari a $-1.05\,\mu s$, con mediana
-$-0.62\,\mu s$ e minimo $-5.30\,\mu s$; nel caso \texttt{high} la media è $-0.56\,
-\mu s$, con mediana $-0.16\,\mu s$ e minimo $-4.10\,\mu s$. In entrambi i casi,
-la serie temporale rimane vicina allo zero lungo tutto l’intervallo osservato, senza
-mostrare un peggioramento sistematico all’aumentare dello stress di rete.
+Nello scenario \texttt{medium}, la struttura generale del fenomeno rimane analoga,
+ma la dispersione cresce leggermente e compaiono fluttuazioni negative più
+frequenti. La media della curva aggregata è pari a \texttt{-2.642 \,$\mu$s}, quindi
+molto vicina a quella osservata nello scenario \texttt{low}, ma i grafici mostrano
+alcune discese più accentuate in specifici indici campionari. I dati grezzi
+confermano che la distribuzione resta fortemente concentrata attorno a valori
+prossimi allo zero: media \texttt{-2.642 \,$\mu$s}, mediana \texttt{-0.073 \,$\mu$s},
+primo quartile \texttt{-1.075 \,$\mu$s} e terzo quartile \texttt{-0.004 \,$\mu$s}.
+Anche in questo caso, quindi, la maggior parte delle osservazioni rimane di
+piccola entità, mentre il peggioramento riguarda soprattutto la variabilità. L'ampiezza
+media della banda \texttt{p10-p90} risulta pari a \texttt{6.266 \,$\mu$s}, mentre
+la banda interquartile media cresce a \texttt{1.804 \,$\mu$s}; inoltre, il
+valore massimo dell'IQR raggiunge \texttt{10.978 \,$\mu$s}, segnale che in
+alcuni punti il comportamento tra le run diventa più irregolare. Nel complesso,
+tuttavia, lo scenario \texttt{medium} non introduce una rottura netta rispetto
+al caso precedente: l'offset rimane nell'ordine di pochi microsecondi negativi e continua
+a descrivere un sistema sostanzialmente sotto controllo.
 
-Nel complesso, i dati non evidenziano differenze strutturali tra i tre scenari
-per questa metrica. L’\texttt{offset} stimato da \texttt{sourcestats} resta
-infatti contenuto e sostanzialmente stabile anche al crescere del degrado
-applicato sul \texttt{client}, mentre l’unica deviazione rilevante compare nel
-caso \texttt{low} come evento isolato e non come effetto sistematico delle condizioni
-di rete.
+Nello scenario \texttt{high}, il peggioramento diventa più evidente. La media
+delle curve aggregate scende a \texttt{-5.451 \,$\mu$s}, quindi circa il doppio
+in valore assoluto rispetto ai casi \texttt{low} e \texttt{medium}, e la curva delle
+medie mostra tratti più chiaramente distanti dallo zero, con minimi fino a
+\texttt{-15.103 \,$\mu$s}. Anche i dati grezzi confermano tale tendenza: la media
+globale è \texttt{-5.451 \,$\mu$s}, mentre la mediana resta comunque vicina allo zero,
+pari a \texttt{-0.360 \,$\mu$s}. Questo scarto tra media e mediana è rilevante, poiché
+suggerisce che il peggioramento non sia uniforme su tutti i campioni, ma sia
+trainato da episodi più marcati che trascinano la media verso valori più
+negativi. La dispersione aumenta sensibilmente: l'ampiezza media dell'intervallo
+\texttt{p10-p90} sale a \texttt{15.836 \,$\mu$s}, quasi il doppio del caso \texttt{low},
+mentre l'IQR medio raggiunge \texttt{3.693 \,$\mu$s}. Anche i grafici mostrano infatti
+bande di incertezza più ampie, coerenti con una maggiore instabilità tra le run. Nonostante
+ciò, il sistema non appare in collasso: l'offset rimane nell'ordine delle poche decine
+di microsecondi e continua a oscillare attorno a valori compatibili con una sincronizzazione
+ancora operativa, seppure meno regolare.
 
+Nel confronto complessivo tra i tre scenari emerge dunque un andamento
+progressivo. Gli scenari \texttt{low} e \texttt{medium} risultano tra loro piuttosto
+vicini: in entrambi i casi l'offset medio resta attorno a \texttt{-3 \,$\mu$s} e la
+maggior parte dei campioni si mantiene molto prossima allo zero. Lo scenario
+\texttt{high} introduce invece un peggioramento più marcato, con media più
+negativa e dispersione sensibilmente maggiore, ma senza una perdita completa di stabilità.
+In sintesi, applicando il degrado di rete sul client, la metrica di \texttt{offset\_us}
+verso la sorgente mostra una buona robustezza del meccanismo di sincronizzazione di
+Chrony: l'effetto del degrado cresce con l'intensità dello scenario, ma rimane complessivamente
+contenuto e si manifesta soprattutto come aumento della variabilità e presenza di
+deviazioni negative più pronunciate, più che come deriva sistematica
+incontrollata.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/low/servergm/offset_us_mean_ci95.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/medium/servergm/offset_us_mean_ci95.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/high/servergm/offset_us_mean_ci95.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/low/servergm/offset_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/medium/servergm/offset_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/high/servergm/offset_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
 \paragraph*{servergm - netem/tc:}
-L’analisi dell’\texttt{offset} rilevato tramite \texttt{chronyc sourcestats},
-nel caso in cui il degrado di rete sia applicato sul nodo \texttt{servergm},
-evidenzia un comportamento differente nei tre scenari, ma senza una tendenza lineare
-univoca al crescere dello stress.
+Nel caso della metrica \texttt{offset\_us} riferita alla sezione \texttt{sourcestats},
+l'analisi con impairment applicato sul nodo \texttt{servergm} evidenzia un comportamento
+non monotono al variare dello scenario, ma nel complesso compatibile con una
+sincronizzazione che resta attiva e generalmente prossima alla sorgente di
+riferimento.
 
-Nello scenario \texttt{low} i valori risultano piuttosto dispersi e comprendono
-sia campioni negativi sia positivi, con media pari a $1.596~\mu s$, mediana pari
-a $1 .001~\mu s$ e massimo pari a $12.0~\mu s$. Il grafico mostra infatti una dinamica
-irregolare, caratterizzata da un picco positivo pronunciato nella parte centrale
-della serie, che incide in modo evidente sul valore medio.
+Nello scenario \texttt{low}, la curva delle medie presenta la maggiore
+irregolarità tra i tre casi analizzati. Il valor medio aggregato risulta pari a \texttt{2.935
+\,$\mu$s}, quindi molto vicino allo zero, ma la dispersione tra i diversi punti
+della curva è elevata: la deviazione standard delle medie è infatti \texttt{16.824
+\,$\mu$s}, con valori compresi tra \texttt{-18.383 \,$\mu$s} e \texttt{41.717 \,$\mu$s}.
+Anche le bande di variabilità risultano ampie, con una larghezza media dell'intervallo
+\texttt{p10-p90} pari a \texttt{74.976 \,$\mu$s} e picchi fino a \texttt{138.489
+\,$\mu$s}. Le statistiche globali sui campioni grezzi confermano tale quadro: la
+media complessiva è \texttt{2.935 \,$\mu$s}, ma la deviazione standard raggiunge
+\texttt{68.012 \,$\mu$s}, con valori estremi fino a \texttt{555 \,$\mu$s}.
+Questo indica che, pur in presenza di un valor medio contenuto, il comportamento
+nello scenario \texttt{low} è caratterizzato da una marcata variabilità inter-run
+e da outlier positivi che ampliano sensibilmente la dispersione osservata.
 
-Nello scenario \texttt{medium} permane una variabilità apprezzabile, ma con centro
-della distribuzione spostato in campo negativo: la media è pari a
-$-2.087~ \mu s$ e la mediana a $-1.4~\mu s$, con valori compresi tra $-11.0~\mu s$
-e $5.819~\mu s$. Anche in questo caso la serie non mostra stabilità attorno a un
-livello costante, ma alterna scostamenti di segno opposto con ampiezza non trascurabile.
+Nello scenario \texttt{medium}, la dinamica appare invece più regolare e stabile.
+La curva delle medie rimane costantemente attestata su valori leggermente
+negativi, con una media aggregata pari a \texttt{-3.863 \,$\mu$s}. La dispersione
+si riduce in misura netta rispetto al caso precedente: la deviazione standard
+delle medie scende a \texttt{1.935 \,$\mu$s}, mentre l'intervallo medio \texttt{p10-p90}
+si attesta a \texttt{9.546 \,$\mu$s}. Anche le statistiche globali confermano un assetto
+più compatto, con deviazione standard complessiva pari a \texttt{8.784 \,$\mu$s} e
+valori estremi compresi tra \texttt{-50 \,$\mu$s} e \texttt{24 \,$\mu$s}. In
+questo caso, quindi, l'offset verso la sorgente resta sistematicamente vicino
+allo zero e mostra una variabilità decisamente più contenuta rispetto allo
+scenario \texttt{low}.
 
-Lo scenario \texttt{high} presenta invece un andamento nettamente più compatto. I
-campioni restano tutti prossimi allo zero e interamente in campo negativo, con
-media pari a $-0.279~\mu s$, mediana pari a $-0.140~\mu s$ e deviazione standard pari
-a $0.302~\mu s$, molto inferiore rispetto ai casi \texttt{low} e \texttt{medium}.
-Anche dal grafico emerge una serie quasi piatta, con oscillazioni molto
-contenute e assenza di picchi rilevanti.
+Nello scenario \texttt{high}, il comportamento resta nel complesso stabile e,
+per certi aspetti, ancora più concentrato attorno a valori prossimi allo zero.
+La media aggregata della curva è pari a \texttt{-2.122 \,$\mu$s}, dunque
+leggermente negativa ma di entità molto ridotta. La deviazione standard delle medie
+è \texttt{3.022 \,$\mu$s}, superiore a quella osservata nello scenario \texttt{medium}
+ma comunque molto inferiore al caso \texttt{low}. Inoltre, l'ampiezza media dell'IQR
+è pari a soli \texttt{0.709 \,$\mu$s}, mentre l'intervallo medio \texttt{p10-p90}
+è pari a \texttt{2.355 \,$\mu$s}, valori che descrivono una forte concentrazione
+della parte centrale della distribuzione. I dati grezzi confermano tale lettura:
+la media complessiva è \texttt{-2.122 \,$\mu$s}, con mediana \texttt{-0.178 \,$\mu$s}
+e quartili molto prossimi allo zero. Nel grafico è visibile una singola
+flessione più marcata, coerente con il minimo della curva pari a \texttt{-10.588 \,$\mu$s},
+ma tale episodio non altera il quadro generale di sostanziale stabilità.
 
-Nel complesso, i dati non mostrano un peggioramento progressivo dell’\texttt{offset}
-all’aumentare dello stress di rete. Al contrario, il caso \texttt{high} risulta
-il più regolare tra i tre, mentre le maggiori escursioni si osservano negli scenari
-\texttt{low} e \texttt{medium}. Pertanto, anche in questo caso non emerge una relazione
-diretta e sistematica tra intensità del degrado applicato su \texttt{servergm} e
-aumento dell’\texttt{offset} misurato sul client.
+Nel confronto complessivo tra i tre scenari emerge dunque un risultato non lineare.
+Lo scenario \texttt{low} è quello che mostra la dispersione più accentuata e la maggiore
+sensibilità a valori anomali, pur mantenendo una media molto vicina allo zero. Gli
+scenari \texttt{medium} e \texttt{high} appaiono invece più regolari, con offset
+medi leggermente negativi ma contenuti entro pochi microsecondi e con una
+variabilità sensibilmente inferiore. Pertanto, per la metrica \texttt{offset\_us}
+di \texttt{sourcestats}, il degrado applicato sul nodo \texttt{servergm} non
+produce una deriva sistematica progressivamente crescente al crescere dello
+scenario, ma piuttosto una risposta sperimentale in cui il caso \texttt{low}
+risulta il più disperso, mentre \texttt{medium} e \texttt{high} mantengono un comportamento
+più compatto e vicino alla condizione nominale.
 
 \paragraph*{Confronto:}
-Confrontando i due casi di applicazione del degrado di rete, ossia sul nodo
-\texttt{clientchrony} e sul nodo \texttt{servergm}, emerge che l’\texttt{offset} misurato
-tramite \texttt{chronyc sourcestats} rimane in generale contenuto in entrambi i
-contesti, ma con differenze apprezzabili in termini di regolarità e sensibilità agli
-scenari.
+Nel confronto tra i due casi emerge una differenza netta nella sensibilità della
+metrica \texttt{offset\_us} rispetto al punto della topologia in cui viene applicato
+il degrado. Quando l'impairment è introdotto su \texttt{clientchrony}, l'effetto
+sull'offset risulta più chiaramente strutturato: al crescere dello scenario si osserva
+un progressivo peggioramento, con medie che si spostano verso valori più
+negativi e con un aumento della dispersione, particolarmente evidente nel caso \texttt{high}.
+Al contrario, con degrado applicato su \texttt{servergm}, il comportamento
+appare meno regolare e non monotono: non emerge una deriva progressiva dell'offset,
+ma piuttosto una risposta disomogenea, in cui lo scenario \texttt{low} risulta
+paradossalmente il più disperso, mentre \texttt{medium} e \texttt{high} mantengono
+un andamento più compatto e vicino alla condizione nominale.
 
-Nel caso in cui il degrado sia applicato su \texttt{clientchrony}, i valori dell’\texttt{offset}
-risultano quasi sempre molto prossimi allo zero nei tre scenari, con scostamenti
-medi pari a $-5.521~\mu s$ in \texttt{low}, $-1.051~\mu s$ in \texttt{medium} e $-
-0.564~\mu s$ in \texttt{high}. A parte un singolo campione anomalo nello scenario
-\texttt{low} e oscillazioni moderate nel caso \texttt{medium}, l’andamento
-osservato è sostanzialmente stabile e non mostra variazioni strutturali
-rilevanti al crescere dello stress.
-
-Quando invece il degrado è applicato su \texttt{servergm}, la serie appare in
-media più irregolare negli scenari \texttt{low} e \texttt{medium}. In particolare,
-nello scenario \texttt{low} si osservano escursioni fino a $12.0~\mu s$, mentre
-nel caso \texttt{medium} i valori variano tra $-11.0~\mu s$ e $5.819~\mu s$.
-Solo nello scenario \texttt{high} il comportamento torna ad essere molto compatto,
-con valori tutti vicini allo zero e deviazione standard pari a $0.302~\mu s$.
-
-Nel confronto diretto, quindi, l’applicazione del degrado sul lato \texttt{clientchrony}
-produce un comportamento complessivamente più stabile e più uniforme tra i tre scenari,
-mentre l’applicazione su \texttt{servergm} introduce una maggiore variabilità nei
-casi \texttt{low} e \texttt{medium}. Tuttavia, in nessuno dei due contesti emerge
-una crescita monotona dell’\texttt{offset} al crescere dello stress di rete. Di
-conseguenza, anche il confronto tra le due modalità di applicazione del \texttt{netem}
-non evidenzia un effetto sistematico delle condizioni di rete su questa metrica, ma
-piuttosto differenze di stabilità locale tra le due configurazioni sperimentali.
+In sintesi, il degrado applicato lato client produce un impatto più coerente e
+direttamente osservabile sulla sincronizzazione stimata da Chrony, mentre il degrado
+applicato lato server non determina, almeno su questa metrica, un peggioramento sistematico
+crescente, ma soprattutto variazioni di dispersione tra gli scenari.
 
 \subsection{Analisi metrica: \texttt{stddev}}
 \begin{figure}[H]
@@ -1263,7 +1483,7 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_low_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/stddev_us_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1272,7 +1492,7 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_medium_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/medium/servergm/stddev_us_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1280,12 +1500,12 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_high_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/high/servergm/stddev_us_mean_ci95.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{clientchrony}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -1295,7 +1515,7 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_low_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/low/servergm/stddev_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1304,7 +1524,7 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_medium_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/medium/servergm/stddev_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1312,94 +1532,221 @@ piuttosto differenze di stabilità locale tra le due configurazioni sperimentali
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_high_sourcestats_stddev_us.png
+      pars_plots/chrony_clientchrony/_aggregated/sourcestats/high/servergm/stddev_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{servergm}}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \paragraph*{clientchrony - netem/tc:}
-L’analisi della metrica \texttt{std dev} restituita da \texttt{chronyc
-sourcestats} mostra un comportamento complessivamente stabile tra i tre scenari, pur
-in presenza di oscillazioni locali dovute al numero limitato di campioni disponibili.
-Nello scenario \texttt{low} si osservano valori compresi tra 45~$\mu s$ e 171~$\mu
-s$, con media pari a 110~$\mu s$ e mediana pari a 113.5~$\mu s$. Lo scenario \texttt{medium}
-presenta valori centrali molto simili, con media pari a 111.2~$\mu s$ e mediana pari
-a 109~$\mu s$, ma con una dispersione più elevata, evidenziata sia dal massimo di
-218~$\mu s$ sia dalla deviazione standard pari a 55.98~$\mu s$. Nello scenario
-\texttt{high}, invece, il livello centrale risulta leggermente più alto, con
-media pari a 135.8~$\mu s$ e mediana pari a 131.5~$\mu s$, mentre la variabilità relativa
-è più contenuta rispetto agli altri casi, come indicato dal coefficiente di
-variazione pari a 0.219.
+Nel caso della metrica \texttt{stddev\_us}, l'analisi relativa a \texttt{clientchrony}
+con degrado applicato sul nodo client non mostra un peggioramento monotono al
+crescere dell'intensità dello scenario, ma piuttosto una risposta non lineare della
+variabilità stimata rispetto alla sorgente. In tutti i casi i valori restano
+dell'ordine delle centinaia di microsecondi, ma con differenze apprezzabili sia nel
+livello medio sia nella regolarità tra i diversi scenari.
 
-Dal punto di vista grafico non emerge un andamento monotono o una crescita netta
-e sistematica della metrica al crescere dello stress di rete applicato sul nodo
-\texttt{clientchrony}. Le differenze tra \texttt{low} e \texttt{medium}
-risultano infatti trascurabili nei valori centrali, mentre lo scenario \texttt{high}
-mostra un moderato incremento del livello medio della deviazione standard, senza però
-evidenziare una discontinuità marcata rispetto agli altri due casi. In termini
-oggettivi, i dati non indicano un effetto forte e chiaramente strutturale delle condizioni
-di rete su questa metrica, ma soltanto una lieve tendenza a valori più elevati
-nello scenario di stress massimo.
+Nello scenario \texttt{low}, la curva delle medie si colloca su un livello complessivamente
+intermedio, con una media aggregata pari a \texttt{109.552 \,$\mu$s}. La
+dinamica mostra una discesa nella prima parte della curva, passando da valori iniziali
+prossimi a \texttt{150 \,$\mu$s} verso livelli più vicini a \texttt{90{-}100 \,$\mu$s},
+per poi mantenersi relativamente stabile con alcune oscillazioni locali. La dispersione
+lungo la curva non è trascurabile: la deviazione standard delle medie è \texttt{21.838
+\,$\mu$s}, con valori compresi tra \texttt{78.637 \,$\mu$s} e \texttt{154.733 \,$\mu$s}.
+Anche le bande di variabilità sono ampie, con IQR medio pari a \texttt{98.925 \,$\mu$s}
+e ampiezza media \texttt{p10-p90} pari a \texttt{155.630 \,$\mu$s}. Le
+statistiche globali sui campioni grezzi confermano il medesimo ordine di
+grandezza: media \texttt{109.552 \,$\mu$s}, mediana \texttt{103 \,$\mu$s}, terzo quartile
+\texttt{167 \,$\mu$s} e massimo \texttt{464 \,$\mu$s}. Nel complesso, quindi, lo
+scenario \texttt{low} descrive una variabilità della sorgente stimata già significativa,
+ma ancora distribuita in modo relativamente regolare lungo la curva.
+
+Nello scenario \texttt{medium}, la metrica cresce in modo netto e si porta sul
+livello più elevato tra i tre casi osservati. La media aggregata raggiunge infatti
+\texttt{140.899 \,$\mu$s}, con mediana della curva pari a \texttt{140.867 \,$\mu$s}
+e valori medi che oscillano tra \texttt{121.333 \,$\mu$s} e \texttt{165.109 \,$\mu$s}.
+Anche visivamente la curva appare attestata su un piano superiore rispetto a quello
+dei casi \texttt{low} e \texttt{high}. La dispersione tra i punti della curva, pur
+non esplodendo, resta presente: la deviazione standard delle medie è \texttt{14.774
+\,$\mu$s}. Le bande di variabilità risultano tuttavia più larghe del caso \texttt{low}:
+l'IQR medio sale a \texttt{100.000 \,$\mu$s} e l'ampiezza media \texttt{p10-p90} raggiunge
+\texttt{178.740 \,$\mu$s}. Le statistiche globali confermano questa configurazione,
+con media complessiva \texttt{140.899 \,$\mu$s}, mediana \texttt{141 \,$\mu$s},
+terzo quartile \texttt{191.250 \,$\mu$s} e massimo \texttt{510 \,$\mu$s}. Lo scenario
+\texttt{medium} rappresenta quindi il caso in cui la stima di dispersione della
+sorgente risulta mediamente più alta, pur senza mostrare instabilità irregolari particolarmente
+marcate nella curva delle medie.
+
+Nello scenario \texttt{high}, il livello medio della metrica diminuisce sensibilmente
+rispetto al caso \texttt{medium} e si colloca anche al di sotto del caso \texttt{low}.
+La media aggregata della curva è pari a \texttt{95.787 \,$\mu$s}, con mediana
+\texttt{91.687 \,$\mu$s} e valori compresi tra \texttt{72.040 \,$\mu$s} e
+\texttt{135.000 \,$\mu$s}. La curva appare più irregolare di quella osservata in
+\texttt{medium}, ma resta comunque confinata entro un intervallo relativamente
+contenuto. Le bande di variabilità rimangono ampie: l'IQR medio vale \texttt{88.450
+\,$\mu$s}, mentre l'ampiezza media \texttt{p10-p90} è pari a \texttt{154.760 \,$\mu$s},
+dunque molto vicina al caso \texttt{low} ma inferiore al caso \texttt{medium}.
+Anche i dati grezzi confermano tale riduzione del livello medio, con media complessiva
+\texttt{95.787 \,$\mu$s}, mediana \texttt{88 \,$\mu$s} e massimo \texttt{410 \,$\mu$s}.
+In questo scenario, quindi, non si osserva un ulteriore aumento della
+variabilità stimata, bensì un ritorno verso valori medi più bassi.
+
+Nel confronto complessivo tra i tre scenari emerge dunque un andamento non monotono.
+Lo scenario \texttt{medium} è quello che presenta il livello medio più elevato della
+metrica \texttt{stddev\_us}, mentre \texttt{low} occupa una posizione intermedia
+e \texttt{high} mostra invece valori medi più contenuti. Anche sul piano della
+dispersione intra-curva e inter-run non si osserva una crescita progressiva con
+l'intensità del degrado: le bande restano ampie in tutti i casi, ma raggiungono
+i valori medi più elevati ancora nello scenario \texttt{medium}. Pertanto, per questa
+metrica, il degrado applicato su \texttt{clientchrony} non produce una risposta semplicemente
+crescente, ma modifica la stima della deviazione standard in modo più articolato,
+con un massimo nel caso \texttt{medium} e un successivo ridimensionamento nel
+caso \texttt{high}.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/low/servergm/stddev_us_mean_ci95.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/medium/servergm/stddev_us_mean_ci95.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/high/servergm/stddev_us_mean_ci95.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/low/servergm/stddev_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/medium/servergm/stddev_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/sourcestats/high/servergm/stddev_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
 
 \paragraph*{servergm - netem/tc:}
-L’analisi della metrica \texttt{std dev} con \texttt{netem/tc} applicato sul nodo
-\texttt{servergm} evidenzia differenze più marcate tra i tre scenari rispetto a
-quanto osservato nel caso di applicazione sul \texttt{clientchrony}. Nello
-scenario \texttt{low} la deviazione standard assume i valori più elevati dell’intera
-serie, con media pari a 214.9~$\mu s$, mediana pari a 217.5~$\mu s$ e valori compresi
-tra 170~$\mu s$ e 252~$\mu s$. Il profilo temporale mostra inoltre un andamento
-prevalentemente crescente, con oscillazioni limitate ma su livelli sistematicamente
-alti.
+Nel caso della metrica \texttt{stddev\_us} riferita alla sezione \texttt{sourcestats},
+l'analisi con impairment applicato sul nodo \texttt{servergm} evidenzia un comportamento
+non monotono al variare dello scenario, ma con una chiara differenza tra il caso
+\texttt{low}, più irregolare e disperso, e i casi \texttt{medium} e \texttt{high},
+che risultano invece più compatti.
 
-Nello scenario \texttt{medium} si osserva invece una netta riduzione del livello
-centrale, con media pari a 120.5~$\mu s$ e mediana pari a 123.5~$\mu s$. Anche
-la dispersione risulta più contenuta, come indicato dalla deviazione standard pari
-a 9.76~$\mu s$ e dall’intervallo complessivo di 24~$\mu s$. I valori si
-mantengono quindi concentrati in una fascia relativamente stretta.
+Nello scenario \texttt{low}, la curva delle medie si colloca sul livello più
+elevato tra i tre scenari. La media aggregata risulta pari a \texttt{190.047 \,$\mu$s},
+con una deviazione standard delle medie di \texttt{53.570 \,$\mu$s}; i valori medi
+lungo la curva variano infatti tra \texttt{105.800 \,$\mu$s} e \texttt{268.400
+\,$\mu$s}. Anche le bande di variabilità sono molto ampie: l'IQR medio è pari a \texttt{72.600
+\,$\mu$s}, mentre l'ampiezza media dell'intervallo \texttt{p10-p90} raggiunge
+\texttt{359.800 \,$\mu$s}, con picchi fino a \texttt{537.400 \,$\mu$s}. Le
+statistiche globali sui campioni grezzi confermano questa forte dispersione, mostrando
+una media complessiva di \texttt{190.047 \,$\mu$s}, una deviazione standard di \texttt{252.466
+\,$\mu$s} e un valore massimo pari a \texttt{1622 \,$\mu$s}. Nel complesso, quindi,
+lo scenario \texttt{low} descrive una stima della deviazione standard elevata e accompagnata
+da una variabilità molto marcata tra le run, con presenza di outlier che
+ampliano sensibilmente l'escursione osservata.
 
-Lo scenario \texttt{high} presenta un comportamento molto simile al caso \texttt{medium},
-con media pari a 118.7~$\mu s$ e mediana pari a 115~$\mu s$. La variabilità
-resta moderata, con minimo pari a 94~$\mu s$ e massimo pari a 159~$\mu s$, senza
-evidenziare incrementi sistematici rispetto allo scenario intermedio.
+Nello scenario \texttt{medium}, il livello medio della metrica si riduce in
+misura netta. La media aggregata della curva scende infatti a \texttt{139.160 \,$\mu$s},
+con deviazione standard delle medie pari a \texttt{38.298 \,$\mu$s}. I valori medi
+risultano compresi tra \texttt{121.133 \,$\mu$s} e \texttt{246.000 \,$\mu$s}.
+Anche in questo caso le bande restano ampie, ma meno estese rispetto allo scenario
+\texttt{low}: l'IQR medio vale \texttt{76.400 \,$\mu$s}, mentre l'intervallo medio
+\texttt{p10-p90} è pari a \texttt{111.360 \,$\mu$s}. Le statistiche globali
+confermano un ridimensionamento del livello medio, con media complessiva \texttt{139.160
+\,$\mu$s} e mediana \texttt{130 \,$\mu$s}; tuttavia, resta una certa sensibilità a
+valori estremi, come mostra il massimo pari a \texttt{2053 \,$\mu$s}. In termini
+interpretativi, lo scenario \texttt{medium} mantiene una stima di variabilità
+ancora significativa, ma più contenuta rispetto al caso \texttt{low}, e con un comportamento
+della curva mediamente più raccolto.
 
-Nel complesso, i dati non mostrano una crescita monotona della metrica al crescere
-dello stress di rete. Al contrario, lo scenario \texttt{low} risulta quello con
-i valori di \texttt{std dev} più elevati, mentre gli scenari \texttt{medium} e \texttt{high}
-si collocano su livelli sensibilmente inferiori e tra loro piuttosto vicini. In termini
-oggettivi, l’effetto osservato non è quindi coerente con una dipendenza diretta
-e progressiva dalle condizioni di rete imposte nei tre scenari.
+Nello scenario \texttt{high}, la metrica si stabilizza ulteriormente attorno a un
+livello medio simile, ma con una regolarità molto più marcata. La media aggregata
+è pari a \texttt{137.440 \,$\mu$s}, dunque molto vicina al caso \texttt{medium}, ma
+la deviazione standard delle medie scende drasticamente a \texttt{5.770 \,$\mu$s}.
+Anche l'intervallo dei valori medi lungo la curva risulta molto ristretto,
+compreso tra \texttt{127.267 \,$\mu$s} e \texttt{145.200 \,$\mu$s}. Le bande di dispersione
+si contraggono: l'IQR medio è pari a \texttt{64.100 \,$\mu$s} e l'ampiezza media \texttt{p10-p90}
+è \texttt{136.500 \,$\mu$s}, con oscillazioni grafiche molto più regolari lungo
+i diversi indici campionari. Le statistiche globali sui dati grezzi confermano questa
+lettura: la media complessiva è \texttt{137.440 \,$\mu$s}, la mediana è \texttt{141.500
+\,$\mu$s} e il massimo osservato è \texttt{314 \,$\mu$s}, molto inferiore ai massimi
+degli altri due scenari. Pertanto, nello scenario \texttt{high}, pur rimanendo la
+metrica su un ordine di grandezza analogo a quello di \texttt{medium}, il comportamento
+risulta sensibilmente più compatto e meno influenzato da run anomale.
+
+Nel confronto complessivo emerge dunque una dinamica non lineare. Lo scenario
+\texttt{low} è quello che presenta il livello medio più elevato e la maggiore dispersione,
+sia nella curva aggregata sia nei campioni grezzi. Gli scenari \texttt{medium} e
+\texttt{high} mostrano invece medie inferiori e molto simili tra loro, ma
+differiscono sul piano della stabilità: \texttt{medium} conserva ancora una
+dispersione non trascurabile, mentre \texttt{high} appare il caso più regolare e
+compatto. Per la metrica \texttt{stddev\_us}, quindi, il degrado applicato sul
+nodo \texttt{servergm} non determina un aumento progressivo della variabilità stimata
+al crescere dello scenario; al contrario, il caso \texttt{low} risulta il più
+penalizzante, mentre \texttt{high} mostra il comportamento complessivamente più
+stabile.
 
 \paragraph*{Confronto:}
-Il confronto tra i due casi di applicazione di \texttt{netem} mostra una
-differenza abbastanza netta nel comportamento della metrica \texttt{std dev}.
-Quando il degrado è applicato sul \texttt{clientchrony}, i valori osservati si
-collocano su livelli medi inferiori negli scenari \texttt{low} e \texttt{medium},
-con medie pari rispettivamente a 110.0~$\mu s$ e 111.2~$\mu s$, mentre nello
-scenario \texttt{high} si osserva un incremento moderato fino a 135.8~$\mu s$.
-In questo caso, quindi, la metrica resta complessivamente contenuta, pur con una certa
-irregolarità temporale.
+Nel confronto tra i due casi emerge una differenza abbastanza netta. Con degrado
+applicato su \texttt{servergm}, la metrica \texttt{stddev\_us} assume i valori medi
+più elevati nello scenario \texttt{low} e poi si riduce nei casi \texttt{medium} e
+\texttt{high}, con quest'ultimo che risulta il più stabile e compatto. Con
+degrado applicato su \texttt{clientchrony}, invece, il massimo si osserva nello scenario
+\texttt{medium}, mentre \texttt{high} riporta la metrica su livelli più bassi.
 
-Quando invece \texttt{netem} è applicato sul \texttt{servergm}, il comportamento
-risulta diverso. Lo scenario \texttt{low} presenta infatti valori molto più
-elevati, con media pari a 214.9~$\mu s$ e mediana pari a 217.5~$\mu s$,
-nettamente superiori a quelli ottenuti nel caso di degrado sul client. Negli scenari
-\texttt{medium} e \texttt{high}, invece, i livelli si riducono sensibilmente e tornano
-vicini a quelli misurati con \texttt{netem} sul \texttt{clientchrony}, con medie
-pari rispettivamente a 120.5~$\mu s$ e 118.7~$\mu s$.
-
-Dal confronto diretto emerge quindi che la differenza principale tra i due
-contesti non riguarda tanto gli scenari \texttt{medium} e \texttt{high}, che mostrano
-valori abbastanza simili, quanto piuttosto lo scenario \texttt{low}, nel quale
-il degrado applicato sul \texttt{servergm} produce una deviazione standard molto più
-elevata rispetto al degrado applicato sul \texttt{clientchrony}. In termini strettamente
-descrittivi, non si osserva dunque una relazione monotona e uniforme né rispetto
-all’intensità dello stress né rispetto al nodo su cui esso viene introdotto; si rileva
-piuttosto una forte sensibilità del caso \texttt{low} con \texttt{netem} applicato
-sul lato \texttt{servergm}, mentre negli altri scenari i due assetti forniscono risultati
-complessivamente più vicini.
+In termini comparativi, quindi, l'impairment sul server tende a produrre un
+effetto più severo soprattutto nel caso \texttt{low}, accompagnato da una
+dispersione molto marcata e da outlier più pronunciati. L'impairment sul client mostra
+invece un comportamento più regolare, con variazioni meno estreme e una risposta
+non monotona centrata sul caso \texttt{medium}. Nel complesso, il degrado lato \texttt{servergm}
+appare quindi più sensibile alla presenza di condizioni instabili, mentre lato \texttt{clientchrony}
+l'effetto resta più contenuto e distribuito in modo più omogeneo tra gli scenari.
 
 \subsection{Analisi metrica: \texttt{system time offset}}
 \begin{figure}[H]
@@ -1409,7 +1756,7 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_low_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/low/system_time_us_mean_ci95.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1418,7 +1765,7 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_medium_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/medium/system_time_us_mean_ci95.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1426,12 +1773,12 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_clientchrony/chrony_high_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/high/system_time_us_mean_ci95.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{clientchrony}}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -1441,7 +1788,7 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_low_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/low/system_time_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario LOW}
   \end{subfigure}
@@ -1450,7 +1797,7 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_medium_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/medium/system_time_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
@@ -1458,101 +1805,220 @@ complessivamente più vicini.
     {0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{
-      images/data_plots/plots_chrony_servergm/chrony_high_tracking_system_time_offset_us.png
+      pars_plots/chrony_clientchrony/_aggregated/tracking/high/system_time_us_mean_iqr_p10_p90.png
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Comparazione della performance - nodo: \texttt{clientchrony} - netem/tc:
-  \texttt{servergm}}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
 \paragraph*{clientchrony - netem/tc:}
-L’analisi del \texttt{system time offset} del nodo \texttt{clientchrony}, nel caso
-in cui il \texttt{netem/tc} sia applicato sul client stesso, mostra valori sempre
-contenuti nell’ordine dei microsecondi ($\mu s$), senza evidenziare una
-separazione netta e sistematica tra i tre scenari di carico.
+Nel caso della metrica \texttt{system\_time\_us}, l'analisi relativa a \texttt{clientchrony}
+con degrado applicato sul nodo client evidenzia un comportamento più regolare
+rispetto ad altre metriche, ma con una tendenza abbastanza chiara verso valori medi
+progressivamente più negativi al crescere dell'intensità dello scenario. L'effetto
+del degrado non si manifesta come instabilità esplosiva, bensì come uno spostamento
+graduale del livello medio della curva, accompagnato da una variabilità che
+rimane significativa ma nel complesso confrontabile nei tre casi.
 
-Nel caso \texttt{low}, la serie presenta un andamento prevalentemente negativo, con
-media pari a $-19.5298~\mu s$ e mediana pari a $-14.9195~\mu s$; si osservano
-tuttavia alcune misure prossime allo zero e un minimo pari a $-70.277~\mu s$. Lo scenario
-\texttt{medium} mostra il valore medio più negativo, pari a $-25.7615~\mu s$,
-una mediana di $-16.0345~\mu s$ e anche la maggiore dispersione, con deviazione standard
-pari a $25.8088~\mu s$ e intervallo interquartile di $39.09075~\mu s$. Nel caso
-\texttt{high}, invece, i valori risultano leggermente più concentrati: la media
-è pari a $-20.1462~\mu s$, la mediana a $-14.052~\mu s$ e la deviazione standard scende
-a $17.6532~\mu s$.
+Nello scenario \texttt{low}, la curva delle medie si mantiene costantemente su
+valori negativi moderati. La media aggregata risulta pari a \texttt{-25.284 \,$\mu$s},
+con deviazione standard delle medie \texttt{9.885 \,$\mu$s}; i valori della curva
+risultano compresi tra \texttt{-44.187 \,$\mu$s} e \texttt{-11.031 \,$\mu$s}. I
+grafici mostrano alcune oscillazioni locali, ma senza discontinuità marcate. Le
+bande di dispersione restano ampie: l'IQR medio è pari a \texttt{35.089 \,$\mu$s},
+mentre l'ampiezza media dell'intervallo \texttt{p10-p90} raggiunge \texttt{73.456
+\,$\mu$s}, con picchi fino a \texttt{144.596 \,$\mu$s}. Anche i dati grezzi
+confermano questo quadro, con media complessiva \texttt{-25.284 \,$\mu$s}, mediana
+\texttt{-13.664 \,$\mu$s}, primo quartile \texttt{-34.557 \,$\mu$s} e terzo
+quartile \texttt{-0.530 \,$\mu$s}. Nel complesso, quindi, lo scenario \texttt{low}
+descrive un offset del tempo di sistema stabilmente negativo, ma ancora
+contenuto entro poche decine di microsecondi nella maggior parte dei campioni.
 
-Dal punto di vista grafico, tutti e tre gli scenari mostrano oscillazioni
-moderate attorno a valori negativi, con alcuni campioni isolati vicini allo zero e
-senza un andamento progressivamente peggiorativo all’aumentare dello stress di rete.
-Anche i valori estremi, pur presenti in ciascuno scenario, non delineano una
-progressione monotona: il minimo più marcato compare nel caso \texttt{medium} ($-
-72.943~\mu s$), mentre lo scenario \texttt{high} non risulta il più penalizzato.
+Nello scenario \texttt{medium}, il livello medio si sposta ulteriormente verso
+valori più negativi. La media aggregata della curva scende infatti a \texttt{-30.408
+\,$\mu$s}, con deviazione standard delle medie pari a \texttt{10.531 \,$\mu$s}; i
+valori medi lungo la curva variano tra \texttt{-46.762 \,$\mu$s} e \texttt{-13.465
+\,$\mu$s}. L'andamento rimane abbastanza regolare e non mostra rotture
+improvvise, ma si colloca complessivamente su un livello più basso rispetto al caso
+\texttt{low}. Anche le bande di dispersione restano ampie, sebbene leggermente
+più raccolte nella parte centrale: l'IQR medio vale \texttt{39.129 \,$\mu$s}, mentre
+l'intervallo medio \texttt{p10-p90} è \texttt{78.520 \,$\mu$s}. Le statistiche
+globali sui campioni grezzi confermano questo lieve peggioramento, con media complessiva
+\texttt{-30.408 \,$\mu$s}, mediana \texttt{-22.285 \,$\mu$s} e quartili pari a
+\texttt{-46.666 \,$\mu$s} e \texttt{-2.351 \,$\mu$s}. In termini interpretativi,
+lo scenario \texttt{medium} non altera drasticamente la forma del fenomeno, ma
+rende più marcato il bias negativo del tempo di sistema rispetto alla sorgente.
 
-Nel complesso, per questa metrica non emerge una differenza strutturale chiaramente
-attribuibile alle diverse condizioni di rete applicate sul \texttt{clientchrony}.
-Le variazioni osservate indicano una certa fluttuazione tra scenari, ma non
-supportano l’ipotesi di un deterioramento sistematico del \texttt{system time
-offset} al crescere del livello di stress.
+Nello scenario \texttt{high}, la tendenza osservata nei casi precedenti si
+accentua ulteriormente. La media aggregata della curva raggiunge \texttt{-34.573 \,$\mu$s},
+il valore più negativo tra i tre scenari, mentre la deviazione standard delle
+medie è \texttt{10.809 \,$\mu$s}. I valori medi lungo la curva oscillano tra
+\texttt{-59.120 \,$\mu$s} e \texttt{-17.588 \,$\mu$s}, mantenendosi quindi stabilmente
+più bassi rispetto agli altri due casi. Anche le bande di dispersione risultano
+comparabili o leggermente più ampie: l'IQR medio è \texttt{45.637 \,$\mu$s} e l'ampiezza
+media \texttt{p10-p90} è \texttt{82.403 \,$\mu$s}. I dati grezzi confermano il medesimo
+assetto, con media complessiva \texttt{-34.573 \,$\mu$s}, mediana \texttt{-19.111
+\,$\mu$s}, primo quartile \texttt{-48.642 \,$\mu$s} e terzo quartile prossimo allo
+zero, pari a \texttt{0.001 \,$\mu$s}. Anche in questo scenario, dunque, il
+sistema resta operativo, ma il tempo di sistema si colloca mediamente su valori più
+negativi e con una dispersione ancora significativa.
+
+Nel confronto complessivo tra i tre scenari emerge quindi una dinamica più lineare
+rispetto a quanto osservato per altre metriche. Il passaggio da \texttt{low} a \texttt{medium}
+e poi a \texttt{high} produce infatti un progressivo spostamento del livello medio
+verso valori più negativi: \texttt{-25.284 \,$\mu$s}, \texttt{-30.408 \,$\mu$s} e
+\texttt{-34.573 \,$\mu$s}. La variabilità rimane ampia in tutti e tre i casi e non
+cresce in modo altrettanto netto, ma il bias medio negativo del \texttt{system\_time\_us}
+diventa gradualmente più pronunciato all'aumentare del degrado. Pertanto, per questa
+metrica, l'effetto del netem applicato su \texttt{clientchrony} appare soprattutto
+come una deriva progressiva del livello centrale della misura, piuttosto che
+come un aumento drastico dell'instabilità.
+
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/low/system_time_us_mean_ci95.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/medium/system_time_us_mean_ci95.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/high/system_time_us_mean_ci95.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
+\begin{figure}[H]
+  \centering
+
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/low/system_time_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario LOW}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/medium/system_time_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario MEDIUM}
+  \end{subfigure}
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      pars_plots/chrony_servergm/_aggregated/tracking/high/system_time_us_mean_iqr_p10_p90.png
+    }
+    \caption{Scenario HIGH}
+  \end{subfigure}
+  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  - netem/tc: \texttt{servergm}}
+  \label{fig:scenario_comparison}
+\end{figure}
 
 \paragraph*{servergm - netem/tc:}
-L’analisi del \texttt{system time offset} del nodo \texttt{clientchrony}, nel caso
-in cui il degrado di rete sia applicato sul nodo \texttt{servergm}, evidenzia un comportamento
-differenziato tra i tre scenari, con variazioni più marcate rispetto a quanto
-osservato per altre metriche.
+Nel caso della metrica \texttt{system\_time\_us} riferita alla sezione \texttt{tracking},
+l'analisi con impairment applicato sul nodo \texttt{servergm} evidenzia un
+comportamento fortemente non monotono al variare dello scenario. Il caso \texttt{low}
+risulta nettamente il più irregolare e disperso, mentre gli scenari \texttt{medium}
+e soprattutto \texttt{high} mostrano una sensibile contrazione sia del livello medio
+sia della variabilità, pur mantenendo un offset del tempo di sistema
+prevalentemente negativo.
 
-Nel caso \texttt{low}, la serie assume valori mediamente positivi, con media pari
-a $71.7357~\mu s$ e mediana pari a $33.3505~\mu s$. La dispersione è elevata, come
-indicato dalla deviazione standard di $135.3627~\mu s$, e il profilo temporale
-mostra un picco massimo di $403.865~\mu s$, che contribuisce in modo rilevante ad
-aumentare il valore medio.
+Nello scenario \texttt{low}, la metrica assume il livello medio più elevato tra
+i tre casi ed è accompagnata dalla maggiore dispersione osservata nell'intera
+analisi. La media aggregata della curva è pari a \texttt{97.407 \,$\mu$s}, con deviazione
+standard delle medie pari a \texttt{92.121 \,$\mu$s}; i valori medi lungo la curva
+risultano compresi tra \texttt{-57.631 \,$\mu$s} e \texttt{227.575 \,$\mu$s}. I
+grafici mostrano infatti una curva molto irregolare, con alternanza tra valori moderatamente
+positivi e una flessione negativa locale, oltre a bande di incertezza molto
+ampie. Tale quadro è confermato dagli indicatori di dispersione: l'IQR medio è
+\texttt{115.127 \,$\mu$s}, mentre l'ampiezza media dell'intervallo \texttt{p10-p90}
+raggiunge \texttt{461.010 \,$\mu$s}, con picchi fino a \texttt{817.440 \,$\mu$s}.
+Anche i dati grezzi confermano un comportamento estremamente disperso, con media
+complessiva \texttt{97.407 \,$\mu$s}, deviazione standard \texttt{418.691 \,$\mu$s}
+e un valore massimo pari a \texttt{2342.321 \,$\mu$s}. In termini interpretativi,
+lo scenario \texttt{low} descrive quindi una risposta molto instabile, con forte
+eterogeneità tra run e presenza di episodi anomali che trascinano la media su
+valori positivi elevati.
 
-Lo scenario \texttt{medium} presenta invece un livello centrale negativo, con media
-pari a $-42.8227~\mu s$ e mediana pari a $-29.7855~\mu s$. Anche in questo caso
-la variabilità rimane significativa, con deviazione standard di $66.5330~\mu s$ e
-minimo pari a $-175.907~\mu s$. La serie oscilla attorno a valori negativi, con alcuni
-campioni prossimi allo zero ma senza stabilizzarsi su livelli positivi.
+Nello scenario \texttt{medium}, il comportamento cambia in modo netto. La media aggregata
+della curva scende a \texttt{-10.765 \,$\mu$s}, passando dunque da un livello chiaramente
+positivo a uno leggermente negativo. La deviazione standard delle medie si
+riduce a \texttt{49.927 \,$\mu$s}, circa la metà del valore osservato nel caso
+\texttt{low}, mentre i valori della curva si collocano tra \texttt{-51.169 \,$\mu$s}
+e \texttt{114.676 \,$\mu$s}. Anche visivamente il grafico mostra un picco iniziale
+positivo più pronunciato, seguito però da una stabilizzazione su valori
+moderatamente negativi. Le bande di dispersione si restringono sensibilmente rispetto
+al caso precedente: l'IQR medio è pari a \texttt{43.947 \,$\mu$s} e l'intervallo medio
+\texttt{p10-p90} vale \texttt{97.563 \,$\mu$s}. I dati grezzi confermano il
+ridimensionamento del fenomeno, con media complessiva \texttt{-10.765 \,$\mu$s}, mediana
+\texttt{-7.355 \,$\mu$s} e quartili pari a \texttt{-50.338 \,$\mu$s} e \texttt{0.031
+\,$\mu$s}. Pertanto, nello scenario \texttt{medium}, il tempo di sistema resta
+variabile ma risulta nel complesso molto meno disperso del caso \texttt{low},
+con una tendenza centrale tornata leggermente sotto lo zero.
 
-Nel caso \texttt{high}, il \texttt{system time offset} risulta il più contenuto
-dei tre scenari. La media è pari a $-13.4635~\mu s$, la mediana a $-9.183~\mu s$
-e la deviazione standard scende a $14.1233~\mu s$, nettamente inferiore rispetto ai
-casi \texttt{low} e \texttt{medium}. Anche il campo di variazione si riduce
-sensibilmente, con valori compresi tra $-46.044~\mu s$ e $0.007~\mu s$.
+Nello scenario \texttt{high}, la metrica mostra il comportamento più compatto e
+regolare. La media aggregata della curva è pari a \texttt{-22.466 \,$\mu$s}, quindi
+più negativa rispetto al caso \texttt{medium}, ma accompagnata da una deviazione standard
+delle medie molto contenuta, pari a soli \texttt{6.852 \,$\mu$s}. L'intervallo
+dei valori medi lungo la curva è infatti ristretto, compreso tra \texttt{-33.763 \,$\mu$s}
+e \texttt{-12.696 \,$\mu$s}, e il grafico mostra una linea quasi piatta attorno
+a valori debolmente negativi. Anche gli indicatori di dispersione confermano questo
+assetto più stabile: l'IQR medio è \texttt{27.040 \,$\mu$s}, mentre l'ampiezza
+media \texttt{p10-p90} è \texttt{57.641 \,$\mu$s}, entrambe inferiori ai valori osservati
+negli altri due scenari. Le statistiche globali sui campioni grezzi sono
+coerenti con tale lettura, con media complessiva \texttt{-22.466 \,$\mu$s}, deviazione
+standard \texttt{34.432 \,$\mu$s} e massimo pari a \texttt{39.212 \,$\mu$s},
+molto inferiore ai picchi degli altri scenari. In questo caso, dunque, il degrado
+non si traduce in una maggiore instabilità, ma in un comportamento più raccolto
+attorno a un offset negativo moderato.
 
-Nel complesso, i dati non mostrano un peggioramento monotono del \texttt{system
-time offset} all’aumentare dello stress di rete applicato sul \texttt{servergm}. Al
-contrario, lo scenario \texttt{low} è quello che presenta gli scostamenti positivi
-più elevati e la maggiore variabilità complessiva, mentre lo scenario \texttt{high}
-appare il più stabile e contenuto. Pertanto, anche in questo caso non emerge una relazione
-lineare e sistematica tra intensità del carico di rete e deterioramento della metrica.
+Nel confronto complessivo tra i tre scenari emerge quindi una dinamica
+fortemente non lineare. Lo scenario \texttt{low} è nettamente il più disperso e
+presenta anche il livello medio più elevato, positivo e influenzato da run molto anomale.
+Lo scenario \texttt{medium} riduce drasticamente tale effetto, riportando la
+metrica su valori medi prossimi ma inferiori allo zero e contraendo in misura
+sostanziale la variabilità. Lo scenario \texttt{high} accentua ulteriormente
+questa stabilizzazione, risultando il caso più compatto e regolare, pur con una
+media leggermente più negativa. Per la metrica \texttt{system\_time\_us}, quindi,
+il degrado applicato sul nodo \texttt{servergm} non produce un peggioramento progressivo
+all'aumentare dello scenario, ma una risposta sperimentale in cui il caso
+\texttt{low} rappresenta la condizione più critica, mentre \texttt{medium} e soprattutto
+\texttt{high} mostrano un comportamento via via più stabile.
 
 \paragraph*{Confronto:}
-Il confronto tra i due casi di applicazione di \texttt{netem/tc} per la metrica \texttt{system
-time offset} mette in evidenza differenze più nette rispetto a quanto osservato
-per \texttt{offset} e \texttt{std dev}.
-
-Quando il degrado è applicato su \texttt{clientchrony}, i tre scenari mantengono
-valori medi sempre negativi e relativamente contenuti: la media passa da $-19.529
-8~\mu s$ nel caso \texttt{low}, a $-25.7615~\mu s$ nel caso \texttt{medium}, fino
-a $-20.1462~\mu s$ nel caso \texttt{high}. Anche le mediane restano vicine tra loro,
-comprese tra circa $-16~\mu s$ e $-14~\mu s$, mentre la dispersione è moderata,
-pur con alcune escursioni più marcate nei casi \texttt{low} e \texttt{medium}. Nel
-complesso, il comportamento risulta piuttosto stabile e non emerge una
-differenza strutturale chiara tra i tre livelli di stress.
-
-Diversamente, quando il degrado è applicato su \texttt{servergm}, la metrica mostra
-una sensibilità maggiore alla collocazione del disturbo. In questo caso lo
-scenario \texttt{low} presenta valori medi positivi, con media pari a
-$71.7357~\mu s$ e un picco massimo di $403.865~\mu s$, risultando nettamente più instabile
-degli altri. Lo scenario \texttt{medium} si sposta invece su valori medi negativi,
-con media pari a $-42.8227~\mu s$, mentre il caso \texttt{high} torna a un
-comportamento più contenuto, con media pari a $-13.4635~\mu s$ e la minore deviazione
-standard tra i tre scenari.
-
-Il confronto diretto mostra quindi che l’applicazione del degrado su \texttt{servergm}
-produce effetti più marcati e irregolari sul \texttt{system time offset},
-soprattutto nei casi \texttt{low} e \texttt{medium}, mentre l’applicazione su \texttt{clientchrony}
-conduce a valori più contenuti e complessivamente più omogenei. Anche considerando
-entrambi i contesti, non si osserva comunque una crescita monotona del
-disallineamento al crescere dello stress di rete: la differenza principale riguarda
-piuttosto la maggiore instabilità introdotta quando il degrado interessa il lato \texttt{servergm}.
+Nel confronto tra i due punti di applicazione del degrado non emerge una superiorità
+univoca di uno scenario rispetto all'altro. Con impairment applicato su \texttt{clientchrony},
+la metrica \texttt{system\_time\_us} mostra un andamento più regolare e soprattutto
+un peggioramento progressivo al crescere dell'intensità dello scenario,
+evidenziando quindi una risposta più monotona al degrado. Con impairment applicato
+su \texttt{servergm}, invece, il comportamento è meno lineare: non si osserva una
+crescita progressiva del deterioramento, ma compare una condizione fortemente
+anomala nello scenario \texttt{low}, caratterizzata da dispersione molto elevata
+e valori medi sensibilmente più instabili.
