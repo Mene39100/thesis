@@ -1,0 +1,49 @@
+\chapter{Introduzione}
+\label{cha:Introduzione}
+
+La sincronizzazione temporale è fondamentale nei sistemi distribuiti e nelle
+reti di calcolatori, consetne a nodi differenti di avere un sistema di riferimento
+temporale comune sufficientemente coerente. In assenza di un riferimento
+temporale condiviso, diventa più complesso correlare eventi prodotti da macchine diverse,
+ordinare correttamente operazioni distribuite, analizzare log, coordinare
+servizi e valutare il comportamento complessivo di un'infrastruttura di rete.
+
+Nei sistemi distribuiti e nelle reti di calcolatori, rispetto ad ognuno di essi vi
+è una memoria del proprio clock locale, producendo infomazioni temporali
+associate ad ogni file, log, transazione, messaggi e processi automatici. I
+timestamp, rappresentativi appunto dell'istante temporale in cui è avventuo un qualche
+cambiamento rispetto all'informazione, fungono da riferimento tra macchine
+differenti, venendo trattati come se fossero direttamente confrontabili tra macchine
+differenti, tale assunzione però può essere valida solamente se i clock locali
+vengono tenuti aggiornati rispetto ad un riferimetno comune.
+
+La difficolta alla base è più complessa di quanto può sembrare. I clock locali non
+sono strumenti perfetti, e in quanto tale la loro stabilità e correttezza nel
+tener conto della miusra del tempo può essere incerta. Gli oscillatori hardware possono
+accumulare deriva nel tempo, generando scostametni progressivi rispetto ad un
+tempo di riferimento. La sincronizzazione, quindi, non è solamento uno strumento di
+inizializzazione per l'orologio di una macchina, ma è uno strumento necessario
+per compensare in modo continuo la deriva tra orologia diversi.
+
+L'importanza della sincronizzazione temporale è centrale in una molitudine di
+ambiti applicativi. Nei sistemi di logging, auditing e monitoraggio, timestamp coerenti
+consentono di ordinare eventi prodotti da host diversi e di ricostruire correttamente
+il comportamento della rete. Nella diagnosi dei guasti, la possibilità di correlare
+temporalmente eventi registrati da server, router e altri dispositivi riducendo
+drasticamente l'ambiguità nell'identificazione della causa del problema. Servizi come
+quelli di directory, autenticazione, operazioni schedulate, ambienti
+virtualizzati, posta elettronica e sistemi transazionali dipendono, in
+condizioni differenti, da una base di riferimento comune.
+
+Una sbagliata sincornizzazione può essere causa di problematicità, la quale può
+avere dimensioni differenti rispetto all'ambito di riferimento in cui si opera. Vi
+sono sistemi che sono dotati di tolleranze agli errori, arrivando a
+discostamenti fino all'ordine di millisecondi, tuttavia trascuravili per attività
+come quelle di logging, monitoraggio o correlazione approssiamta degli eventi. Vi
+sono poi scenari, come sistemi industriali, telecomunicazini, applicazioni real-time
+o infrastrutture finanziarie che richiedono alta precisione e una maggiore
+stabilità, andando a ricercare i sistemi più sofisticati che possano mitigare a tali
+problematicità. In tali casi, ritardi variabili, jitter, perdita o riordinametno dei
+pacchetti possono compromettere la qualità della sincronizzazione e rendere necessario
+valutare attentamente il comportamento dei diversi protocolli in condizioni di rete
+non ideali.
