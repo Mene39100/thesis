@@ -1,23 +1,22 @@
 \chapter{Introduzione}
 \label{cha:Introduzione}
 
+%contesto e motivazione
 La sincronizzazione temporale è fondamentale nei sistemi distribuiti e nelle
-reti di calcolatori, consetne a nodi differenti di avere un sistema di riferimento
+reti di calcolatori, consente a nodi differenti di avere un sistema di riferimento
 temporale comune sufficientemente coerente. In assenza di un riferimento
 temporale condiviso, diventa più complesso correlare eventi prodotti da macchine diverse,
 ordinare correttamente operazioni distribuite, analizzare log, coordinare
 servizi e valutare il comportamento complessivo di un'infrastruttura di rete.
 
-Nei sistemi distribuiti e nelle reti di calcolatori, rispetto ad ognuno di essi vi
-è una memoria del proprio clock locale, producendo infomazioni temporali
-associate ad ogni file, log, transazione, messaggi e processi automatici. I
-timestamp, rappresentativi appunto dell'istante temporale in cui è avventuo un qualche
-cambiamento rispetto all'informazione, fungono da riferimento tra macchine
-differenti, venendo trattati come se fossero direttamente confrontabili tra macchine
-differenti, tale assunzione però può essere valida solamente se i clock locali
-vengono tenuti aggiornati rispetto ad un riferimetno comune.
+Nei sistemi distribuiti e nelle reti di calcolatori, ogni macchina è dotata di clock
+locale, necessario a produrre riferimenti temporali associabili ad ogni tipo di
+informazione. I timestamp associati a file, log, transazioni, messaggi e
+processi automatici, fungono da riferimento tra macchine differenti; tuttavia, se
+il riferimento univoco cessasse, allora il confronto non avrebbe più alcuna
+validità.
 
-La difficolta alla base è più complessa di quanto può sembrare. I clock locali non
+La difficolta alla base è più complessa di quanto possa sembrare. I clock locali non
 sono strumenti perfetti, e in quanto tale la loro stabilità e correttezza nel
 tener conto della miusra del tempo può essere incerta. Gli oscillatori hardware possono
 accumulare deriva nel tempo, generando scostametni progressivi rispetto ad un
@@ -38,12 +37,112 @@ condizioni differenti, da una base di riferimento comune.
 Una sbagliata sincornizzazione può essere causa di problematicità, la quale può
 avere dimensioni differenti rispetto all'ambito di riferimento in cui si opera. Vi
 sono sistemi che sono dotati di tolleranze agli errori, arrivando a
-discostamenti fino all'ordine di millisecondi, tuttavia trascuravili per attività
-come quelle di logging, monitoraggio o correlazione approssiamta degli eventi. Vi
-sono poi scenari, come sistemi industriali, telecomunicazini, applicazioni real-time
-o infrastrutture finanziarie che richiedono alta precisione e una maggiore
-stabilità, andando a ricercare i sistemi più sofisticati che possano mitigare a tali
-problematicità. In tali casi, ritardi variabili, jitter, perdita o riordinametno dei
-pacchetti possono compromettere la qualità della sincronizzazione e rendere necessario
-valutare attentamente il comportamento dei diversi protocolli in condizioni di rete
-non ideali.
+discostamenti fino all'ordine di millisecondi, tuttavia trascurabili. In questi
+casi non viene violata l'integrità del sistema ma piuttosto, l'analisi dei guasti
+può essere comporomessa, in quanto la sequenza temporale degli eventi potrebbe
+risultare ambigua.
+
+Vi sono poi scenari in cui l'impatto può avere criticità più rilevanti. Nei servizi
+di autenticazione e nei sistemi distribuiti che fanno utilizzo di ticket, token
+o credenziali che hanno una validità temporale limitata all'utilizzo, nel caso di
+una deriva eccessiva tra i clock dei nodi nel sistema, possono verificarsi
+rifiuti di autenticazioni, errori di validazione e talvolta comportamenti incoerenti
+con il sistema stesso. Nei database distribuiti e nei sistemi transazionali, una marcatura
+temporale non coerente può dare origine a complicanze quali, ordinamento delle
+operazioni, l'audit delle modifiche e la ricostruzione dello stato del sistema in
+caso di errore.
+
+Qualora il sistema invece dipendesse nella sua totalità dalla sincronizzazione temporale,
+facendone un pilstro del corretto funzionamento, in quel caso una sincronia non è
+opzionale tra i clock locali e quelli di riferimento, ma diventa imperativa. Nelle
+reti industriali e nei sistemi di controllo, nodi differenti possono dover
+coordinare misurazioni, attuazioni o scambi di messaggistica secondo vincoli temporali
+stringenti. Metriche quali, offset elevato o una variabilità marcata possono comporomettere
+la coerenza delle operazioni distribuite. Un analogo discorso si può fare nelle
+reti di telocomunicazioni e nelle applivazioni real-time, la sincronicità è fondamentale
+per coordinare trasimissioni, allocare risorse e mantenere un corretto
+ordinamento della sequenza degli eventi.
+
+Anche in ambito finanziario la qualità della sincronizzazzione può avere
+conseguenze significative. In sistemi di trading come quelli ad alta frequenza,
+pagamenti o registrazioni di transazioni, anche il minimo errore può essere causa
+di eventi economicamente impattanti. La correttezza della sincronizzazione
+temporale è alla base del loro funzionamento. In presenza di eventi molto ravvicinati
+nel tempo, una sincronizzazione insufficente può essere compromettente.
+
+Di conseguenza, non esiste un solo ed unico livello di sincronizzazione adeguato per
+ogni applicazione. Vi sono sistemi che hanno un elevato grado di tollerabilità
+arrivando all'ordine dei millisecondi, soprattuo quando il tempo viene utilizzato
+come strumento di logging e monitoraggio oppure correlazione approssimata tra gli
+eventi. In altri scenari invece, come sistemi industriali, telecomunicazioni, applicazioni
+real-time e infrastrutture come quelle finanziarie, sono richiesti precisione
+elevata e stabilità temporale.
+
+%problema affrontato
+Fondamentalmente la qualità della sincronizzazione temporale dipende in modo
+primario dalle condizioni della rete e attraverso la quale avviene lo scambio di
+messaggi. I protocolli di sincronizzazione stimano sulla base della invio e della
+ricezzione della messaggistica lo scosamento tra clock locale di sistema e il clock
+di riferimento nella rete considerata.
+
+In condizioni nominali, il normale funzionamento dei protocolli garantisce una
+sincronizzazione sufficientemente accurata e stabile. Tuttavia, in presenza in
+impariment di rete più serveri, il comportamento può essere negativamente condizionato.
+Tendenzialmente i protocolli sono sviluppati a mitigare tale eventualità, o talvolta
+soccombere qualora essa non sia evitabile. L'analisi delle metriche in
+situazioni di stress può mettere quindi in evidenza il comportamento tra i
+diversi protocolli di sincronizzazione.
+%obittivo del lavoro
+L'obiettivo alla base della tesi è l'analisi sperimentale del comportamento di differenti
+demoni di sincronizzazione temporale in presenza di condizioni di degrado controllato
+sulla rete. Nello specifico sono stati confrontati tre protocolli, rispettivametne
+NTPsec, Chrony e ptp4l, osservandone la risposta al variare di scenari preimpostati,
+di intensità differenti, andando ad operare sul delay temporale, jitter, perdita di
+pacchetti, riordinamento dei pacchetti ed infine sulla limitazione della banda
+di rete.
+
+Il confronto è stato condotto attraverso l'analisi esclusiva delle metirche
+rappresentative della qualità della sincronizzazione opportunamente scelte per
+ogni protocollo. Gli scenari proposti sono rispettivamete tre, denominati
+seconodo la logica low, medium e high.
+
+%approccio sperimentale
+Il lavoro è stato svolto mediante la realizzazione di un ambiente sperimentale controllato,
+nel quale i diversi demoni sono stati configurati su nodi ai quali è stato
+associato opportunamente un ruolo rispetto alla topologia di riferimento. Nel
+caso dei due protoclli NTPsec e ptp4l sono state realizzate due topologie con un nodo
+di riferimento uno intermedio ed un nodo client, tale per cui fosse possibile
+osservare separatamente gli effetti del degrado sul nodo terminiale e quello
+intermedio. Per Chrony è stato deciso una strada più conservativa lavorando su una
+classica configurazione client-server, valutando separatamente il caso di
+applicazione di impairment (lato client o lato server).
+
+Il degrado di rete è stato introdotto con l'ausilo di strumenti di traffic
+control, configurando i tre scenari sperimentali precedentemente definiti con intensità
+crescente di impairments. Per ciasuno sono state effettuate differenti run
+indipendenti, isolando oppurtuamente da ruomore esterno e raccogliendo una base sufficiente
+per il successivo confronto statistico. I log prodotti dai demoni sono stati
+successivametne raccolti ed eleborati tramite appositi script di parsing e
+analisi, ottenendo serie numeriche aggregate per nodo, scenario ed infine per
+metrica.
+
+%anticipazione dell'analisi dati finale
+L'analisi dei dati raccolti si basa su due livelli complementari. Da una parte sono
+state considerate le statistiche descrittive delle metriche osservate, potendo
+valutare il livello medio, la variabilità e la presenza di eventi di natura anomala.
+Dall'altro lato invece, sono state utilizzate rappresentazioni grafiche aggregate,
+che hanno permesso di confrontare l'evoluzione delle metriche nei diversi
+scenari sperimentali. Nel dettaglio, l'analisi considera sia la media con
+intervallo di confidenza al 95\%, sia la media con bande di trasparenza con
+interquartile e intervallo tra decimo e novantesimo percentile.
+
+L'impostazione consente di distinguere tra peggioramenti del livello medio della
+sincronizzazione, aumento della variabilità tra run e perdita di regolarità del comportamento
+temporale nei diversi scenari di rete.
+%struttura della tesi
+La tesi si stratturerà come segue. Verranno descritti i protocolli e i demoni analizzati,
+motivandone le scelte. Sarà descritta la fase di sperimentazione che ha portato alla
+raccolta dati e come essi sono stati analizzati, quindi tutta la fase di
+scripting. Infine sarà fatta un analisi dati complessiva mettendo a confronto i protocolli
+testati nei differenti scenari di rete. Nella capitolo conclusivo verranno fatte
+le considerazioni finali.
