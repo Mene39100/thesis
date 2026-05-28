@@ -96,7 +96,7 @@ diversi protocolli di sincronizzazione.
 L'obiettivo alla base della tesi è l'analisi sperimentale del comportamento di differenti
 demoni di sincronizzazione temporale in presenza di condizioni di degrado controllato
 sulla rete. Nello specifico sono stati confrontati tre protocolli, rispettivametne
-NTPsec, Chrony e ptp4l, osservandone la risposta al variare di scenari preimpostati,
+NTPsec, Chrony e linuxptp, osservandone la risposta al variare di scenari preimpostati,
 di intensità differenti, andando ad operare sul delay temporale, jitter, perdita di
 pacchetti, riordinamento dei pacchetti ed infine sulla limitazione della banda
 di rete.
@@ -109,8 +109,8 @@ seconodo la logica low, medium e high.
 %approccio sperimentale
 Il lavoro è stato svolto mediante la realizzazione di un ambiente sperimentale controllato,
 nel quale i diversi demoni sono stati configurati su nodi ai quali è stato
-associato opportunamente un ruolo rispetto alla topologia di riferimento. Nel
-caso dei due protoclli NTPsec e ptp4l sono state realizzate due topologie con un nodo
+associato opportunamente un ruolo rispetto alla topologia di riferimento. Nel caso
+dei due protoclli NTPsec e linuxptp sono state realizzate due topologie con un nodo
 di riferimento uno intermedio ed un nodo client, tale per cui fosse possibile
 osservare separatamente gli effetti del degrado sul nodo terminiale e quello
 intermedio. Per Chrony è stato deciso una strada più conservativa lavorando su una

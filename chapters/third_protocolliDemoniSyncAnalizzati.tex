@@ -1,2 +1,76 @@
 \chapter{Protocolli e demoni di sincronizzazione analizzati}
 \label{cha:protocolliAndDemoni}
+
+\section{Protocollo, implementazione e demone}
+
+Prima di entrare nel dettaglio dei protocolli e implementazioni usate nell'attività
+sperimentale, è utile chiarire la distinzione che vi è presente tra protocollo, implementazione
+software e demone. Questi tre livelli sono collegati ma non coincidono.
+
+Un protocollo di rete, in telecomunicazioni, è un particolare tipo di protocollo
+di comunicazione preposto al funzionamento di una rete informatica ovvero la
+definizione formale a priori delle modalità o regole di interazione che due o
+più apparecchiature elettroniche collegate tra loro devono rispettare per
+operare particolari funzionalità di elaborazione necessarie all'espletamento di
+un certo servizio di rete.
+
+In senso lato, un protocollo di comunicazione definisce la struttura ex ante, la
+quale può essere adatta ad ogni sua possibile interpretazione attraverso l'implemntazione
+pratica, delineando alla base le regole logiche dello scambio di messaggi, il
+formato delle informazioni trasmesse, il modello di sincornizzazione e più in generale,
+il comporamento atteso dai nodi coinvolte. \cite{ProtocolloDiRete2026}
+
+L'implementazione software costituisce la parte pratica, ovvero la realizzazione concreta
+di tali regole all'interno di un sistema operativo.
+
+Infine un demone è un programma che viene eseguito come processo in background,
+anziché essere sotto il controllo diretto di un utente interattivo
+\cite{DaemonComputing2026}, nel caso specifico è responsabile dell'applivazione dell'alogritmo
+di sincronizzazione e della gestione del clock locale.
+
+Nel contesto della sincronizzazione temporale, i due protocolli presi ad esame
+sono rispettivamente NTP e PTP. Network Time Protocol, definito nella sua
+versione 4, dalla specifica {\textbf{RFC 5905}}. Precision Time Protocol
+definito dallo standard \texttt{\textbf{IEEE 1588}}. È importante notare come la
+analisi sperimentale che ne seguirà non deriva semplicemnte dalla differenza di
+protocollo utilizzato, ma anche dalla sua implementazione plastica.
+
+Per questa ragione, nella presente tesi vengono distinti i protocolli in
+riferimento dagli strumenti software effettivamente analizzate. Nel dettaglio abbiamo
+NTPsec, Chrony e linuxptp.
+
+NTPsec e Chrony sono due distribuzioni che implmentano NTPv4 secondo RFC 5905, derivate
+da NTP Classic, l'originale di Dave Mills, orientate a una realizzazione più moderna
+e mantenibile del protocollo.\cite{SecureNetworkTime}.
+
+Il servizio di sincronizzazione fornito da NTPsec viene eseguito tramite il demone
+\texttt{ntpd}, cioè il processo che opera sul nodo e mantiene il clock locale sincronizzato
+rispetto alle sorgenti configurate.
+
+L'implementazione Chrony, una suite software alternativa di NTPsec, comprende due
+programmi, il primo denominato \texttt{\textbf{chronyd}} è un demone che può essere
+avviato all'avvio del sistema e chronyc è un programma con interfaccia a command-line
+che può essere utilizzato per monitorare le prestazioni di chronyd e per modificare
+vari parametri operativi mentre è in esecuzione. \cite{ChronyIntroduction}
+
+Nel caso di PTP, vi è una distinzione analoga ma rispetto ad uno standard
+differente. L'implementazione software analizzata disponibile in ambiente linux è
+rispettivamente \texttt{\textbf{linuxptp}}. In particolare, il demone
+considerato è \texttt{\textbf{ptp4l}}.
+
+La distinzione sopra riportata è fondamentale nel distinguere i diversi piani di comparazione
+che ne seguiranno. Le metriche raccolte nel capitolo
+\ref{cha:AnalisiSperimentale} descirivono quindi il comportamento concreto dei
+demoni in questione nelle condizioni sperimentali definite, oltre alle ovvie proprietà
+teoriche dei protocolli a cui essi si referiscono.
+
+\section{Network Time Protocol}
+\subsection{Caratteristiche generali di NTP}
+\subsection{NTPsec e il demone ntpd}
+\subsection{Chrony e il demone chronyd}
+
+\section{Precision Time Protocol}
+\subsection{Caratteristiche generali di PTP}
+\subsection{linuxptp e il demone ptp4l}
+
+\section{Motivazione della scelta degli strumenti analizzati}
