@@ -30,64 +30,64 @@ di sincronizzazione e della gestione del clock locale.
 
 Nel contesto della sincronizzazione temporale, i due protocolli presi ad esame
 sono rispettivamente NTP e PTP. Network Time Protocol, definito nella sua
-versione 4, dalla specifica {\textbf{RFC 5905}}. Precision Time Protocol
-definito dallo standard \texttt{\textbf{IEEE 1588}}. È importante notare come la
-analisi sperimentale che ne seguirà non deriva semplicemnte dalla differenza di
-protocollo utilizzato, ma anche dalla sua implementazione plastica.
+versione 4, dalla specifica \texttt{\textbf{RFC 5905}}. Precision Time Protocol definito
+dallo standard \texttt{\textbf{IEEE 1588}}. È importante notare come la analisi sperimentale
+che ne seguirà non deriva semplicemnte dalla differenza di protocollo utilizzato,
+ma anche dalla sua implementazione plastica.
 
-Per questa ragione, nella presente tesi vengono distinti i protocolli in
-riferimento dagli strumenti software effettivamente analizzate. Nel dettaglio abbiamo
-NTPsec, Chrony e linuxptp.
+Per questa ragione, nella presente tesi vengono distinti i protocolli in riferimento
+dagli strumenti software effettivamente analizzate. Nel dettaglio abbiamo NTPsec,
+Chrony e linuxptp.
 
-NTPsec e Chrony sono due distribuzioni che implmentano NTPv4 secondo RFC 5905, derivate
-da NTP Classic, l'originale di Dave Mills, orientate a una realizzazione più moderna
-e mantenibile del protocollo.\cite{SecureNetworkTime}.
+NTPsec e Chrony sono due distribuzioni che implmentano NTPv4 secondo RFC 5905,
+derivate da NTP Classic, l'originale di Dave Mills, orientate a una
+realizzazione più moderna e mantenibile del protocollo.\cite{SecureNetworkTime}.
 
-Il servizio di sincronizzazione fornito da NTPsec viene eseguito tramite il demone
-\texttt{ntpd}, cioè il processo che opera sul nodo e mantiene il clock locale sincronizzato
-rispetto alle sorgenti configurate.
+Il servizio di sincronizzazione fornito da NTPsec viene eseguito tramite il
+demone \texttt{ntpd}, cioè il processo che opera sul nodo e mantiene il clock
+locale sincronizzato rispetto alle sorgenti configurate.
 
-L'implementazione Chrony, una suite software alternativa di NTPsec, comprende due
-programmi, il primo denominato \texttt{\textbf{chronyd}} è un demone che può essere
-avviato all'avvio del sistema e chronyc è un programma con interfaccia a command-line
-che può essere utilizzato per monitorare le prestazioni di chronyd e per modificare
-vari parametri operativi mentre è in esecuzione. \cite{ChronyIntroduction}
+L'implementazione Chrony, una suite software alternativa di NTPsec, comprende
+due programmi, il primo denominato \texttt{\textbf{chronyd}} è un demone che può
+essere avviato all'avvio del sistema e chronyc è un programma con interfaccia a
+command-line che può essere utilizzato per monitorare le prestazioni di chronyd
+e per modificare vari parametri operativi mentre è in esecuzione. \cite{ChronyIntroduction}
 
-Nel caso di PTP, vi è una distinzione analoga ma rispetto ad uno standard
-differente. L'implementazione software analizzata disponibile in ambiente linux è
-rispettivamente \texttt{\textbf{linuxptp}}. In particolare, il demone
-considerato è \texttt{\textbf{ptp4l}}.
+Nel caso di PTP, vi è una distinzione analoga ma rispetto ad uno standard differente.
+L'implementazione software analizzata disponibile in ambiente linux è
+rispettivamente \texttt{\textbf{linuxptp}}. In particolare, il demone considerato
+è \texttt{\textbf{ptp4l}}.
 
-La distinzione sopra riportata è fondamentale nel distinguere i diversi piani di comparazione
-che ne seguiranno. Le metriche raccolte nel capitolo
-\ref{cha:AnalisiSperimentale} descirivono quindi il comportamento concreto dei
-demoni in questione nelle condizioni sperimentali definite, oltre alle ovvie proprietà
-teoriche dei protocolli a cui essi si referiscono.
+La distinzione sopra riportata è fondamentale nel distinguere i diversi piani di
+comparazione che ne seguiranno. Le metriche raccolte nel capitolo \ref{cha:AnalisiSperimentale}
+descirivono quindi il comportamento concreto dei demoni in questione nelle condizioni
+sperimentali definite, oltre alle ovvie proprietà teoriche dei protocolli a cui
+essi si referiscono.
 
 \section{Network Time Protocol}
-Network Time Protocol (NTP) è uno dei principali protocolli di sincronizzazionte temporale
-utilizzati in reti di computer. NTP è stato progettato per sincronizzare gli
-orologi dei computer su Internet e su reti locali, garantendo che tutti i dispositivi
-coinvolti abbiano un tempo coerente. La versione più recente di NTP è la
-versione 4, definita nella specifica RFC 5905.
+\subsection{Caratteristiche generali}
+Network Time Protocol (NTP) è uno dei principali protocolli di sincronizzazionte
+temporale utilizzati in reti di computer. NTP è stato progettato per sincronizzare
+gli orologi dei computer su Internet e su reti locali, garantendo che tutti i
+dispositivi coinvolti abbiano un tempo coerente. La versione più recente di NTP è
+la versione 4, definita nella specifica RFC 5905.
 
-Un'implementazione NTP funziona come server primario, server secondario, o
+L'implementazione di NTP assume funzione di server primario, server secondario o
 client. Un server primario è sincronizzato con un orologio di riferimento direttamente
 riconducibile all'UTC (ad esempio, GPS, Galileo, ecc.). Un client si sincronizza
 con uno o più server upstream, ma non fornisce la sincronizzazione ai client dipendenti.
 Un server secondario ha uno o più server upstream e uno o più server downstream
-o client. Tutti i server e i client pienamente conformi a NTPv4 devono implementare
-l'intera suite di algoritmi presenti nella documentazione ufficiale. Allo stesso
-tempo è possibile utilizzare algoritmi alternativi, assicurandosi che l'output sia
-conforme allo standard descritto. \cite{martinNetworkTimeProtocol2010}
+o client. \cite{martinNetworkTimeProtocol2010}
 
-Ci sono tre varianti del protocollo NTP: simmetrico, client/server e broadcast.
-Ogni variante è associata a un diverso insieme di modalità di pacchetto, che sono
-indicate in un campo specifico all'interno del pacchetto NTP come nella figura \ref{tab:ntp_association_packet_modes}.
-In aggiunta, ogni variante del protocollo NTP supporta due tipi di associazioni:
-persistenti ed effimere. Le persistenti vengono attivate all'avvio e non vengono mai
-disattivate. Le associazioni effimere vengono attivate all'arrivo di un
-pacchetto e vengono disattivate in caso di errore o timeout.
+Il protocollo generalmente opera sopra UDP, sulla porta 123, e utilizza lo
+scambio di messaggi timestamp per stimare il ritardo di rete e l'offset tra il
+clock locale e una sorgente temporale di riferimento.
+
+\subsection{Modalità operative e topologia gerarchica}
+Nella specifica vi sono tre varianti del protocollo NTP, rispettivamente simmetrico,
+client/server e broadcast. Ognuna di queste varianti è associata a un diverso insieme
+di modalità di pacchetto, che sono indicate in un campo specifico all'interno
+del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 
 \begin{table}[h]
   \centering
@@ -107,53 +107,90 @@ pacchetto e vengono disattivate in caso di errore o timeout.
   \label{tab:ntp_association_packet_modes}
 \end{table}
 
-Nella variante client/server, un client persistente invia pacchetti di modalità
-4 a un server, che restituisce pacchetti di modalità 3. I server forniscono sincronizzazione
-a uno o più client, ma non accettano sincronizzazione da loro. Un server può anche
-essere un driver di orologio di riferimento che ottiene il tempo direttamente da una
-fonte standard come un ricevitore GPS o un servizio di modem telefonico. In
-questa variante,i client estraggono la sincronizzazione dai server.
+Nella v
 
-Nella variante simmetrica, un peer opera sia come server che come client utilizzando
-un'associazione simmetrica attiva o simmetrica passiva. Un'associazione
-simmetrica attiva persistente invia pacchetti simmetrici attivi (modalità 1) a
-un'associazione peer simmetrica attiva. In alternativa, un'associazione
-simmetrica passiva effimera può essere attivata all'arrivo di un pacchetto
-simmetrico attivo senza un'associazione corrispondente. Tale associazione invia pacchetti
-simmetrici passivi (modalità 2) e persiste fino a errore o timeout. I peer si
-scambiano e si sincronizzano reciprocamente. Ai fini di questo documento, un
-peer opera come un client, quindi i riferimenti a client implicano anche peer.
+Nella variante \texttt{client/server}, un client persistente invia pacchetti di modalità
+4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
+sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro.
+Un server può anche essere un driver di orologio di riferimento che ottiene il
+tempo direttamente da una fonte standard come un ricevitore GPS o un servizio di
+modem telefonico. In questa variante,i client estraggono la sincronizzazione dai server.
+Variante utilizzata in fase di testing, in entrambi le implementazioni NTPsec \ref{NTPsec}
+e Chrony \ref{Chrony}.
 
-Nella variante broadcast, un'associazione persistente con un server broadcast
-invia periodicamente pacchetti broadcast (modalità 5) che possono essere
-ricevuti da più client. Alla ricezione di un pacchetto broadcast senza un'associazione
-corrispondente, viene attivata un'associazione effimera con un client broadcast
-(modalità 6) che persiste fino a errore o timeout. È utile effettuare uno scambio
-iniziale in cui il client, operante in modalità client, scambia diversi pacchetti
-con il server, in modo da calibrare il ritardo di propagazione ed eseguire il
-protocollo di sicurezza Autokey, dopodiché il client torna alla modalità client broadcast.
-Un server broadcast invia la sincronizzazione ai client e ad altri server.
+Nella modalità \texttt{symmetric} due nodi operano come peer. Ciascun peer può trattare
+l'altro come potenziale sorgente temporale e la relazione non è strutturata secondo
+una direzione gerarchica client--server. Questa modalità è adatta a scenari in cui
+più server temporali cooperano tra loro come nodi di pari livello.
 
-Seguendo, in linea di massima, le convenzioni stabilite dall'industria
-telefonica, il livello di ciascun server nella gerarchia è definito da un numero di
-stratum. Ai server primari viene assegnato lo stratum uno; ai server secondari di
-ogni livello inferiore vengono assegnati numeri di stratum superiori di uno rispetto
-al livello precedente. All'aumentare del numero di stratum, la sua precisione si degrada
-a seconda del percorso di rete specifico e della stabilità dell'orologio di sistema.
-Gli errori medi, misurati in base alle distanze di sincronizzazione, aumentano
-approssimativamente in proporzione ai numeri di stratum e al ritardo di andata e
-ritorno misurato.
+La modalità \texttt{broadcast} prevede infine che un server invii periodicamente
+messaggi temporali destinati a più client. I client possono ricevere passivamente
+tali aggiornamenti, eventualmente dopo una fase iniziale di calibrazione del
+ritardo. Questa modalità è utile quando si vuole distribuire la sincronizzazione a
+più nodi riducendo lo scambio individuale di messaggi.
 
-Come prassi standard, la topologia della rete di temporizzazione dovrebbe essere organizzata
-in modo da evitare loop di temporizzazione e minimizzare la distanza di sincronizzazione.
-In NTP, la topologia della sottorete viene determinata utilizzando una variante dell'algoritmo
-di routing distribuito Bellman-Ford, che calcola l'albero di copertura del
-percorso più breve con radice sui server primari. Come risultato di questa progettazione,
-l'algoritmo riorganizza automaticamente la sottorete, in modo da produrre l'ora più
-precisa e affidabile, anche in presenza di guasti nella rete di temporizzazione. \cite{martinNetworkTimeProtocol2010}
+Il livello ricoperto da ciascun server nella gerarchia è definito secondo una numerazione
+di stratum. Partendo da stratum 1, associato a server primari, si può arrivare
+ad un massimo di 15 (16 si considera non sincronizzato). All'aumentare del numero
+di stratum, la sua precisione si degrada a seconda del percorso di rete
+specifico e della stabilità dell'orologio di sistema. Gli errori medi, misurati
+in base alle distanze di sincronizzazione, aumentano approssimativamente in proporzione
+ai numeri di stratum e al ritardo di andata e ritorno misurato.
+
+NTP organizza la sincronizzazione secondo una struttura gerarchica orientata a evitare
+cicli e a minimizzare la distanza di sincronizzazione rispetto alle sorgenti primarie.
+La RFC 5905 descrive tale organizzazione come basata su una variante dell'algoritmo
+distribuito Bellman-Ford, utilizzata per determinare uno spanning tree dei percorsi
+più brevi radicato sui primary server~ \cite{martinNetworkTimeProtocol2010} In
+questo modo, la subnet NTP può riorganizzarsi automaticamente in presenza di guasti
+o variazioni nella rete temporale.
+
+-------------
+\subsection{Stima di offset e delay}
+La scala temporale del Tempo Coordinato Universale (UTC) rappresenta il tempo solare
+medio così come diffuso dai laboratori nazionali di standardizzazione. Il tempo
+di sistema è rappresentato dall'orologio di sistema gestito dall'hardware e dal
+sistema operativo. L'obiettivo degli algoritmi NTP è minimizzare sia la differenza
+di tempo che la differenza di frequenza tra UTC e l'orologio di sistema. Quando
+queste differenze sono state ridotte al di sotto delle tolleranze nominali, si dice
+che l'orologio di sistema è sincronizzato con UTC. Un timestamp $T(t)$
+rappresenta la data UTC o l'offset di tempo rispetto a UTC al tempo di
+esecuzione t. Il significato inteso dovrebbe essere chiaro dal contesto. Sia
+$T(t)$ l'offset di tempo, $R(t)$ l'offset di frequenza e $D(t)$ il tasso di invecchiamento
+(derivata prima di $R(t)$ rispetto a t). Quindi, se $T(t_{0})$ è lo scostamento temporale
+UTC determinato a $t = t_{0}$, lo scostamento temporale UTC al tempo t è
+
+\[
+  T(t) = T(t_{0}) + R(t_{0})(t-t_{0}) + 1/2 * D(t_{0})(t-t_{0})^{2}+ e
+\]
+
+dove e è un termine di errore stocastico discusso più avanti in questo documento.
+Sebbene il termine D(t) sia importante nella caratterizzazione degli oscillatori
+di precisione, viene solitamente trascurato per gli oscillatori dei computer.
+
+Il modello di prestazioni NTP include quattro statistiche che vengono aggiornate ogni
+volta che un client effettua una misurazione con un server. Lo scostamento (theta)
+rappresenta lo scostamento temporale di massima verosimiglianza dell'orologio
+del server rispetto all'orologio di sistema. Il ritardo (delta) rappresenta il ritardo
+di andata e ritorno tra client e server. La dispersione (epsilon) rappresenta l'errore
+massimo intrinseco alla misurazione. Aumenta a una velocità pari alla massima tolleranza
+di frequenza dell'orologio di sistema disciplinato (PHI), tipicamente 15 ppm. Il jitter
+(psi) è definito come la media quadratica (RMS) delle differenze di offset più recenti
+e rappresenta l'errore nominale nella stima dell'offset.
+
+\subsection{Filtraggio, selezione e disciplina del clock}
+% NTP non applica meccanicamente i timestamp;
+% filtra, seleziona sorgenti, disciplina il clock.
+
+\subsection{NTPsec e demone ntpd}
+% implementazione usata nel tuo testbed;
+% ntpd come demone;
+% metriche osservate: delay, jitter, offset, reach/refid/selected se vuoi.
 \subsection{Caratteristiche generali di NTP}
 \subsection{NTPsec e il demone ntpd}
+\label{NTPsec}
 \subsection{Chrony e il demone chronyd}
+\label{Chrony}
 
 \section{Precision Time Protocol}
 \subsection{Caratteristiche generali di PTP}
