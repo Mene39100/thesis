@@ -217,7 +217,7 @@ poiché eventuali ritrasmissioni introdurrebbero ulteriore ritardo e renderebber
 meno rappresentativa l'informazione temporale trasportata dal pacchetto. La RFC 5905
 osserva infatti che un trasporto affidabile, come TCP, può risultare controproducente
 per NTP, in quanto i retry aumenterebbero il delay e gli errori associati alla
-stima temporale~\cite{martinNetworkTimeProtocol2010}.
+stima temporale \cite{martinNetworkTimeProtocol2010}.
 
 Il protocollo on-wire si basa quindi sullo scambio di datagrammi contenenti
 timestamp e informazioni di stato. Tali timestamp consentono di stimare il round-trip
@@ -277,60 +277,43 @@ lo stato delle associazioni e le metriche prodotte dal servizio.
 
 \begin{table}[h]
   \centering
-  \small
-  \begin{tabularx}
-    {\textwidth}{llX} \hline \textbf{Comando / fonte} & \textbf{Metrica / campo}
-    & \textbf{Significato} \\ \hline
-
-    \texttt{ntpq -p} & \texttt{remote} & Sorgente o peer NTP remoto configurato. \\
-    \texttt{ntpq -p} & \texttt{refid} & Identificativo della sorgente temporale di
-    riferimento. \\ \texttt{ntpq -p} & \texttt{st} & Stratum della sorgente
-    remota. \\ \texttt{ntpq -p} & \texttt{t} & Tipo di associazione NTP. \\
-    \texttt{ntpq -p} & \texttt{when} & Tempo trascorso dall'ultimo pacchetto
-    ricevuto dalla sorgente. \\ \texttt{ntpq -p} & \texttt{poll} & Intervallo di polling
-    verso la sorgente. \\ \texttt{ntpq -p} & \texttt{reach} & Registro di
-    raggiungibilità della sorgente. \\ \texttt{ntpq -p} & \texttt{delay} & Ritardo
-    stimato del percorso verso la sorgente. \\ \texttt{ntpq -p} & \texttt{offset}
-    & Scostamento stimato tra clock locale e sorgente temporale. \\ \texttt{ntpq
-    -p} & \texttt{jitter} & Variabilità delle misure associate alla sorgente. \\
-
+  \begin{tabular}{lll}
     \hline
-
-    \texttt{peerstats} & \texttt{offset} & Scostamento stimato rispetto al peer
-    remoto. \\ \texttt{peerstats} & \texttt{delay} & Ritardo stimato dell'associazione
-    con il peer. \\ \texttt{peerstats} & \texttt{dispersion} & Incertezza
-    stimata della misura temporale. \\ \texttt{peerstats} & \texttt{jitter} & Jitter
-    RMS associato alle misure del peer. \\
-
+    \textbf{Comando / fonte} & \textbf{Metrica / campo}       & \textbf{Significato}                                           \\
     \hline
-
-    \texttt{loopstats} & \texttt{offset} & Offset del clock locale rispetto alla
-    sorgente selezionata. \\ \texttt{loopstats} & \texttt{frequency} & Correzione
-    di frequenza applicata al clock locale. \\ \texttt{loopstats} & \texttt{jitter}
-    & Variabilità stimata del clock locale. \\ \texttt{loopstats} & \texttt{wander}
-    & Variabilità lenta della frequenza del clock locale. \\
-
+    \texttt{ntpq -p}         & \texttt{remote}                & Sorgente o peer NTP remoto configurato.                        \\
+    \texttt{ntpq -p}         & \texttt{refid}                 & Identificativo della sorgente temporale di riferimento.        \\
+    \texttt{ntpq -p}         & \texttt{st}                    & Stratum della sorgente remota.                                 \\
+    \texttt{ntpq -p}         & \texttt{t}                     & Tipo di associazione NTP.                                      \\
+    \texttt{ntpq -p}         & \texttt{when}                  & Tempo trascorso dall'ultimo pacchetto ricevuto dalla sorgente. \\
+    \texttt{ntpq -p}         & \texttt{poll}                  & Intervallo di polling verso la sorgente.                       \\
+    \texttt{ntpq -p}         & \texttt{reach}                 & Registro di raggiungibilità della sorgente.                    \\
+    \texttt{ntpq -p}         & \texttt{delay}                 & Ritardo stimato del percorso verso la sorgente.                \\
+    \texttt{ntpq -p}         & \texttt{offset}                & Scostamento stimato tra clock locale e sorgente temporale.     \\
+    \texttt{ntpq -p}         & \texttt{jitter}                & Variabilità delle misure associate alla sorgente.              \\
     \hline
-
-    \texttt{rawstats} & \texttt{originate timestamp} & Timestamp di invio della
-    richiesta da parte del client. \\ \texttt{rawstats} & \texttt{receive
-    timestamp} & Timestamp di ricezione della richiesta presso il server. \\
-    \texttt{rawstats} & \texttt{transmit timestamp} & Timestamp di invio della
-    risposta da parte del server. \\ \texttt{rawstats} & \texttt{destination
-    timestamp} & Timestamp locale di ricezione della risposta presso il client.
-    \\
-
+    \texttt{peerstats}       & \texttt{offset}                & Scostamento stimato rispetto al peer remoto.                   \\
+    \texttt{peerstats}       & \texttt{delay}                 & Ritardo stimato dell'associazione con il peer.                 \\
+    \texttt{peerstats}       & \texttt{dispersion}            & Incertezza stimata della misura temporale.                     \\
+    \texttt{peerstats}       & \texttt{jitter}                & Jitter RMS associato alle misure del peer.                     \\
     \hline
-
-    \texttt{readvar} & \texttt{rootdelay} & Ritardo cumulativo verso la sorgente
-    primaria. \\ \texttt{readvar} & \texttt{rootdisp} & Dispersione cumulativa verso
-    la sorgente primaria. \\ \texttt{readvar} & \texttt{stratum} & Livello
-    gerarchico del sistema locale. \\ \texttt{readvar} & \texttt{refid} & Identificativo
-    della sorgente selezionata. \\ \texttt{readvar} & \texttt{leap} & Stato
-    relativo alla sincronizzazione e ai leap second. \\
-
+    \texttt{loopstats}       & \texttt{offset}                & Offset del clock locale rispetto alla sorgente selezionata.    \\
+    \texttt{loopstats}       & \texttt{frequency}             & Correzione di frequenza applicata al clock locale.             \\
+    \texttt{loopstats}       & \texttt{jitter}                & Variabilità stimata del clock locale.                          \\
+    \texttt{loopstats}       & \texttt{wander}                & Variabilità lenta della frequenza del clock locale.            \\
     \hline
-  \end{tabularx}
+    \texttt{rawstats}        & \texttt{originate timestamp}   & Timestamp di invio della richiesta da parte del client.        \\
+    \texttt{rawstats}        & \texttt{receive timestamp}     & Timestamp di ricezione della richiesta presso il server.       \\
+    \texttt{rawstats}        & \texttt{transmit timestamp}    & Timestamp di invio della risposta da parte del server.         \\
+    \texttt{rawstats}        & \texttt{destination timestamp} & Timestamp locale di ricezione della risposta presso il client. \\
+    \hline
+    \texttt{readvar}         & \texttt{rootdelay}             & Ritardo cumulativo verso la sorgente primaria.                 \\
+    \texttt{readvar}         & \texttt{rootdisp}              & Dispersione cumulativa verso la sorgente primaria.             \\
+    \texttt{readvar}         & \texttt{stratum}               & Livello gerarchico del sistema locale.                         \\
+    \texttt{readvar}         & \texttt{refid}                 & Identificativo della sorgente selezionata.                     \\
+    \texttt{readvar}         & \texttt{leap}                  & Stato relativo alla sincronizzazione e ai leap second.         \\
+    \hline
+  \end{tabular}
   \caption{Principali metriche e campi esposti da NTPsec tramite \texttt{ntpd},
   \texttt{ntpq} e file statistici, rielaborati dalla documentazione ufficiale~\cite{ntpsec-doc}.}
   \label{tab:ntpsec_metriche}
