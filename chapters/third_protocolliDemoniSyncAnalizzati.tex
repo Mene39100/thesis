@@ -86,15 +86,27 @@ uno o più server upstream, ma non fornisce la sincronizzazione ai client
 dipendenti. Un server secondario ha uno o più server upstream e uno o più server downstream
 o client. \cite{martinNetworkTimeProtocol2010}
 
-Il protocollo generalmente opera sopra UDP, sulla porta 123, e utilizza lo scambio
-di messaggi timestamp per stimare il ritardo di rete e l'offset tra il clock locale
-e una sorgente temporale di riferimento.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}
+    {0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{
+      images/theory/Network_Time_Protocol_servers_and_clients.png
+    }
+    \caption{NTP hierarchy \cite{NetworkTimeProtocol2026}}
+  \end{subfigure}
+\end{figure}
+
+Il protocollo generalmente opera sopra UDP, sulla porta 123, e utilizza lo
+scambio di messaggi timestamp per stimare il ritardo di rete e l'offset tra il
+clock locale e una sorgente temporale di riferimento.
 
 \subsection{Modalità operative e topologia gerarchica}
-Nella specifica vi sono tre varianti del protocollo NTP, rispettivamente
-simmetrico, client/server e broadcast. Ognuna di queste varianti è associata a
-un diverso insieme di modalità di pacchetto, che sono indicate in un campo specifico
-all'interno del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
+Nella specifica vi sono tre varianti del protocollo NTP, rispettivamente simmetrico,
+client/server e broadcast. Ognuna di queste varianti è associata a un diverso insieme
+di modalità di pacchetto, che sono indicate in un campo specifico all'interno
+del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 
 \begin{table}[h]
   \centering
@@ -116,56 +128,55 @@ all'interno del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 
 Nella v
 
-Nella variante \texttt{client/server}, un client persistente invia pacchetti di
-modalità 4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
-sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro. Un
-server può anche essere un driver di orologio di riferimento che ottiene il tempo
-direttamente da una fonte standard come un ricevitore GPS o un servizio di modem telefonico.
-In questa variante,i client estraggono la sincronizzazione dai server. Variante utilizzata
-in fase di testing, in entrambi le implementazioni NTPsec \ref{NTPsec} e Chrony
-\ref{Chrony}.
+Nella variante \texttt{client/server}, un client persistente invia pacchetti di modalità
+4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
+sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro.
+Un server può anche essere un driver di orologio di riferimento che ottiene il
+tempo direttamente da una fonte standard come un ricevitore GPS o un servizio di
+modem telefonico. In questa variante,i client estraggono la sincronizzazione dai server.
+Variante utilizzata in fase di testing, in entrambi le implementazioni NTPsec \ref{NTPsec}
+e Chrony \ref{Chrony}.
 
-Nella modalità \texttt{symmetric} due nodi operano come peer. Ciascun peer può
-trattare l'altro come potenziale sorgente temporale e la relazione non è
-strutturata secondo una direzione gerarchica client--server. Questa modalità è
-adatta a scenari in cui più server temporali cooperano tra loro come nodi di
-pari livello.
+Nella modalità \texttt{symmetric} due nodi operano come peer. Ciascun peer può trattare
+l'altro come potenziale sorgente temporale e la relazione non è strutturata secondo
+una direzione gerarchica client--server. Questa modalità è adatta a scenari in cui
+più server temporali cooperano tra loro come nodi di pari livello.
 
-La modalità \texttt{broadcast} prevede infine che un server invii periodicamente messaggi
-temporali destinati a più client. I client possono ricevere passivamente tali
-aggiornamenti, eventualmente dopo una fase iniziale di calibrazione del ritardo.
-Questa modalità è utile quando si vuole distribuire la sincronizzazione a più
-nodi riducendo lo scambio individuale di messaggi.
+La modalità \texttt{broadcast} prevede infine che un server invii periodicamente
+messaggi temporali destinati a più client. I client possono ricevere passivamente
+tali aggiornamenti, eventualmente dopo una fase iniziale di calibrazione del
+ritardo. Questa modalità è utile quando si vuole distribuire la sincronizzazione a
+più nodi riducendo lo scambio individuale di messaggi.
 
-Il livello ricoperto da ciascun server nella gerarchia è definito secondo una
-numerazione di stratum. Partendo da stratum 1, associato a server primari, si può
-arrivare ad un massimo di 15 (16 si considera non sincronizzato). All'aumentare
-del numero di stratum, la sua precisione si degrada a seconda del percorso di rete
-specifico e della stabilità dell'orologio di sistema. Gli errori medi, misurati in
-base alle distanze di sincronizzazione, aumentano approssimativamente in
-proporzione ai numeri di stratum e al ritardo di andata e ritorno misurato.
+Il livello ricoperto da ciascun server nella gerarchia è definito secondo una numerazione
+di stratum. Partendo da stratum 1, associato a server primari, si può arrivare
+ad un massimo di 15 (16 si considera non sincronizzato). All'aumentare del numero
+di stratum, la sua precisione si degrada a seconda del percorso di rete
+specifico e della stabilità dell'orologio di sistema. Gli errori medi, misurati
+in base alle distanze di sincronizzazione, aumentano approssimativamente in proporzione
+ai numeri di stratum e al ritardo di andata e ritorno misurato.
 
-NTP organizza la sincronizzazione secondo una struttura gerarchica orientata a
-evitare cicli e a minimizzare la distanza di sincronizzazione rispetto alle
-sorgenti primarie. La RFC 5905 descrive tale organizzazione come basata su una variante
-dell'algoritmo distribuito Bellman-Ford, utilizzata per determinare uno spanning
-tree dei percorsi più brevi radicato sui primary server~ \cite{martinNetworkTimeProtocol2010}
-In questo modo, la subnet NTP può riorganizzarsi automaticamente in presenza di
-guasti o variazioni nella rete temporale.
+NTP organizza la sincronizzazione secondo una struttura gerarchica orientata a evitare
+cicli e a minimizzare la distanza di sincronizzazione rispetto alle sorgenti primarie.
+La RFC 5905 descrive tale organizzazione come basata su una variante dell'algoritmo
+distribuito Bellman-Ford, utilizzata per determinare uno spanning tree dei percorsi
+più brevi radicato sui primary server~ \cite{martinNetworkTimeProtocol2010} In
+questo modo, la subnet NTP può riorganizzarsi automaticamente in presenza di guasti
+o variazioni nella rete temporale.
 
 -------------
 \subsection{Stima di offset e delay}
 Il tempo di sistema è rappresentato dall'orologio di sistema gestito dall'hardware
-e dal sistema operativo. L'obiettivo degli algoritmi NTP è minimizzare sia la differenza
-di tempo che la differenza di frequenza tra UTC (Coordinated Universal Time, o l'orologio
-di riferimento) e l'orologio di sistema. Quando queste differenze sono state ridotte
-al di sotto delle tolleranze nominali, si dice che l'orologio di sistema è
-sincronizzato con UTC. Un timestamp $T(t)$ rappresenta la data UTC o l'offset di tempo
-rispetto a UTC al tempo di esecuzione t. Il significato inteso dovrebbe essere
-chiaro dal contesto. Sia $T(t)$ l'offset di tempo, $R(t)$ l'offset di frequenza
-e $D(t)$ il tasso di invecchiamento (derivata prima di $R(t)$ rispetto a t). Quindi,
-se $T(t_{0})$ è lo scostamento temporale UTC determinato a $t = t_{0}$, lo scostamento
-temporale UTC al tempo t è
+e dal sistema operativo. L'obiettivo degli algoritmi NTP è minimizzare sia la
+differenza di tempo che la differenza di frequenza tra UTC (Coordinated Universal
+Time, o l'orologio di riferimento) e l'orologio di sistema. Quando queste
+differenze sono state ridotte al di sotto delle tolleranze nominali, si dice che l'orologio
+di sistema è sincronizzato con UTC. Un timestamp $T(t)$ rappresenta la data UTC
+o l'offset di tempo rispetto a UTC al tempo di esecuzione t. Il significato inteso
+dovrebbe essere chiaro dal contesto. Sia $T(t)$ l'offset di tempo, $R(t)$ l'offset
+di frequenza e $D(t)$ il tasso di invecchiamento (derivata prima di $R(t)$
+rispetto a t). Quindi, se $T(t_{0})$ è lo scostamento temporale UTC determinato a
+$t = t_{0}$, lo scostamento temporale UTC al tempo t è
 
 \[
   T(t) = T(t_{0}) + R(t_{0})(t-t_{0}) + 1/2 * D(t_{0})(t-t_{0})^{2}+ e
@@ -173,107 +184,106 @@ temporale UTC al tempo t è
 
 dove e è un termine di errore stocastico.
 
-Quattro statistiche vengono aggiornate ogni volta che un client effettua una misurazione
-con un server. Lo scomostamento, ossia il \texttt{theta}, è rappresentazione dello
-scostamento temporale di massima verosimiglianza dell'orologio del server rispetto
-all'orologio di sistema. Vi è poi il ritardo,definito come \texttt{delta}, che è
-definito come il ritardo di andata e ritorno tra client e server. Vi è poi la dispersione,
-\texttt{epsilon} cioè l'errore massimo intrinseco alla misurazione, la quale
-aumenta a una velocità pari alla massima tolleranza di frequenza dell'orologio
-di sistema disciplinato $PHI$, tipicamente 15 ppm. Infine, il jitter, definito
-come \texttt{psi}, è la media quadratica (RMS) delle differenze di offset più
-recenti e rappresenta l'errore nominale nella stima dell'offset.
+Quattro statistiche vengono aggiornate ogni volta che un client effettua una
+misurazione con un server. Lo scomostamento, ossia il \texttt{theta}, è
+rappresentazione dello scostamento temporale di massima verosimiglianza dell'orologio
+del server rispetto all'orologio di sistema. Vi è poi il ritardo,definito come \texttt{delta},
+che è definito come il ritardo di andata e ritorno tra client e server. Vi è poi
+la dispersione, \texttt{epsilon} cioè l'errore massimo intrinseco alla
+misurazione, la quale aumenta a una velocità pari alla massima tolleranza di frequenza
+dell'orologio di sistema disciplinato $PHI$, tipicamente 15 ppm. Infine, il
+jitter, definito come \texttt{psi}, è la media quadratica (RMS) delle differenze di
+offset più recenti e rappresenta l'errore nominale nella stima dell'offset.
 
-La specifica NTPv4 descrive inoltre il protocollo come un insieme di processi e
-strutture di stato, distinguendo tra variabili associate ai pacchetti, allo
-stato dei peer, al processo di polling, allo stato di sistema e alla disciplina
-del clock \cite{martinNetworkTimeProtocol2010}. Questa organizzazione evidenzia che
-il demone non si limita a ricevere timestamp e applicare una correzione immediata,
-ma mantiene informazioni sullo stato delle associazioni, valuta la qualità delle sorgenti
-e utilizza tali informazioni nel processo di selezione, filtraggio e correzione
-del clock locale.
+La specifica NTPv4 descrive inoltre il protocollo come un insieme di processi e strutture
+di stato, distinguendo tra variabili associate ai pacchetti, allo stato dei peer,
+al processo di polling, allo stato di sistema e alla disciplina del clock \cite{martinNetworkTimeProtocol2010}.
+Questa organizzazione evidenzia che il demone non si limita a ricevere timestamp
+e applicare una correzione immediata, ma mantiene informazioni sullo stato delle associazioni,
+valuta la qualità delle sorgenti e utilizza tali informazioni nel processo di
+selezione, filtraggio e correzione del clock locale.
 
-Dal punto di vista dei dati scambiati, un pacchetto NTP contiene informazioni relative
-sia allo stato della sorgente temporale sia ai timestamp necessari alla stima del
-tempo. Tra i campi più rilevanti per l'analisi della sincronizzazione vi sono
-\texttt{mode}, che identifica la modalità del pacchetto, \texttt{stratum}, che indica
-la distanza gerarchica dalla sorgente di riferimento, \texttt{poll}, che
-descrive l'intervallo di interrogazione, \texttt{rootdelay} e \texttt{rootdisp},
-che rappresentano rispettivamente il ritardo e la dispersione cumulativi verso
-la sorgente primaria, e \texttt{refid}, che identifica il riferimento temporale utilizzato.
-Il pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec}, \texttt{xmt}
-e \texttt{dst}, corrispondenti ai quattro istanti utilizzati nel modello di stima
+Dal punto di vista dei dati scambiati, un pacchetto NTP contiene informazioni
+relative sia allo stato della sorgente temporale sia ai timestamp necessari alla
+stima del tempo. Tra i campi più rilevanti per l'analisi della sincronizzazione vi
+sono \texttt{mode}, che identifica la modalità del pacchetto, \texttt{stratum},
+che indica la distanza gerarchica dalla sorgente di riferimento, \texttt{poll}, che
+descrive l'intervallo di interrogazione, \texttt{rootdelay} e \texttt{rootdisp}, che
+rappresentano rispettivamente il ritardo e la dispersione cumulativi verso la sorgente
+primaria, e \texttt{refid}, che identifica il riferimento temporale utilizzato. Il
+pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec}, \texttt{xmt} e
+\texttt{dst}, corrispondenti ai quattro istanti utilizzati nel modello di stima
 di delay e offset. \cite{martinNetworkTimeProtocol2010}
 
-Dal punto di vista del formato dei messaggi, un pacchetto NTP è trasportato come
-datagramma UDP e contiene un header composto da campi che descrivono sia lo
-stato della sorgente temporale sia i timestamp utilizzati per la stima della
-sincronizzazione \cite{martinNetworkTimeProtocol2010}.
+Dal punto di vista del formato dei messaggi, un pacchetto NTP è trasportato come datagramma
+UDP e contiene un header composto da campi che descrivono sia lo stato della sorgente
+temporale sia i timestamp utilizzati per la stima della sincronizzazione \cite{martinNetworkTimeProtocol2010}.
 
-Dal punto di vista del trasporto, NTP opera tramite pacchetti scambiati su UDP,
-tipicamente sulla porta 123. La scelta di UDP è coerente con la natura della
-sincronizzazione temporale: il protocollo non richiede consegna affidabile dei messaggi,
-poiché eventuali ritrasmissioni introdurrebbero ulteriore ritardo e renderebbero
-meno rappresentativa l'informazione temporale trasportata dal pacchetto. La RFC 5905
-osserva infatti che un trasporto affidabile, come TCP, può risultare controproducente
-per NTP, in quanto i retry aumenterebbero il delay e gli errori associati alla
-stima temporale \cite{martinNetworkTimeProtocol2010}.
+Dal punto di vista del trasporto, NTP opera tramite pacchetti scambiati su UDP, tipicamente
+sulla porta 123. La scelta di UDP è coerente con la natura della sincronizzazione
+temporale: il protocollo non richiede consegna affidabile dei messaggi, poiché eventuali
+ritrasmissioni introdurrebbero ulteriore ritardo e renderebbero meno rappresentativa
+l'informazione temporale trasportata dal pacchetto. La RFC 5905 osserva infatti
+che un trasporto affidabile, come TCP, può risultare controproducente per NTP, in
+quanto i retry aumenterebbero il delay e gli errori associati alla stima temporale
+\cite{martinNetworkTimeProtocol2010}.
 
-Il protocollo on-wire si basa quindi sullo scambio di datagrammi contenenti
-timestamp e informazioni di stato. Tali timestamp consentono di stimare il round-trip
-delay e l'offset tra client e sorgente temporale. Ne consegue che la qualità
-della sincronizzazione dipende direttamente dalle condizioni del percorso di
-rete: delay variabile, jitter, perdita di pacchetti e congestione possono alterare
-la regolarità delle osservazioni disponibili al demone.
+Il protocollo on-wire si basa quindi sullo scambio di datagrammi contenenti timestamp
+e informazioni di stato. Tali timestamp consentono di stimare il round-trip
+delay e l'offset tra client e sorgente temporale. Ne consegue che la qualità della
+sincronizzazione dipende direttamente dalle condizioni del percorso di rete:
+delay variabile, jitter, perdita di pacchetti e congestione possono alterare la
+regolarità delle osservazioni disponibili al demone.
 
 \subsection{Filtraggio, selezione e disciplina del clock}
-In NTPv4 è presente una sequenza di elaborazione delle osservazioni temporali,
-al fine di ridurre l'effetto di misure rumorose, selezionare sorgenti coerenti e correggere
-il clock del sistema in modo controllato \cite{martinNetworkTimeProtocol2010}.
+In NTPv4 è presente una sequenza di elaborazione delle osservazioni temporali, al
+fine di ridurre l'effetto di misure rumorose, selezionare sorgenti coerenti e
+correggere il clock del sistema in modo controllato
+\cite{martinNetworkTimeProtocol2010}.
 
-Il primo livello di elaborazione è il \textit{clock filter algorithm}. Per ogni associazione
-con una sorgente temporale, il demone mantiene un insieme di campioni recenti, ciascuno
-associato alle misure osservate. L'idea di base è individuare le osservazioni
-più affidabili, privilegiando in generale campioni caratterizzati da minore incertezza.
-In questo modo, il protocollo evita che una singola misura degradata produca immediatamente
-una correzione errata del clock locale.
+Il primo livello di elaborazione è il \textit{clock filter algorithm}. Per ogni
+associazione con una sorgente temporale, il demone mantiene un insieme di campioni
+recenti, ciascuno associato alle misure osservate. L'idea di base è individuare le
+osservazioni più affidabili, privilegiando in generale campioni caratterizzati
+da minore incertezza. In questo modo, il protocollo evita che una singola misura
+degradata produca immediatamente una correzione errata del clock locale.
 
-In seguito al filtraggio delle misure associate ai singoli peer, il demone
-procede con il \textit{system process}, che valuta le sorgenti temporali
-disponibili. Quando sono presenti più sorgenti, NTP deve stabilire quali siano
-coerenti tra loro e quali debbano essere escluse perché considerate inaffidabili
-o anomale. Il processo di selezione riduce quindi l'insieme delle sorgenti candidate
-e individua il riferimento temporale da utilizzare per la sincronizzazione del sistema.
-Anche quando nel testbed è presente una topologia controllata e con poche
-sorgenti, questo meccanismo è concettualmente rilevante: la qualità della
-sorgente percepita dal demone influenza lo stato operativo e le metriche
-riportate.
+In seguito al filtraggio delle misure associate ai singoli peer, il demone procede
+con il \textit{system process}, che valuta le sorgenti temporali disponibili.
+Quando sono presenti più sorgenti, NTP deve stabilire quali siano coerenti tra loro
+e quali debbano essere escluse perché considerate inaffidabili o anomale. Il
+processo di selezione riduce quindi l'insieme delle sorgenti candidate e
+individua il riferimento temporale da utilizzare per la sincronizzazione del
+sistema. Anche quando nel testbed è presente una topologia controllata e con poche
+sorgenti, questo meccanismo è concettualmente rilevante: la qualità della sorgente
+percepita dal demone influenza lo stato operativo e le metriche riportate.
 
-L'ultimo passaggio è la \textit{clock discipline}, cioè il meccanismo mediante
-il quale le stime selezionate vengono utilizzate per correggere il clock locale. La
+L'ultimo passaggio è la \textit{clock discipline}, cioè il meccanismo mediante il
+quale le stime selezionate vengono utilizzate per correggere il clock locale. La
 correzione non coincide necessariamente con uno spostamento immediato dell'orologio
-di sistema. Il demone può intervenire anche regolando progressivamente la
-frequenza di avanzamento del clock, in modo da ridurre l'offset preservando la continuità
-temporale. Questa distinzione è importante: una misura di offset rappresenta una stima
-dello scostamento, mentre la disciplina del clock determina come tale stima
+di sistema. Il demone può intervenire anche regolando progressivamente la frequenza
+di avanzamento del clock, in modo da ridurre l'offset preservando la continuità
+temporale. Questa distinzione è importante: una misura di offset rappresenta una
+stima dello scostamento, mentre la disciplina del clock determina come tale stima
 viene trasformata in una correzione effettiva.
 
 \subsection{NTPsec e il demone ntpd}
 
-NTPsec è un progetto nato con l'obiettivo di fornire una implementazione più sicura
-e manutenibile del protocollo NTP, mantenendo la compatibilità con la specifica
-RFC 5905. Il progetto si è sviluppato a partire da NTP Classic. L'obiettivo di NTPsec
-è quello di offrire una versione più robusta e semplificata del protocollo,
-ottenutos anche attraverso la rimozione di codice legacy e funzionalità obsolete.
-Questa caratteristica è rilevante soprattutto in contesti in cui il demone di sincronizzazione
-è esposto in rete e deve operare come componente infrastrutturale affidabile \cite{SecureNetworkTime}.
+NTPsec è un progetto nato con l'obiettivo di fornire una implementazione più
+sicura e manutenibile del protocollo NTP, mantenendo la compatibilità con la specifica
+RFC 5905. Il progetto si è sviluppato a partire da NTP Classic. L'obiettivo di
+NTPsec è quello di offrire una versione più robusta e semplificata del
+protocollo, ottenutos anche attraverso la rimozione di codice legacy e funzionalità
+obsolete. Questa caratteristica è rilevante soprattutto in contesti in cui il
+demone di sincronizzazione è esposto in rete e deve operare come componente
+infrastrutturale affidabile \cite{SecureNetworkTime}.
 
-Il componente principale della suite è il demone \texttt{ntpd}, responsabile dell'esecuzione
-del servizio NTP sul nodo. Il demone gestisce le associazioni configurate, comunica
-con le sorgenti temporali, mantiene lo stato della sincronizzazione e applica le
-correzioni necessarie al clock locale. Accanto al demone, la suite fornisce
-strumenti di interrogazione e controllo, come \texttt{ntpq}, utilizzabili per osservare
-lo stato delle associazioni e le metriche prodotte dal servizio.
+Il componente principale della suite è il demone \texttt{ntpd}, responsabile
+dell'esecuzione del servizio NTP sul nodo. Il demone gestisce le associazioni configurate,
+comunica con le sorgenti temporali, mantiene lo stato della sincronizzazione e applica
+le correzioni necessarie al clock locale. Accanto al demone, la suite fornisce strumenti
+di interrogazione e controllo, come \texttt{ntpq}, utilizzabili per osservare lo
+stato delle associazioni e le metriche prodotte dal servizio.
 
 \begin{table}[h]
   \centering
@@ -322,40 +332,40 @@ lo stato delle associazioni e le metriche prodotte dal servizio.
 \subsection{Chrony e il demone chronyd}
 \label{Chrony}
 
-Chrony è una suite software per la sincronizzazione temporale e costituisce una implementazione
-versatile del Network Time Protocol. Il progetto è progettato per sincronizzare
-il clock di sistema rispetto a server NTP, reference clock, come ricevitori GPS, oppure
-input manuali; può inoltre operare come server NTPv4, fornendo sincronizzazione ad
-altri nodi della rete~\cite{ChronyDocumentation}.
+Chrony è una suite software per la sincronizzazione temporale e costituisce una
+implementazione versatile del Network Time Protocol. Il progetto è progettato per
+sincronizzare il clock di sistema rispetto a server NTP, reference clock, come ricevitori
+GPS, oppure input manuali; può inoltre operare come server NTPv4, fornendo
+sincronizzazione ad altri nodi della rete~\cite{ChronyDocumentation}.
 
-Dal punto di vista protocollare, Chrony non definisce un protocollo alternativo
-a NTP, ma implementa la sincronizzazione basata su NTP con una propria architettura
-software e proprie strategie interne di stima e controllo del clock. Questa
-distinzione è rilevante nel contesto della tesi, poiché Chrony e NTPsec appartengono
-allo stesso ambito protocollare, ma rappresentano implementazioni differenti: eventuali
-differenze di comportamento devono quindi essere ricondotte non al protocollo di riferimento,
-bensì alle scelte implementative e operative dei rispettivi demoni.
+Dal punto di vista protocollare, Chrony non definisce un protocollo alternativo a
+NTP, ma implementa la sincronizzazione basata su NTP con una propria
+architettura software e proprie strategie interne di stima e controllo del clock.
+Questa distinzione è rilevante nel contesto della tesi, poiché Chrony e NTPsec
+appartengono allo stesso ambito protocollare, ma rappresentano implementazioni differenti:
+eventuali differenze di comportamento devono quindi essere ricondotte non al
+protocollo di riferimento, bensì alle scelte implementative e operative dei rispettivi
+demoni.
 
-La suite Chrony è composta principalmente da due programmi: \texttt{chronyd} e
-\texttt{chronyc}. Il primo è il demone responsabile della sincronizzazione del
-clock locale e viene normalmente eseguito come servizio di sistema. Il secondo è un'interfaccia
-a riga di comando che consente di interrogare lo stato del demone, monitorarne
-le prestazioni e modificare alcuni parametri operativi durante l'esecuzione
-\cite{ChronyDocumentation}.
+La suite Chrony è composta principalmente da due programmi: \texttt{chronyd} e \texttt{chronyc}.
+Il primo è il demone responsabile della sincronizzazione del clock locale e viene
+normalmente eseguito come servizio di sistema. Il secondo è un'interfaccia a
+riga di comando che consente di interrogare lo stato del demone, monitorarne le prestazioni
+e modificare alcuni parametri operativi durante l'esecuzione \cite{ChronyDocumentation}.
 
-Una caratteristica rilevante di Chrony è la sua progettazione orientata al
-funzionamento in condizioni operative variabili. La documentazione del progetto evidenzia
-infatti il supporto a scenari quali connessioni di rete intermittenti, reti
-congestionate, variazioni di temperatura che influenzano il clock locale,
-sistemi non sempre attivi e ambienti virtualizzati \cite{ChronyDocumentation}. Queste
-caratteristiche rendono Chrony particolarmente adatto a contesti nei quali la sincronizzazione
-deve rimanere efficace anche quando la disponibilità della sorgente temporale o la
-qualità del percorso di rete non sono costanti.
+Una caratteristica rilevante di Chrony è la sua progettazione orientata al funzionamento
+in condizioni operative variabili. La documentazione del progetto evidenzia
+infatti il supporto a scenari quali connessioni di rete intermittenti, reti congestionate,
+variazioni di temperatura che influenzano il clock locale, sistemi non sempre attivi
+e ambienti virtualizzati \cite{ChronyDocumentation}. Queste caratteristiche
+rendono Chrony particolarmente adatto a contesti nei quali la sincronizzazione
+deve rimanere efficace anche quando la disponibilità della sorgente temporale o
+la qualità del percorso di rete non sono costanti.
 
-Le metriche rese disponibili da Chrony, in particolare attraverso le
-informazioni di \textit{tracking} e \textit{sourcestats}, permettono di osservare
-lo stato del clock locale, la qualità della sorgente temporale e la variabilità
-delle misure utilizzate dal demone.
+Le metriche rese disponibili da Chrony, in particolare attraverso le informazioni
+di \textit{tracking} e \textit{sourcestats}, permettono di osservare lo stato
+del clock locale, la qualità della sorgente temporale e la variabilità delle misure
+utilizzate dal demone.
 
 \begin{table}[h]
   \centering
