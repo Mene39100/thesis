@@ -444,9 +444,221 @@ riferimenti temporali siano interni rispetto ai nodi preventivamente stabiliti, 
 sono rispettivametne i nodi \texttt{servergm} e \texttt{serverntp}.
 
 \section{Configurazione logica dei protocolli}
+Come è stato precedentemente descritto, vi sono tre percorsi logici distinti. Le differenti
+configurazioni applicate ai container nella fase di avvio, vengono
+opportunamente selezionate in base all'ambiente di test selezionato.
+
+Le tre catene logiche considerate sono:
+\begin{center}
+  \texttt{servergm} $\rightarrow$ \texttt{boundary} $\rightarrow$ \texttt{clientptp}
+\end{center}
+per PTP,
+\begin{center}
+  \texttt{servergm} $\rightarrow$ \texttt{clientchrony}
+\end{center}
+per Chrony, e
+\begin{center}
+  \texttt{serverntp} $\rightarrow$ \texttt{boundary} $\rightarrow$ \texttt{clientntp}
+\end{center}
+per NTPsec.
+
 \subsection{Configurazione PTP}
+
+Nella configurazione PTP, costrutia tramtie il software linuxptp, in particolare
+tramite il demone \texttt{ptp4l}, vi è il nodo \texttt{servergm} che opera come grandmaster
+interno del dominio PTP, il nodo \texttt{boundary} che rappresenta il boundary clock
+del sistema tra la rete A e la rete B, ed infinte si ha il \texttt{clientptp} ovvero
+il nodo slave finale sulla rete B.
+
+Nel dominio PTP si è utilizzato il dominio 24, ed in tutte le configurazione si
+è adottato il meccanismo di delay end-to-end e il timestamping software, coerente
+con la strutta dei container stessi, assenti di timestamping hardware dedicato.
+
+La configurazione del nodo \texttt{servergm} è presente nel file \texttt{server\_ptp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione PTP del nodo servergm.},label={lst:ptp-servergm}]
+[global]
+twoStepFlag 1
+domainNumber 24
+delay_mechanism E2E
+time_stamping software
+slaveOnly 0
+priority1 128
+priority2 128
+[eth0]
+\end{lstlisting}
+
+Il parametro \texttt{slaveOnly 0} rende possibile assegnare al nodo il ruolo di
+master. I valori \texttt{priority1} e \texttt{priority2}, entrambi pari a 128, così
+opportunamente scelti per \texttt{servergm}, permettono al nodo di avere prelazione
+nella scelta come di selezione dei master. Così facendo si ha che la gerarchia
+PTP viene resa coerente con il disegno logico sperimentale nel quale il \texttt{servergm}
+rappresenta il riferimento temporale principale del dominio.
+
+Differentemente si ha che il nodo \texttt{boundary} è configurato attraverso un
+interfaccia multipla. È connesso alla rete A tramite \texttt{eth0} e alla rete B
+tramite \texttt{eth1}. La configurazione è contenuta nel file \texttt{boundary\_ptp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione PTP del nodo boundary.},label={lst:ptp-boundary}]
+[global]
+twoStepFlag 1
+domainNumber 24
+delay_mechanism E2E
+time_stamping software
+slaveOnly 0
+priority1 200
+priority2 200
+announceReceiptTimeout 3
+tx_timestamp_timeout 20
+[eth0]
+[eth1]
+\end{lstlisting}
+
+Allo stesso modo del servergm anceh il \texttt{boundary} ha una configurazione di
+tipo \texttt{slaveOnly 0}, dovendo svolgere il ruolo di master sulla porta downstream
+verso \texttt{clientptp}. Tuttavia, i valori \texttt{priority1} e \texttt{priority2}
+sono pari a 200, riducendo la preferenza rispetto al \texttt{servergm}. Questa configurazione
+permette al boundary clock di sincronizzarsi rispetto al grandmaster sulla rete A
+e di propagare la sincronizzazione verso la rete B.
+
+Il nodo \texttt{clientptp} è configurato invece come slave PTP. La configurazione
+è contenuta nel file \texttt{client\_ptp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione PTP del nodo clientptp.},label={lst:ptp-client}]
+[global]
+twoStepFlag 1
+domainNumber 24
+delay_mechanism E2E
+time_stamping software
+summary_interval 1
+logging_level 6
+slaveOnly 1
+announceReceiptTimeout 3
+tx_timestamp_timeout 20
+verbose 1
+logMinDelayReqInterval 0
+logAnnounceInterval 1
+logSyncInterval 0
+[eth0]
+\end{lstlisting}
+
+Impostantdo il parametro \texttt{slaveOnly 1} si impedisce al client di
+candidarsi come master, vincolandolo alla sincronizzazione rispetto al nodo upstream
+selezionato nel dominio PTP. Per quanto rigurda i parametri rivolti agli
+intervalli dei messaggi e al livello di logging, sono stati opportunamente modificati
+per ottenre un comportamente osservabile più coerente con le neccessità dell'
+analisi dati.
+
 \subsection{Configurazione Chrony}
+
+Nella configurazione Chrony il nodo \texttt{servergm} svolge il ruolo di
+sorgente temporale interna, mentre \texttt{clientchrony} opera come client
+Chrony.
+
+La configurazione del server Chrony è contenuta nel file \texttt{server\_chrony.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione Chrony del nodo servergm.},label={lst:chrony-server}]
+server 127.127.1.0
+local stratum 8
+manual
+makestep 1 -1
+driftfile /var/lib/chrony/chrony.drift
+bindaddress 0.0.0.0
+allow 10.0.10.0/24
+log measurements statistics tracking refclocks
+logchange 0.01
+\end{lstlisting}
+
+La specifica \texttt{local stratum 8} permette al nodo di comportarsi come sorgente
+temporale interna indipendentemente dalla presenza di un riferimento esterno. La
+direttiva \texttt{allow 10.0.10.0/24} autorizza i nodi della rete A a interrogare
+il server Chrony. La specifica \texttt{bindaddress 0.0.0.0} abilita l'ascolto sulle
+interfacce disponibili del container.
+
+Il client Chrony è configurato per utilizzare come sorgente il nodo \texttt{servergm},
+raggiungibile all'indirizzo \texttt{10.0.10.1}. La configurazione è presente nel file
+\texttt{client\_chrony.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione Chrony del nodo clientchrony.},label={lst:chrony-client}]
+server 10.0.10.1 iburst minpoll 1 maxpoll 2
+driftfile /var/lib/chrony/chrony.drift
+logdir /analysis/raw_logs/T2/chrony_logs
+log measurements statistics tracking refclocks
+logchange 0.01
+\end{lstlisting}
+
+L'opzione di \texttt{iburst} peremette al client del dominio di acquisire più
+rapidamente la sorgente nella fase iniziale. I parametri \texttt{minpoll 1} e
+\texttt{maxpoll 2} limitano l'intervallo di polling, mantenendo una frequenza di
+campionamento elevata rispetto alla durata delle run sperimentali. La direttiva \texttt{driftfile}
+specifica il file utilizzato da Chrony per memorizzare la stima del drift del
+clock locale.
+
 \subsection{Configurazione NTPsec}
+
+Nella configurazione NTPsec, realizzata tramite \texttt{ntpd}, si ha come
+riferimento temporale il nodo \texttt{serverntp}, utilizzando il clock locale. Il
+nodo \texttt{boundary} si sincronizza con \texttt{serverntp} sulla rete A e rende
+disponibile il servizio NTPsec verso la rete B vero il nodo \texttt{clientntp}, collocato
+sulla rete B.
+
+La catena logica è:
+
+\begin{center}
+  \texttt{serverntp} $\rightarrow$ \texttt{boundary} $\rightarrow$ \texttt{clientntp}
+\end{center}
+
+La configurazione è presente nel file \texttt{server\_ntp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione NTPsec del nodo serverntp.},label={lst:ntpsec-server}]
+server 127.127.1.0
+fudge 127.127.1.0 stratum 8
+local stratum 8
+
+driftfile /var/lib/ntpsec/ntp.drift
+
+restrict default kod nomodify notrap nopeer limited
+restrict 127.0.0.1
+restrict ::1
+restrict 10.0.10.0 mask 255.255.255.0 nomodify notrap
+\end{lstlisting}
+
+La sorgente \texttt{127.127.1.0} indica l'utilizzo del clock locale. Lo stratum
+è impostato a 8, ciò è coerente con la sorgente temporale interna. La direttiva
+\texttt{driftfile} specifica il file in cui NTPsec memorizza la stima del drift del
+clock. Le direttive \texttt{restrict} limitano le operazioni consentite ai client
+e autorizzano la rete \texttt{10.0.10.0/24} a interrogare il server.
+
+La configurazione è contenuta nel file \texttt{boundary\_ntp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione NTPsec del nodo boundary.},label={lst:ntpsec-boundary}]
+server 10.0.10.4 iburst
+driftfile /var/lib/ntpsec/ntp.drift
+
+restrict default kod nomodify notrap nopeer limited
+restrict 10.0.10.0 mask 255.255.255.0 nomodify notrap
+restrict 10.0.20.0 mask 255.255.255.0
+restrict 127.0.0.1
+restrict ::1
+\end{lstlisting}
+
+La direttiva \texttt{server 10.0.10.4 iburst} indica che il boundary si sincronizza
+con \texttt{serverntp} sulla rete A. La rete B è autorizzata tramite la direttiva
+\texttt{restrict 10.0.20.0 mask 255.255.255.0}, permettendo a \texttt{clientntp}
+di utilizzare il boundary come sorgente NTPsec.
+
+Il client NTPsec utilizza il boundary sulla rete B, raggiungibile all'indirizzo \texttt{10.0.20.1}.
+La configurazione è contenuta nel file \texttt{client\_ntp.conf}.
+
+\begin{lstlisting}[language=bash,caption={Configurazione NTPsec del nodo clientntp.},label={lst:ntpsec-client}]
+server 10.0.20.1 iburst
+driftfile /var/lib/ntpsec/ntp.drift
+restrict 127.0.0.1
+restrict ::1
+\end{lstlisting}
+
+Differentemente dalla configurazione PTP, il nodo \texttt{boundary} opera come classico
+nodo intermedio e non come boundary clock nel senso del protocollo IEEE 1588.
 
 \section{Emulazione degli impairment di rete}
 \subsection{Linux Traffic Control}
