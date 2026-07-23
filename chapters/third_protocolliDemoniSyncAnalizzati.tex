@@ -108,7 +108,7 @@ client/server e broadcast. Ognuna di queste varianti è associata a un diverso i
 di modalità di pacchetto, che sono indicate in un campo specifico all'interno
 del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
   \begin{tabular}{lcc}
     \hline
@@ -126,57 +126,55 @@ del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
   \label{tab:ntp_association_packet_modes}
 \end{table}
 
-Nella v
+Nella variante \texttt{client/server}, un client persistente invia pacchetti di
+modalità 4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
+sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro. Un
+server può anche essere un driver di orologio di riferimento che ottiene il tempo
+direttamente da una fonte standard come un ricevitore GPS o un servizio di modem telefonico.
+In questa variante,i client estraggono la sincronizzazione dai server. Variante utilizzata
+in fase di testing, in entrambi le implementazioni NTPsec \ref{NTPsec} e Chrony
+\ref{Chrony}.
 
-Nella variante \texttt{client/server}, un client persistente invia pacchetti di modalità
-4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
-sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro.
-Un server può anche essere un driver di orologio di riferimento che ottiene il
-tempo direttamente da una fonte standard come un ricevitore GPS o un servizio di
-modem telefonico. In questa variante,i client estraggono la sincronizzazione dai server.
-Variante utilizzata in fase di testing, in entrambi le implementazioni NTPsec \ref{NTPsec}
-e Chrony \ref{Chrony}.
+Nella modalità \texttt{symmetric} due nodi operano come peer. Ciascun peer può
+trattare l'altro come potenziale sorgente temporale e la relazione non è
+strutturata secondo una direzione gerarchica client--server. Questa modalità è
+adatta a scenari in cui più server temporali cooperano tra loro come nodi di
+pari livello.
 
-Nella modalità \texttt{symmetric} due nodi operano come peer. Ciascun peer può trattare
-l'altro come potenziale sorgente temporale e la relazione non è strutturata secondo
-una direzione gerarchica client--server. Questa modalità è adatta a scenari in cui
-più server temporali cooperano tra loro come nodi di pari livello.
+La modalità \texttt{broadcast} prevede infine che un server invii periodicamente messaggi
+temporali destinati a più client. I client possono ricevere passivamente tali
+aggiornamenti, eventualmente dopo una fase iniziale di calibrazione del ritardo.
+Questa modalità è utile quando si vuole distribuire la sincronizzazione a più
+nodi riducendo lo scambio individuale di messaggi.
 
-La modalità \texttt{broadcast} prevede infine che un server invii periodicamente
-messaggi temporali destinati a più client. I client possono ricevere passivamente
-tali aggiornamenti, eventualmente dopo una fase iniziale di calibrazione del
-ritardo. Questa modalità è utile quando si vuole distribuire la sincronizzazione a
-più nodi riducendo lo scambio individuale di messaggi.
+Il livello ricoperto da ciascun server nella gerarchia è definito secondo una
+numerazione di stratum. Partendo da stratum 1, associato a server primari, si può
+arrivare ad un massimo di 15 (16 si considera non sincronizzato). All'aumentare
+del numero di stratum, la sua precisione si degrada a seconda del percorso di rete
+specifico e della stabilità dell'orologio di sistema. Gli errori medi, misurati in
+base alle distanze di sincronizzazione, aumentano approssimativamente in
+proporzione ai numeri di stratum e al ritardo di andata e ritorno misurato.
 
-Il livello ricoperto da ciascun server nella gerarchia è definito secondo una numerazione
-di stratum. Partendo da stratum 1, associato a server primari, si può arrivare
-ad un massimo di 15 (16 si considera non sincronizzato). All'aumentare del numero
-di stratum, la sua precisione si degrada a seconda del percorso di rete
-specifico e della stabilità dell'orologio di sistema. Gli errori medi, misurati
-in base alle distanze di sincronizzazione, aumentano approssimativamente in proporzione
-ai numeri di stratum e al ritardo di andata e ritorno misurato.
+NTP organizza la sincronizzazione secondo una struttura gerarchica orientata a
+evitare cicli e a minimizzare la distanza di sincronizzazione rispetto alle
+sorgenti primarie. La RFC 5905 descrive tale organizzazione come basata su una variante
+dell'algoritmo distribuito Bellman-Ford, utilizzata per determinare uno spanning
+tree dei percorsi più brevi radicato sui primary server~ \cite{martinNetworkTimeProtocol2010}
+In questo modo, la subnet NTP può riorganizzarsi automaticamente in presenza di
+guasti o variazioni nella rete temporale.
 
-NTP organizza la sincronizzazione secondo una struttura gerarchica orientata a evitare
-cicli e a minimizzare la distanza di sincronizzazione rispetto alle sorgenti primarie.
-La RFC 5905 descrive tale organizzazione come basata su una variante dell'algoritmo
-distribuito Bellman-Ford, utilizzata per determinare uno spanning tree dei percorsi
-più brevi radicato sui primary server~ \cite{martinNetworkTimeProtocol2010} In
-questo modo, la subnet NTP può riorganizzarsi automaticamente in presenza di guasti
-o variazioni nella rete temporale.
-
--------------
 \subsection{Stima di offset e delay}
 Il tempo di sistema è rappresentato dall'orologio di sistema gestito dall'hardware
-e dal sistema operativo. L'obiettivo degli algoritmi NTP è minimizzare sia la
-differenza di tempo che la differenza di frequenza tra UTC (Coordinated Universal
-Time, o l'orologio di riferimento) e l'orologio di sistema. Quando queste
-differenze sono state ridotte al di sotto delle tolleranze nominali, si dice che l'orologio
-di sistema è sincronizzato con UTC. Un timestamp $T(t)$ rappresenta la data UTC
-o l'offset di tempo rispetto a UTC al tempo di esecuzione t. Il significato inteso
-dovrebbe essere chiaro dal contesto. Sia $T(t)$ l'offset di tempo, $R(t)$ l'offset
-di frequenza e $D(t)$ il tasso di invecchiamento (derivata prima di $R(t)$
-rispetto a t). Quindi, se $T(t_{0})$ è lo scostamento temporale UTC determinato a
-$t = t_{0}$, lo scostamento temporale UTC al tempo t è
+e dal sistema operativo. L'obiettivo degli algoritmi NTP è minimizzare sia la differenza
+di tempo che la differenza di frequenza tra UTC (Coordinated Universal Time, o l'orologio
+di riferimento) e l'orologio di sistema. Quando queste differenze sono state ridotte
+al di sotto delle tolleranze nominali, si dice che l'orologio di sistema è
+sincronizzato con UTC. Un timestamp $T(t)$ rappresenta la data UTC o l'offset di tempo
+rispetto a UTC al tempo di esecuzione t. Il significato inteso dovrebbe essere
+chiaro dal contesto. Sia $T(t)$ l'offset di tempo, $R(t)$ l'offset di frequenza
+e $D(t)$ il tasso di invecchiamento (derivata prima di $R(t)$ rispetto a t). Quindi,
+se $T(t_{0})$ è lo scostamento temporale UTC determinato a $t = t_{0}$, lo scostamento
+temporale UTC al tempo t è
 
 \[
   T(t) = T(t_{0}) + R(t_{0})(t-t_{0}) + 1/2 * D(t_{0})(t-t_{0})^{2}+ e
@@ -184,106 +182,107 @@ $t = t_{0}$, lo scostamento temporale UTC al tempo t è
 
 dove e è un termine di errore stocastico.
 
-Quattro statistiche vengono aggiornate ogni volta che un client effettua una
-misurazione con un server. Lo scomostamento, ossia il \texttt{theta}, è
-rappresentazione dello scostamento temporale di massima verosimiglianza dell'orologio
-del server rispetto all'orologio di sistema. Vi è poi il ritardo,definito come \texttt{delta},
-che è definito come il ritardo di andata e ritorno tra client e server. Vi è poi
-la dispersione, \texttt{epsilon} cioè l'errore massimo intrinseco alla
-misurazione, la quale aumenta a una velocità pari alla massima tolleranza di frequenza
-dell'orologio di sistema disciplinato $PHI$, tipicamente 15 ppm. Infine, il
-jitter, definito come \texttt{psi}, è la media quadratica (RMS) delle differenze di
-offset più recenti e rappresenta l'errore nominale nella stima dell'offset.
+Quattro statistiche vengono aggiornate ogni volta che un client effettua una misurazione
+con un server. Lo scomostamento, ossia il \texttt{theta}, è rappresentazione dello
+scostamento temporale di massima verosimiglianza dell'orologio del server rispetto
+all'orologio di sistema. Vi è poi il ritardo,definito come \texttt{delta}, che è
+definito come il ritardo di andata e ritorno tra client e server. Vi è poi la dispersione,
+\texttt{epsilon} cioè l'errore massimo intrinseco alla misurazione, la quale
+aumenta a una velocità pari alla massima tolleranza di frequenza dell'orologio
+di sistema disciplinato $PHI$, tipicamente 15 ppm. Infine, il jitter, definito
+come \texttt{psi}, è la media quadratica (RMS) delle differenze di offset più
+recenti e rappresenta l'errore nominale nella stima dell'offset.
 
-La specifica NTPv4 descrive inoltre il protocollo come un insieme di processi e strutture
-di stato, distinguendo tra variabili associate ai pacchetti, allo stato dei peer,
-al processo di polling, allo stato di sistema e alla disciplina del clock \cite{martinNetworkTimeProtocol2010}.
-Questa organizzazione evidenzia che il demone non si limita a ricevere timestamp
-e applicare una correzione immediata, ma mantiene informazioni sullo stato delle associazioni,
-valuta la qualità delle sorgenti e utilizza tali informazioni nel processo di
-selezione, filtraggio e correzione del clock locale.
+La specifica NTPv4 descrive inoltre il protocollo come un insieme di processi e
+strutture di stato, distinguendo tra variabili associate ai pacchetti, allo
+stato dei peer, al processo di polling, allo stato di sistema e alla disciplina
+del clock \cite{martinNetworkTimeProtocol2010}. Questa organizzazione evidenzia che
+il demone non si limita a ricevere timestamp e applicare una correzione immediata,
+ma mantiene informazioni sullo stato delle associazioni, valuta la qualità delle sorgenti
+e utilizza tali informazioni nel processo di selezione, filtraggio e correzione
+del clock locale.
 
-Dal punto di vista dei dati scambiati, un pacchetto NTP contiene informazioni
-relative sia allo stato della sorgente temporale sia ai timestamp necessari alla
-stima del tempo. Tra i campi più rilevanti per l'analisi della sincronizzazione vi
-sono \texttt{mode}, che identifica la modalità del pacchetto, \texttt{stratum},
-che indica la distanza gerarchica dalla sorgente di riferimento, \texttt{poll}, che
-descrive l'intervallo di interrogazione, \texttt{rootdelay} e \texttt{rootdisp}, che
-rappresentano rispettivamente il ritardo e la dispersione cumulativi verso la sorgente
-primaria, e \texttt{refid}, che identifica il riferimento temporale utilizzato. Il
-pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec}, \texttt{xmt} e
-\texttt{dst}, corrispondenti ai quattro istanti utilizzati nel modello di stima
+Dal punto di vista dei dati scambiati, un pacchetto NTP contiene informazioni relative
+sia allo stato della sorgente temporale sia ai timestamp necessari alla stima del
+tempo. Tra i campi più rilevanti per l'analisi della sincronizzazione vi sono
+\texttt{mode}, che identifica la modalità del pacchetto, \texttt{stratum}, che indica
+la distanza gerarchica dalla sorgente di riferimento, \texttt{poll}, che
+descrive l'intervallo di interrogazione, \texttt{rootdelay} e \texttt{rootdisp},
+che rappresentano rispettivamente il ritardo e la dispersione cumulativi verso
+la sorgente primaria, e \texttt{refid}, che identifica il riferimento temporale utilizzato.
+Il pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec}, \texttt{xmt}
+e \texttt{dst}, corrispondenti ai quattro istanti utilizzati nel modello di stima
 di delay e offset. \cite{martinNetworkTimeProtocol2010}
 
-Dal punto di vista del formato dei messaggi, un pacchetto NTP è trasportato come datagramma
-UDP e contiene un header composto da campi che descrivono sia lo stato della sorgente
-temporale sia i timestamp utilizzati per la stima della sincronizzazione \cite{martinNetworkTimeProtocol2010}.
+Dal punto di vista del formato dei messaggi, un pacchetto NTP è trasportato come
+datagramma UDP e contiene un header composto da campi che descrivono sia lo
+stato della sorgente temporale sia i timestamp utilizzati per la stima della
+sincronizzazione \cite{martinNetworkTimeProtocol2010}.
 
-Dal punto di vista del trasporto, NTP opera tramite pacchetti scambiati su UDP, tipicamente
-sulla porta 123. La scelta di UDP è coerente con la natura della sincronizzazione
-temporale: il protocollo non richiede consegna affidabile dei messaggi, poiché eventuali
-ritrasmissioni introdurrebbero ulteriore ritardo e renderebbero meno rappresentativa
-l'informazione temporale trasportata dal pacchetto. La RFC 5905 osserva infatti
-che un trasporto affidabile, come TCP, può risultare controproducente per NTP, in
-quanto i retry aumenterebbero il delay e gli errori associati alla stima temporale
-\cite{martinNetworkTimeProtocol2010}.
+Dal punto di vista del trasporto, NTP opera tramite pacchetti scambiati su UDP,
+tipicamente sulla porta 123. La scelta di UDP è coerente con la natura della
+sincronizzazione temporale: il protocollo non richiede consegna affidabile dei messaggi,
+poiché eventuali ritrasmissioni introdurrebbero ulteriore ritardo e renderebbero
+meno rappresentativa l'informazione temporale trasportata dal pacchetto. La RFC 5905
+osserva infatti che un trasporto affidabile, come TCP, può risultare controproducente
+per NTP, in quanto i retry aumenterebbero il delay e gli errori associati alla
+stima temporale \cite{martinNetworkTimeProtocol2010}.
 
-Il protocollo on-wire si basa quindi sullo scambio di datagrammi contenenti timestamp
-e informazioni di stato. Tali timestamp consentono di stimare il round-trip
-delay e l'offset tra client e sorgente temporale. Ne consegue che la qualità della
-sincronizzazione dipende direttamente dalle condizioni del percorso di rete:
-delay variabile, jitter, perdita di pacchetti e congestione possono alterare la
-regolarità delle osservazioni disponibili al demone.
+Il protocollo on-wire si basa quindi sullo scambio di datagrammi contenenti
+timestamp e informazioni di stato. Tali timestamp consentono di stimare il round-trip
+delay e l'offset tra client e sorgente temporale. Ne consegue che la qualità
+della sincronizzazione dipende direttamente dalle condizioni del percorso di
+rete: delay variabile, jitter, perdita di pacchetti e congestione possono alterare
+la regolarità delle osservazioni disponibili al demone.
 
 \subsection{Filtraggio, selezione e disciplina del clock}
-In NTPv4 è presente una sequenza di elaborazione delle osservazioni temporali, al
-fine di ridurre l'effetto di misure rumorose, selezionare sorgenti coerenti e
-correggere il clock del sistema in modo controllato
-\cite{martinNetworkTimeProtocol2010}.
+In NTPv4 è presente una sequenza di elaborazione delle osservazioni temporali,
+al fine di ridurre l'effetto di misure rumorose, selezionare sorgenti coerenti e correggere
+il clock del sistema in modo controllato \cite{martinNetworkTimeProtocol2010}.
 
-Il primo livello di elaborazione è il \texttt{clock filter algorithm}. Per ogni
-associazione con una sorgente temporale, il demone mantiene un insieme di campioni
-recenti, ciascuno associato alle misure osservate. L'idea di base è individuare le
-osservazioni più affidabili, privilegiando in generale campioni caratterizzati
-da minore incertezza. In questo modo, il protocollo evita che una singola misura
-degradata produca immediatamente una correzione errata del clock locale.
+Il primo livello di elaborazione è il \texttt{clock filter algorithm}. Per ogni associazione
+con una sorgente temporale, il demone mantiene un insieme di campioni recenti, ciascuno
+associato alle misure osservate. L'idea di base è individuare le osservazioni
+più affidabili, privilegiando in generale campioni caratterizzati da minore incertezza.
+In questo modo, il protocollo evita che una singola misura degradata produca immediatamente
+una correzione errata del clock locale.
 
-In seguito al filtraggio delle misure associate ai singoli peer, il demone procede
-con il \texttt{system process}, che valuta le sorgenti temporali disponibili.
-Quando sono presenti più sorgenti, NTP deve stabilire quali siano coerenti tra loro
-e quali debbano essere escluse perché considerate inaffidabili o anomale. Il
-processo di selezione riduce quindi l'insieme delle sorgenti candidate e
-individua il riferimento temporale da utilizzare per la sincronizzazione del
-sistema. Anche quando nel testbed è presente una topologia controllata e con poche
-sorgenti, questo meccanismo è concettualmente rilevante: la qualità della sorgente
-percepita dal demone influenza lo stato operativo e le metriche riportate.
+In seguito al filtraggio delle misure associate ai singoli peer, il demone
+procede con il \texttt{system process}, che valuta le sorgenti temporali
+disponibili. Quando sono presenti più sorgenti, NTP deve stabilire quali siano
+coerenti tra loro e quali debbano essere escluse perché considerate inaffidabili
+o anomale. Il processo di selezione riduce quindi l'insieme delle sorgenti candidate
+e individua il riferimento temporale da utilizzare per la sincronizzazione del sistema.
+Anche quando nel testbed è presente una topologia controllata e con poche
+sorgenti, questo meccanismo è concettualmente rilevante: la qualità della
+sorgente percepita dal demone influenza lo stato operativo e le metriche
+riportate.
 
-L'ultimo passaggio è la \texttt{clock discipline}, cioè il meccanismo mediante il
-quale le stime selezionate vengono utilizzate per correggere il clock locale. La
+L'ultimo passaggio è la \texttt{clock discipline}, cioè il meccanismo mediante
+il quale le stime selezionate vengono utilizzate per correggere il clock locale. La
 correzione non coincide necessariamente con uno spostamento immediato dell'orologio
-di sistema. Il demone può intervenire anche regolando progressivamente la frequenza
-di avanzamento del clock, in modo da ridurre l'offset preservando la continuità
-temporale. Questa distinzione è importante: una misura di offset rappresenta una
-stima dello scostamento, mentre la disciplina del clock determina come tale stima
+di sistema. Il demone può intervenire anche regolando progressivamente la
+frequenza di avanzamento del clock, in modo da ridurre l'offset preservando la continuità
+temporale. Questa distinzione è importante: una misura di offset rappresenta una stima
+dello scostamento, mentre la disciplina del clock determina come tale stima
 viene trasformata in una correzione effettiva.
 
 \subsection{NTPsec e il demone ntpd}
 
-NTPsec è un progetto nato con l'obiettivo di fornire una implementazione più
-sicura e manutenibile del protocollo NTP, mantenendo la compatibilità con la specifica
-RFC 5905. Il progetto si è sviluppato a partire da NTP Classic. L'obiettivo di
-NTPsec è quello di offrire una versione più robusta e semplificata del
-protocollo, ottenutos anche attraverso la rimozione di codice legacy e funzionalità
-obsolete. Questa caratteristica è rilevante soprattutto in contesti in cui il
-demone di sincronizzazione è esposto in rete e deve operare come componente
-infrastrutturale affidabile \cite{SecureNetworkTime}.
+NTPsec è un progetto nato con l'obiettivo di fornire una implementazione più sicura
+e manutenibile del protocollo NTP, mantenendo la compatibilità con la specifica
+RFC 5905. Il progetto si è sviluppato a partire da NTP Classic. L'obiettivo di NTPsec
+è quello di offrire una versione più robusta e semplificata del protocollo,
+ottenutos anche attraverso la rimozione di codice legacy e funzionalità obsolete.
+Questa caratteristica è rilevante soprattutto in contesti in cui il demone di sincronizzazione
+è esposto in rete e deve operare come componente infrastrutturale affidabile \cite{SecureNetworkTime}.
 
-Il componente principale della suite è il demone \texttt{ntpd}, responsabile
-dell'esecuzione del servizio NTP sul nodo. Il demone gestisce le associazioni configurate,
-comunica con le sorgenti temporali, mantiene lo stato della sincronizzazione e applica
-le correzioni necessarie al clock locale. Accanto al demone, la suite fornisce strumenti
-di interrogazione e controllo, come \texttt{ntpq}, utilizzabili per osservare lo
-stato delle associazioni e le metriche prodotte dal servizio.
+Il componente principale della suite è il demone \texttt{ntpd}, responsabile dell'esecuzione
+del servizio NTP sul nodo. Il demone gestisce le associazioni configurate, comunica
+con le sorgenti temporali, mantiene lo stato della sincronizzazione e applica le
+correzioni necessarie al clock locale. Accanto al demone, la suite fornisce
+strumenti di interrogazione e controllo, come \texttt{ntpq}, utilizzabili per osservare
+lo stato delle associazioni e le metriche prodotte dal servizio.
 
 \begin{table}[h]
   \centering
@@ -332,40 +331,40 @@ stato delle associazioni e le metriche prodotte dal servizio.
 \subsection{Chrony e il demone chronyd}
 \label{Chrony}
 
-Chrony è una suite software per la sincronizzazione temporale e costituisce una
-implementazione versatile del Network Time Protocol. Il progetto è progettato per
-sincronizzare il clock di sistema rispetto a server NTP, reference clock, come ricevitori
-GPS, oppure input manuali; può inoltre operare come server NTPv4, fornendo
-sincronizzazione ad altri nodi della rete~\cite{ChronyDocumentation}.
+Chrony è una suite software per la sincronizzazione temporale e costituisce una implementazione
+versatile del Network Time Protocol. Il progetto è progettato per sincronizzare
+il clock di sistema rispetto a server NTP, reference clock, come ricevitori GPS, oppure
+input manuali; può inoltre operare come server NTPv4, fornendo sincronizzazione ad
+altri nodi della rete~\cite{ChronyDocumentation}.
 
-Dal punto di vista protocollare, Chrony non definisce un protocollo alternativo a
-NTP, ma implementa la sincronizzazione basata su NTP con una propria
-architettura software e proprie strategie interne di stima e controllo del clock.
-Questa distinzione è rilevante nel contesto della tesi, poiché Chrony e NTPsec
-appartengono allo stesso ambito protocollare, ma rappresentano implementazioni differenti:
-eventuali differenze di comportamento devono quindi essere ricondotte non al
-protocollo di riferimento, bensì alle scelte implementative e operative dei rispettivi
-demoni.
+Dal punto di vista protocollare, Chrony non definisce un protocollo alternativo
+a NTP, ma implementa la sincronizzazione basata su NTP con una propria architettura
+software e proprie strategie interne di stima e controllo del clock. Questa
+distinzione è rilevante nel contesto della tesi, poiché Chrony e NTPsec appartengono
+allo stesso ambito protocollare, ma rappresentano implementazioni differenti: eventuali
+differenze di comportamento devono quindi essere ricondotte non al protocollo di riferimento,
+bensì alle scelte implementative e operative dei rispettivi demoni.
 
-La suite Chrony è composta principalmente da due programmi: \texttt{chronyd} e \texttt{chronyc}.
-Il primo è il demone responsabile della sincronizzazione del clock locale e viene
-normalmente eseguito come servizio di sistema. Il secondo è un'interfaccia a
-riga di comando che consente di interrogare lo stato del demone, monitorarne le prestazioni
-e modificare alcuni parametri operativi durante l'esecuzione \cite{ChronyDocumentation}.
+La suite Chrony è composta principalmente da due programmi: \texttt{chronyd} e
+\texttt{chronyc}. Il primo è il demone responsabile della sincronizzazione del
+clock locale e viene normalmente eseguito come servizio di sistema. Il secondo è un'interfaccia
+a riga di comando che consente di interrogare lo stato del demone, monitorarne
+le prestazioni e modificare alcuni parametri operativi durante l'esecuzione
+\cite{ChronyDocumentation}.
 
-Una caratteristica rilevante di Chrony è la sua progettazione orientata al funzionamento
-in condizioni operative variabili. La documentazione del progetto evidenzia
-infatti il supporto a scenari quali connessioni di rete intermittenti, reti congestionate,
-variazioni di temperatura che influenzano il clock locale, sistemi non sempre attivi
-e ambienti virtualizzati \cite{ChronyDocumentation}. Queste caratteristiche
-rendono Chrony particolarmente adatto a contesti nei quali la sincronizzazione
-deve rimanere efficace anche quando la disponibilità della sorgente temporale o
-la qualità del percorso di rete non sono costanti.
+Una caratteristica rilevante di Chrony è la sua progettazione orientata al
+funzionamento in condizioni operative variabili. La documentazione del progetto evidenzia
+infatti il supporto a scenari quali connessioni di rete intermittenti, reti
+congestionate, variazioni di temperatura che influenzano il clock locale,
+sistemi non sempre attivi e ambienti virtualizzati \cite{ChronyDocumentation}. Queste
+caratteristiche rendono Chrony particolarmente adatto a contesti nei quali la sincronizzazione
+deve rimanere efficace anche quando la disponibilità della sorgente temporale o la
+qualità del percorso di rete non sono costanti.
 
-Le metriche rese disponibili da Chrony, in particolare attraverso le informazioni
-di \texttt{tracking} e \texttt{sourcestats}, permettono di osservare lo stato
-del clock locale, la qualità della sorgente temporale e la variabilità delle misure
-utilizzate dal demone.
+Le metriche rese disponibili da Chrony, in particolare attraverso le
+informazioni di \texttt{tracking} e \texttt{sourcestats}, permettono di osservare
+lo stato del clock locale, la qualità della sorgente temporale e la variabilità
+delle misure utilizzate dal demone.
 
 \begin{table}[h]
   \centering
@@ -413,112 +412,111 @@ utilizzate dal demone.
 \section{Precision Time Protocol}
 \subsection{Caratteristiche generali di PTP}
 
-Lo standard IEEE 1588, noto come \texttt{Precision Time Protocol} (PTP), è stato progettato
-con l'obiettivo di fornire una sincronizzazione temporale accurata e precisa tra clock
-appartenenti a sistemi distribuiti. Il protocollo è pensato per dispositivi che
-comunicano attraverso reti a commutazione di pacchetto, incluse reti Ethernet, e
-supporta comunicazioni multicast, unicast oppure una combinazione delle due modalità.
-Lo standard definisce inoltre specifici mapping del protocollo su differenti
-tecnologie di trasporto, tra cui UDP su IPv4/IPv6 e IEEE 802.3 Ethernet \cite{IEEEStandardPrecision2020}.
+Lo standard IEEE 1588, noto come \texttt{Precision Time Protocol} (PTP), è stato
+progettato con l'obiettivo di fornire una sincronizzazione temporale accurata e
+precisa tra clock appartenenti a sistemi distribuiti. Il protocollo è pensato per
+dispositivi che comunicano attraverso reti a commutazione di pacchetto, incluse
+reti Ethernet, e supporta comunicazioni multicast, unicast oppure una
+combinazione delle due modalità. Lo standard definisce inoltre specifici mapping del
+protocollo su differenti tecnologie di trasporto, tra cui UDP su IPv4/IPv6 e
+IEEE 802.3 Ethernet \cite{IEEEStandardPrecision2020}.
 
-Rispetto a protocolli general-purpose come NTP, PTP è orientato a contesti nei
-quali sono richiesti livelli di precisione più elevati e una maggiore
-integrazione con l'infrastruttura di rete. Il protocollo può supportare sincronizzazione
-nell'ordine del sub-microsecondo in reti progettate e configurate in modo appropriato,
-utilizzando una quantità contenuta di banda e di risorse computazionali dedicate
-alla gestione del clock locale. Tale accuratezza dipende tuttavia dalle caratteristiche
-della rete, dal supporto al timestamping e dal tipo di dispositivi coinvolti
-nella distribuzione del tempo ~\cite{IEEEStandardPrecision2020}.
+Rispetto a protocolli general-purpose come NTP, PTP è orientato a contesti nei quali
+sono richiesti livelli di precisione più elevati e una maggiore integrazione con l'infrastruttura
+di rete. Il protocollo può supportare sincronizzazione nell'ordine del sub-microsecondo
+in reti progettate e configurate in modo appropriato, utilizzando una quantità contenuta
+di banda e di risorse computazionali dedicate alla gestione del clock locale.
+Tale accuratezza dipende tuttavia dalle caratteristiche della rete, dal supporto al
+timestamping e dal tipo di dispositivi coinvolti nella distribuzione del tempo ~\cite{IEEEStandardPrecision2020}.
 
-PTP organizza la sincronizzazione secondo una relazione gerarchica tra clock.
-All'interno di un dominio PTP viene individuato un riferimento temporale
-principale, detto \texttt{grandmaster clock}, rispetto al quale gli altri clock del
-dominio si sincronizzano. La sorgente della sincronizzazione è tradizionalmente
-indicata come \texttt{master}, mentre il nodo che riceve la sincronizzazione è
-indicato come \texttt{slave}; nella terminologia più recente, tali ruoli possono essere
-descritti rispettivamente anche come \texttt{timeTransmitter} e \texttt{timeReceiver}.
+PTP organizza la sincronizzazione secondo una relazione gerarchica tra clock. All'interno
+di un dominio PTP viene individuato un riferimento temporale principale, detto
+\texttt{grandmaster clock}, rispetto al quale gli altri clock del dominio si
+sincronizzano. La sorgente della sincronizzazione è tradizionalmente indicata come
+\texttt{master}, mentre il nodo che riceve la sincronizzazione è indicato come \texttt{slave};
+nella terminologia più recente, tali ruoli possono essere descritti
+rispettivamente anche come \texttt{timeTransmitter} e \texttt{timeReceiver}.
 
-Un aspetto fondamentale del protocollo è il concetto di \texttt{PTP domain}. Un dominio
-PTP rappresenta un meccanismo di isolamento logico che consente di separare più reti
-PTP indipendenti anche all'interno dello stesso ambiente fisico. I clock
-appartenenti a domini differenti non partecipano alla stessa gerarchia di
-sincronizzazione e non interagiscono tra loro ai fini della selezione del
-riferimento temporale. In questo modo, più istanze PTP possono coesistere senza
-interferire reciprocamente~\cite{IEEEStandardPrecision2020}.
+Un aspetto fondamentale del protocollo è il concetto di \texttt{PTP domain}. Un
+dominio PTP rappresenta un meccanismo di isolamento logico che consente di
+separare più reti PTP indipendenti anche all'interno dello stesso ambiente
+fisico. I clock appartenenti a domini differenti non partecipano alla stessa gerarchia
+di sincronizzazione e non interagiscono tra loro ai fini della selezione del riferimento
+temporale. In questo modo, più istanze PTP possono coesistere senza interferire reciprocamente~\cite{IEEEStandardPrecision2020}.
 
-Il grandmaster clock costituisce il riferimento temporale del dominio. Esso è il clock
-rispetto al quale gli altri clock locali PTP si sincronizzano, direttamente
-oppure attraverso dispositivi intermedi. La sua selezione avviene sulla base di criteri
-legati alla qualità e alla priorità del clock, quali accuratezza, stabilità e affidabilità.
-Lo standard prevede inoltre la possibilità che un nodo rilevi altri possibili
-master, detti \texttt{foreign masters}: questi rappresentano sorgenti temporali alternative
-che possono essere monitorate e valutate nel caso in cui il riferimento corrente diventi
-meno adeguato o un altro clock presenti caratteristiche migliori~\cite{IEEEStandardPrecision2020}.
+Il grandmaster clock costituisce il riferimento temporale del dominio. Esso è il
+clock rispetto al quale gli altri clock locali PTP si sincronizzano, direttamente
+oppure attraverso dispositivi intermedi. La sua selezione avviene sulla base di
+criteri legati alla qualità e alla priorità del clock, quali accuratezza,
+stabilità e affidabilità. Lo standard prevede inoltre la possibilità che un nodo rilevi
+altri possibili master, detti \texttt{foreign masters}: questi rappresentano
+sorgenti temporali alternative che possono essere monitorate e valutate nel caso
+in cui il riferimento corrente diventi meno adeguato o un altro clock presenti
+caratteristiche migliori~\cite{IEEEStandardPrecision2020}.
 
 \subsection{Architettura e ruoli dei clock}
 
-Lo standard IEEE 1588 definisce diversi tipi di clock, ciascuno con un ruolo specifico
-nella distribuzione della sincronizzazione. Un \texttt{ordinary clock} è un dispositivo
-PTP dotato di una singola porta di rete; può operare come sorgente o come
-destinatario della sincronizzazione, ma appartiene a un solo segmento PTP alla volta.
-In una rete PTP elementare, composta da un singolo segmento, l'architettura può
-essere descritta come un insieme formato da un grandmaster clock e da (n-1)
-ordinary clock che si sincronizzano rispetto a esso.
+Lo standard IEEE 1588 definisce diversi tipi di clock, ciascuno con un ruolo
+specifico nella distribuzione della sincronizzazione. Un \texttt{ordinary clock}
+è un dispositivo PTP dotato di una singola porta di rete; può operare come sorgente
+o come destinatario della sincronizzazione, ma appartiene a un solo segmento PTP
+alla volta. In una rete PTP elementare, composta da un singolo segmento, l'architettura
+può essere descritta come un insieme formato da un grandmaster clock e da (n-1) ordinary
+clock che si sincronizzano rispetto a esso.
 
-Un \texttt{boundary clock} è invece un dispositivo dotato di più porte PTP e collocato
-tra segmenti di rete distinti. Esso può sincronizzarsi rispetto a una sorgente
-temporale su una porta e distribuire a sua volta la sincronizzazione su altre
-porte. In questo senso, il boundary clock agisce come elemento intermedio della
-gerarchia PTP: riceve il tempo da monte e lo propaga verso valle, permettendo di
-estendere la sincronizzazione tra segmenti di rete differenti. Per ogni segmento viene
-determinata una relazione di sincronizzazione locale, mentre l'intero dominio
-rimane riferito al grandmaster clock selezionato
-\cite{IEEEStandardPrecision2020}.
+Un \texttt{boundary clock} è invece un dispositivo dotato di più porte PTP e
+collocato tra segmenti di rete distinti. Esso può sincronizzarsi rispetto a una sorgente
+temporale su una porta e distribuire a sua volta la sincronizzazione su altre porte.
+In questo senso, il boundary clock agisce come elemento intermedio della gerarchia
+PTP: riceve il tempo da monte e lo propaga verso valle, permettendo di estendere la
+sincronizzazione tra segmenti di rete differenti. Per ogni segmento viene
+determinata una relazione di sincronizzazione locale, mentre l'intero dominio rimane
+riferito al grandmaster clock selezionato \cite{IEEEStandardPrecision2020}.
 
-Diverso è il ruolo del \texttt{transparent clock}. Un transparent clock è un
-dispositivo di rete PTP-aware che non agisce come master o slave della gerarchia
-temporale, ma interviene sui messaggi PTP in transito per compensare il ritardo introdotto
-dal dispositivo stesso. In particolare, esso misura il tempo di permanenza del pacchetto
-al proprio interno, detto \texttt{residence time}, e aggiorna il campo \texttt{correctionField}
-dei messaggi PTP. In questo modo, la variabilità introdotta dal dispositivo di rete
-viene resa esplicita e può essere considerata nel calcolo della sincronizzazione.
+Diverso è il ruolo del \texttt{transparent clock}. Un transparent clock è un dispositivo
+di rete PTP-aware che non agisce come master o slave della gerarchia temporale,
+ma interviene sui messaggi PTP in transito per compensare il ritardo introdotto
+dal dispositivo stesso. In particolare, esso misura il tempo di permanenza del
+pacchetto al proprio interno, detto \texttt{residence time}, e aggiorna il campo \texttt{correctionField}
+dei messaggi PTP. In questo modo, la variabilità introdotta dal dispositivo di
+rete viene resa esplicita e può essere considerata nel calcolo della
+sincronizzazione.
 
-Il transparent clock non sincronizza quindi il proprio tempo per poi redistribuirlo,
-come avviene nel boundary clock. La sua funzione è rendere più accurata la misura
-del tempo di attraversamento della rete, compensando latenza e jitter introdotti
-dagli apparati intermedi. Per questo motivo, i transparent clock contribuiscono
-a ridurre l'errore temporale osservato dagli end device, ma non costituiscono una
-sorgente autonoma di sincronizzazione~\cite{PTP_net}.
+Il transparent clock non sincronizza quindi il proprio tempo per poi
+redistribuirlo, come avviene nel boundary clock. La sua funzione è rendere più
+accurata la misura del tempo di attraversamento della rete, compensando latenza e
+jitter introdotti dagli apparati intermedi. Per questo motivo, i transparent clock
+contribuiscono a ridurre l'errore temporale osservato dagli end device, ma non
+costituiscono una sorgente autonoma di sincronizzazione~\cite{PTP_net}.
 
 Lo standard distingue due principali tipologie di transparent clock: \texttt{end-to-end
-transparent clock} e \texttt{peer-to-peer transparent clock}. Il primo aggiorna il
-\texttt{correctionField} con il tempo di residenza del messaggio PTP all'interno
-del dispositivo. Il secondo considera, oltre al tempo di residenza, anche il ritardo
-del collegamento verso il nodo PTP adiacente. In questo modo, il peer-to-peer transparent
-clock contribuisce alla compensazione del ritardo link-by-link, mentre l'end-to-end
-transparent clock agisce principalmente sulla correzione del tempo di
+transparent clock} e \texttt{peer-to-peer transparent clock}. Il primo aggiorna
+il \texttt{correctionField} con il tempo di residenza del messaggio PTP all'interno
+del dispositivo. Il secondo considera, oltre al tempo di residenza, anche il
+ritardo del collegamento verso il nodo PTP adiacente. In questo modo, il peer-to-peer
+transparent clock contribuisce alla compensazione del ritardo link-by-link, mentre
+l'end-to-end transparent clock agisce principalmente sulla correzione del tempo di
 attraversamento del dispositivo.
 
-Nel contesto PTP è inoltre utile distinguere il clock locale generico del nodo
-dal \texttt{local PTP clock}. Il primo rappresenta la nozione di tempo mantenuta
-dal sistema o dal dispositivo; il secondo è il clock utilizzato dall'istanza PTP per
-partecipare alla sincronizzazione del dominio. In un ordinary clock o in un
-boundary clock, il local PTP clock è il clock rispetto al quale vengono calcolati
-gli scostamenti temporali e applicate le correzioni previste dal protocollo.
-Tale clock può essere realizzato fisicamente, mediante un segnale di clock e un contatore
-temporale, oppure descritto matematicamente attraverso un modello che
-rappresenta la relazione tra un clock e un altro.
+Nel contesto PTP è inoltre utile distinguere il clock locale generico del nodo dal
+\texttt{local PTP clock}. Il primo rappresenta la nozione di tempo mantenuta dal sistema
+o dal dispositivo; il secondo è il clock utilizzato dall'istanza PTP per
+partecipare alla sincronizzazione del dominio. In un ordinary clock o in un boundary
+clock, il local PTP clock è il clock rispetto al quale vengono calcolati gli
+scostamenti temporali e applicate le correzioni previste dal protocollo. Tale clock
+può essere realizzato fisicamente, mediante un segnale di clock e un contatore
+temporale, oppure descritto matematicamente attraverso un modello che rappresenta
+la relazione tra un clock e un altro.
 
-Un'ulteriore distinzione riguarda le porte PTP e il meccanismo utilizzato per la
-stima del ritardo. Una \texttt{end-to-end port} è una porta configurata per
-utilizzare il meccanismo delay request-response; una \texttt{peer-to-peer port}
-è invece configurata per utilizzare il meccanismo peer-to-peer. Nel primo caso,
-il nodo ricevente invia una richiesta di delay al master, che risponde con un messaggio
-contenente le informazioni temporali necessarie alla stima del ritardo del percorso.
-Nel secondo caso, la stima del ritardo viene effettuata tra nodi adiacenti,
-attraverso uno scambio specifico di messaggi peer-to-peer. La scelta tra i due meccanismi
-dipende dalla topologia di rete, dai dispositivi presenti e dai requisiti di
-sincronizzazione \cite{IEEEStandardPrecision2020}.
+Un'ulteriore distinzione riguarda le porte PTP e il meccanismo utilizzato per la stima
+del ritardo. Una \texttt{end-to-end port} è una porta configurata per utilizzare il
+meccanismo delay request-response; una \texttt{peer-to-peer port} è invece configurata
+per utilizzare il meccanismo peer-to-peer. Nel primo caso, il nodo ricevente invia
+una richiesta di delay al master, che risponde con un messaggio contenente le
+informazioni temporali necessarie alla stima del ritardo del percorso. Nel secondo
+caso, la stima del ritardo viene effettuata tra nodi adiacenti, attraverso uno scambio
+specifico di messaggi peer-to-peer. La scelta tra i due meccanismi dipende dalla
+topologia di rete, dai dispositivi presenti e dai requisiti di sincronizzazione \cite{IEEEStandardPrecision2020}.
 
 \begin{figure}[H]
   \centering
@@ -532,240 +530,244 @@ sincronizzazione \cite{IEEEStandardPrecision2020}.
 
 \subsection{Messaggi PTP e meccanismo di sincronizzazione}
 
-PTP realizza la sincronizzazione attraverso diverse classi di messaggi, ciascuna con
-una funzione specifica nel protocollo. Lo standard distingue innanzitutto tra
-\texttt{event messages} e \texttt{general messages}. I primi sono messaggi per i quali
-il timestamp di trasmissione o ricezione è rilevante ai fini della sincronizzazione;
-per questo motivo devono essere marcati temporalmente con la massima accuratezza
-possibile. I secondi, invece, trasportano informazioni di supporto al protocollo,
-ma non richiedono necessariamente un timestamp accurato dell'evento fisico di
-invio o ricezione \cite{IEEEStandardPrecision2020}.
+PTP realizza la sincronizzazione attraverso diverse classi di messaggi, ciascuna
+con una funzione specifica nel protocollo. Lo standard distingue innanzitutto tra
+\texttt{event messages} e \texttt{general messages}. I primi sono messaggi per i
+quali il timestamp di trasmissione o ricezione è rilevante ai fini della
+sincronizzazione; per questo motivo devono essere marcati temporalmente con la massima
+accuratezza possibile. I secondi, invece, trasportano informazioni di supporto
+al protocollo, ma non richiedono necessariamente un timestamp accurato dell'evento
+fisico di invio o ricezione \cite{IEEEStandardPrecision2020}.
 
 I messaggi evento comprendono \texttt{Sync}, \texttt{Delay\_Req}, \texttt{Pdelay\_Req}
-e \texttt{Pdelay\_Resp}. Essi sono direttamente coinvolti nella misura dei tempi di
-trasmissione e ricezione, e quindi nella stima dell'offset e del ritardo di
-propagazione. I messaggi generali comprendono invece \texttt{Announce}, \texttt{Follow\_Up},
-\texttt{Delay\_Resp}, \texttt{Pdelay\_Resp\_Follow\_Up}, \texttt{Management} e
-\texttt{Signaling}. Tra questi, \texttt{Follow\_Up}, \texttt{Delay\_Resp} e
-\texttt{Pdelay\_Resp\_Follow\_Up} rientrano nei messaggi temporali PTP, poiché
-trasportano informazioni necessarie al calcolo della sincronizzazione, pur non essendo
-messaggi evento in senso stretto. Nel meccanismo di sincronizzazione ordinario
-tra master e slave, il messaggio \texttt{Sync} è utilizzato per trasferire l'informazione
-temporale dal master verso lo slave. Nei clock di tipo \texttt{one-step}, il timestamp
-preciso di trasmissione viene inserito direttamente nel messaggio \texttt{Sync}. Nei
-clock di tipo \texttt{two-step}, invece, il messaggio \texttt{Sync} viene seguito
-da un messaggio \texttt{Follow\_Up}, che contiene il timestamp effettivo associato
-all'invio del precedente messaggio \texttt{Sync}. Questa distinzione è legata al momento
-in cui il timestamp preciso diventa disponibile: in alcune implementazioni esso
-può essere generato più vicino all'interfaccia di rete o al livello hardware, e quindi
-comunicato successivamente tramite \texttt{Follow\_Up}. \cite{IEEEStandardPrecision2020}.
+e \texttt{Pdelay\_Resp}. Essi sono direttamente coinvolti nella misura dei tempi
+di trasmissione e ricezione, e quindi nella stima dell'offset e del ritardo di propagazione.
+I messaggi generali comprendono invece \texttt{Announce}, \texttt{Follow\_Up},
+\texttt{Delay\_Resp}, \texttt{Pdelay\_Resp\_Follow\_Up}, \texttt{Management} e \texttt{Signaling}.
+Tra questi, \texttt{Follow\_Up}, \texttt{Delay\_Resp} e \texttt{Pdelay\_Resp\_Follow\_Up}
+rientrano nei messaggi temporali PTP, poiché trasportano informazioni necessarie al
+calcolo della sincronizzazione, pur non essendo messaggi evento in senso stretto.
+Nel meccanismo di sincronizzazione ordinario tra master e slave, il messaggio
+\texttt{Sync} è utilizzato per trasferire l'informazione temporale dal master verso
+lo slave. Nei clock di tipo \texttt{one-step}, il timestamp preciso di
+trasmissione viene inserito direttamente nel messaggio \texttt{Sync}. Nei clock
+di tipo \texttt{two-step}, invece, il messaggio \texttt{Sync} viene seguito da
+un messaggio \texttt{Follow\_Up}, che contiene il timestamp effettivo associato
+all'invio del precedente messaggio \texttt{Sync}. Questa distinzione è legata al
+momento in cui il timestamp preciso diventa disponibile: in alcune implementazioni
+esso può essere generato più vicino all'interfaccia di rete o al livello hardware,
+e quindi comunicato successivamente tramite \texttt{Follow\_Up}.
+\cite{IEEEStandardPrecision2020}.
 
-La sincronizzazione degli \texttt{ordinary clock} e dei \texttt{boundary clock} può
-essere completata mediante il meccanismo \texttt{delay request-response}. In questo
-caso, oltre ai messaggi \texttt{Sync} e, se necessario, \texttt{Follow\_Up}, vengono
-utilizzati i messaggi \texttt{Delay\_Req} e \texttt{Delay\_Resp}. Lo slave invia
-una richiesta di delay verso il master e il master risponde comunicando le
-informazioni temporali necessarie alla stima del ritardo di percorso. Combinando le
-informazioni provenienti dai messaggi di sincronizzazione e da quelli di delay,
-lo slave può stimare lo scostamento del proprio clock rispetto al master e
-applicare le correzioni opportune. \cite{IEEEStandardPrecision2020}.
+La sincronizzazione degli \texttt{ordinary clock} e dei \texttt{boundary clock}
+può essere completata mediante il meccanismo \texttt{delay request-response}. In
+questo caso, oltre ai messaggi \texttt{Sync} e, se necessario, \texttt{Follow\_Up},
+vengono utilizzati i messaggi \texttt{Delay\_Req} e \texttt{Delay\_Resp}. Lo slave
+invia una richiesta di delay verso il master e il master risponde comunicando le informazioni
+temporali necessarie alla stima del ritardo di percorso. Combinando le
+informazioni provenienti dai messaggi di sincronizzazione e da quelli di delay, lo
+slave può stimare lo scostamento del proprio clock rispetto al master e applicare
+le correzioni opportune. \cite{IEEEStandardPrecision2020}.
 
-Altri messaggi svolgono funzioni di supporto alla costruzione e alla gestione della
-rete PTP. Il messaggio \texttt{Announce} è utilizzato per stabilire la gerarchia di
-sincronizzazione e supportare la selezione del riferimento temporale. I messaggi
-\texttt{Management} consentono di interrogare o modificare i data set mantenuti dalle
-istanze PTP e possono essere utilizzati per configurazione, inizializzazione e
-gestione dei guasti. I messaggi \texttt{Signaling} sono invece destinati a forme
-ulteriori di comunicazione tra istanze PTP, ad esempio per la negoziazione di parametri
-operativi come il rate dei messaggi unicast. \cite{IEEEStandardPrecision2020}.
+Altri messaggi svolgono funzioni di supporto alla costruzione e alla gestione
+della rete PTP. Il messaggio \texttt{Announce} è utilizzato per stabilire la
+gerarchia di sincronizzazione e supportare la selezione del riferimento
+temporale. I messaggi \texttt{Management} consentono di interrogare o modificare
+i data set mantenuti dalle istanze PTP e possono essere utilizzati per
+configurazione, inizializzazione e gestione dei guasti. I messaggi \texttt{Signaling}
+sono invece destinati a forme ulteriori di comunicazione tra istanze PTP, ad
+esempio per la negoziazione di parametri operativi come il rate dei messaggi
+unicast. \cite{IEEEStandardPrecision2020}.
 
 \subsection{Stima del delay: end-to-end e peer-to-peer}
 
-La stima del ritardo di propagazione è un elemento centrale del funzionamento di PTP,
-poiché l'offset tra clock locale e riferimento può essere corretto solo se il
-protocollo dispone di una stima del tempo impiegato dai messaggi per
-attraversare la rete. Lo standard definisce due meccanismi principali per la misura
-del delay tra porte PTP: il meccanismo \texttt{delay request-response}, anche
-indicato come end-to-end, e il meccanismo \texttt{peer-to-peer}
+La stima del ritardo di propagazione è un elemento centrale del funzionamento di
+PTP, poiché l'offset tra clock locale e riferimento può essere corretto solo se il
+protocollo dispone di una stima del tempo impiegato dai messaggi per attraversare
+la rete. Lo standard definisce due meccanismi principali per la misura del delay
+tra porte PTP: il meccanismo \texttt{delay request-response}, anche indicato come
+end-to-end, e il meccanismo \texttt{peer-to-peer} \cite{IEEEStandardPrecision2020}.
+
+Nel meccanismo end-to-end, il ritardo viene stimato tra il nodo ricevente e il
+master della relazione di sincronizzazione. Lo slave riceve i messaggi \texttt{Sync}
+e, nel caso two-step, \texttt{Follow\_Up}; successivamente invia al master un
+messaggio \texttt{Delay\_Req}. Il master risponde con un messaggio \texttt{Delay\_Resp},
+contenente il timestamp di ricezione della richiesta. A partire da questi scambi,
+lo slave può stimare il ritardo medio del percorso e utilizzarlo per correggere
+la stima dell'offset rispetto al master. Questo meccanismo valuta quindi il delay
+lungo il percorso complessivo tra slave e master.
 \cite{IEEEStandardPrecision2020}.
 
-Nel meccanismo end-to-end, il ritardo viene stimato tra il nodo ricevente e il master
-della relazione di sincronizzazione. Lo slave riceve i messaggi \texttt{Sync} e,
-nel caso two-step, \texttt{Follow\_Up}; successivamente invia al master un messaggio
-\texttt{Delay\_Req}. Il master risponde con un messaggio \texttt{Delay\_Resp}, contenente
-il timestamp di ricezione della richiesta. A partire da questi scambi, lo slave può
-stimare il ritardo medio del percorso e utilizzarlo per correggere la stima dell'offset
-rispetto al master. Questo meccanismo valuta quindi il delay lungo il percorso
-complessivo tra slave e master. \cite{IEEEStandardPrecision2020}.
-
-Nel meccanismo peer-to-peer, invece, il ritardo non viene stimato end-to-end tra slave
-e master, ma tra porte PTP adiacenti. La misura avviene tramite i messaggi \texttt{Pdelay\_Req},
-\texttt{Pdelay\_Resp} e, se richiesto, \texttt{Pdelay\_Resp\_Follow\_Up}. Il
-risultato è una stima del \texttt{PTP Link delay}, cioè del ritardo del
-collegamento tra due porte PTP vicine. Tale stima può essere utilizzata per correggere
-le informazioni temporali contenute nei messaggi \texttt{Sync} e \texttt{Follow\_Up}
+Nel meccanismo peer-to-peer, invece, il ritardo non viene stimato end-to-end tra
+slave e master, ma tra porte PTP adiacenti. La misura avviene tramite i messaggi
+\texttt{Pdelay\_Req}, \texttt{Pdelay\_Resp} e, se richiesto, \texttt{Pdelay\_Resp\_Follow\_Up}.
+Il risultato è una stima del \texttt{PTP Link delay}, cioè del ritardo del collegamento
+tra due porte PTP vicine. Tale stima può essere utilizzata per correggere le
+informazioni temporali contenute nei messaggi \texttt{Sync} e \texttt{Follow\_Up}
 trasmessi lungo i link PTP. \cite{IEEEStandardPrecision2020}.
 
-La differenza tra i due meccanismi riguarda quindi il livello a cui viene
-misurato il ritardo. L'approccio end-to-end considera il percorso tra ricevitore e
-master come un'unica entità logica; l'approccio peer-to-peer misura invece i
-ritardi dei singoli collegamenti tra nodi adiacenti. Quest'ultimo è particolarmente
-adatto a reti in cui i dispositivi intermedi sono PTP-aware e possono contribuire
-alla compensazione del ritardo introdotto da ciascun segmento.
+La differenza tra i due meccanismi riguarda quindi il livello a cui viene misurato
+il ritardo. L'approccio end-to-end considera il percorso tra ricevitore e master
+come un'unica entità logica; l'approccio peer-to-peer misura invece i ritardi dei
+singoli collegamenti tra nodi adiacenti. Quest'ultimo è particolarmente adatto a
+reti in cui i dispositivi intermedi sono PTP-aware e possono contribuire alla
+compensazione del ritardo introdotto da ciascun segmento.
 
-I due meccanismi non sono intercambiabili all'interno dello stesso percorso di comunicazione
-PTP. Lo standard specifica infatti che porte configurate per il meccanismo peer-to-peer
-devono comunicare con porte compatibili con lo stesso meccanismo, mentre reti basate
-su delay request-response devono escludere porte che utilizzano il peer-to-peer delay
-mechanism. Un boundary clock dotato di porte configurate con meccanismi
-differenti può tuttavia essere utilizzato per collegare regioni della rete che
-adottano approcci diversi alla stima del delay.
+I due meccanismi non sono intercambiabili all'interno dello stesso percorso di
+comunicazione PTP. Lo standard specifica infatti che porte configurate per il meccanismo
+peer-to-peer devono comunicare con porte compatibili con lo stesso meccanismo,
+mentre reti basate su delay request-response devono escludere porte che
+utilizzano il peer-to-peer delay mechanism. Un boundary clock dotato di porte configurate
+con meccanismi differenti può tuttavia essere utilizzato per collegare regioni della
+rete che adottano approcci diversi alla stima del delay.
 
-Nel contesto dei dispositivi PTP, questa distinzione si riflette anche nei tipi di
-clock supportati. Gli ordinary clock e i boundary clock possono implementare
-porte basate su entrambi i meccanismi. Gli end-to-end transparent clock partecipano
-al meccanismo delay request-response, mentre i peer-to-peer transparent clock
-utilizzano il meccanismo peer-to-peer. La scelta tra end-to-end e peer-to-peer dipende
-quindi dalla topologia della rete, dalla presenza di dispositivi intermedi
-compatibili con PTP e dai requisiti di accuratezza della sincronizzazione.
+Nel contesto dei dispositivi PTP, questa distinzione si riflette anche nei tipi
+di clock supportati. Gli ordinary clock e i boundary clock possono implementare porte
+basate su entrambi i meccanismi. Gli end-to-end transparent clock partecipano al
+meccanismo delay request-response, mentre i peer-to-peer transparent clock utilizzano
+il meccanismo peer-to-peer. La scelta tra end-to-end e peer-to-peer dipende
+quindi dalla topologia della rete, dalla presenza di dispositivi intermedi compatibili
+con PTP e dai requisiti di accuratezza della sincronizzazione.
 
 \subsection{Best Master Clock Algorithm}
-Il \texttt{Best Master Clock Algorithm} (BMCA) è un meccanismo definito dallo standard
-IEEE 1588 per la selezione del grandmaster clock all'interno di un dominio PTP.
-Il BMCA consente di stabilire quale clock debba essere utilizzato come
-riferimento temporale per la sincronizzazione degli altri nodi del dominio, sulla
-base di criteri legati alla qualità e alla priorità dei clock candidati \cite{IEEEStandardPrecision2020}.
+Il \texttt{Best Master Clock Algorithm} (BMCA) è un meccanismo definito dallo
+standard IEEE 1588 per la selezione del grandmaster clock all'interno di un
+dominio PTP. Il BMCA consente di stabilire quale clock debba essere utilizzato come
+riferimento temporale per la sincronizzazione degli altri nodi del dominio,
+sulla base di criteri legati alla qualità e alla priorità dei clock candidati
+\cite{IEEEStandardPrecision2020}.
 
-I clock trasmettono informazioni nel rispetto delle loro proprietà, articolati
-come dataset, le quali vengono poi utilizzate come input per il processo di selezione.
+I clock trasmettono informazioni nel rispetto delle loro proprietà, articolati come
+dataset, le quali vengono poi utilizzate come input per il processo di selezione.
 
-Nel processo di selezione del riferimento temporale, i clock candidabili
-annunciano periodicamente le proprie caratteristiche tramite messaggi \texttt{Announce}.
-Tali informazioni vengono confrontate dal \texttt{Best Master Clock Algorithm} (BMCA),
-che valuta i clock disponibili secondo una gerarchia ordinata di criteri. Il clock
-considerato migliore viene selezionato come \texttt{grandmaster} del dominio PTP,
-mentre gli altri nodi assumono uno stato coerente con la gerarchia risultante,
-ad esempio \texttt{slave}, \texttt{master} su porte downstream oppure \texttt{passive},
-a seconda del tipo di clock e della posizione nella rete.
+Nel processo di selezione del riferimento temporale, i clock candidabili annunciano
+periodicamente le proprie caratteristiche tramite messaggi \texttt{Announce}. Tali
+informazioni vengono confrontate dal \texttt{Best Master Clock Algorithm} (BMCA),
+che valuta i clock disponibili secondo una gerarchia ordinata di criteri. Il
+clock considerato migliore viene selezionato come \texttt{grandmaster} del dominio
+PTP, mentre gli altri nodi assumono uno stato coerente con la gerarchia
+risultante, ad esempio \texttt{slave}, \texttt{master} su porte downstream
+oppure \texttt{passive}, a seconda del tipo di clock e della posizione nella
+rete.
 
-Nel caso di un \texttt{ordinary clock}, che dispone di una sola porta PTP, la
-selezione determina se il nodo debba operare come master del segmento oppure
-sincronizzarsi come slave rispetto a un clock migliore. Nel caso di un \texttt{boundary
-clock}, invece, porte diverse possono assumere stati diversi: una porta può sincronizzarsi
-come slave verso monte, mentre altre porte possono operare come master verso i
-segmenti downstream.
+Nel caso di un \texttt{ordinary clock}, che dispone di una sola porta PTP, la selezione
+determina se il nodo debba operare come master del segmento oppure sincronizzarsi
+come slave rispetto a un clock migliore. Nel caso di un \texttt{boundary clock},
+invece, porte diverse possono assumere stati diversi: una porta può
+sincronizzarsi come slave verso monte, mentre altre porte possono operare come master
+verso i segmenti downstream.
 
 I criteri di selezione sono i seguenti. Il primo criterio è \texttt{grandmasterIdentity}:
-se due dataset fanno riferimento allo stesso grandmaster, viene selezionato il
-candidato raggiungibile con il minor numero di salti; in caso di ulteriore parità,
-vengono utilizzati come discriminanti \texttt{clockIdentity} e \texttt{portIdentity}.
-Tali identificativi permettono di distinguere univocamente i clock e le porte PTP
+se due dataset fanno riferimento allo stesso grandmaster, viene selezionato il candidato
+raggiungibile con il minor numero di salti; in caso di ulteriore parità, vengono utilizzati
+come discriminanti \texttt{clockIdentity} e \texttt{portIdentity}. Tali
+identificativi permettono di distinguere univocamente i clock e le porte PTP
 coinvolte nella selezione.
 
-Il criterio successivo è \texttt{priority1}, un valore configurabile che consente
-di assegnare una priorità amministrativa a un clock, indipendentemente dalle sue
-caratteristiche temporali intrinseche. Seguono poi i parametri che descrivono la qualità
-del clock: \texttt{clockClass}, che indica la classe del clock e il suo stato di
-sincronizzazione; \texttt{clockAccuracy}, che rappresenta l'accuratezza dichiarata
-del clock rispetto a un riferimento temporale; e \texttt{offsetScaledLogVariance},
+Il criterio successivo è \texttt{priority1}, un valore configurabile che
+consente di assegnare una priorità amministrativa a un clock, indipendentemente dalle
+sue caratteristiche temporali intrinseche. Seguono poi i parametri che
+descrivono la qualità del clock: \texttt{clockClass}, che indica la classe del clock
+e il suo stato di sincronizzazione; \texttt{clockAccuracy}, che rappresenta l'accuratezza
+dichiarata del clock rispetto a un riferimento temporale; e \texttt{offsetScaledLogVariance},
 che fornisce un'indicazione della stabilità del clock.
 
-Infine, il parametro \texttt{priority2} introduce una seconda priorità
-configurabile, utilizzata come criterio di discriminazione quando i parametri precedenti
+Infine, il parametro \texttt{priority2} introduce una seconda priorità configurabile,
+utilizzata come criterio di discriminazione quando i parametri precedenti
 risultano equivalenti. In caso di ulteriore parità, viene utilizzato \texttt{clockIdentity}
-come criterio finale di selezione. In generale, per questi campi un valore
-numericamente più basso corrisponde a una preferenza maggiore nel processo di
-selezione. \cite{PTP_net}
+come criterio finale di selezione. In generale, per questi campi un valore numericamente
+più basso corrisponde a una preferenza maggiore nel processo di selezione.
+\cite{PTP_net}
 
 \subsection{Timestamping e accuratezza}
 
-L'accuratezza della sincronizzazione PTP dipende in modo diretto dalla qualità dei
-timestamp associati ai messaggi temporali. La stima delle offset e delay si basa
-infatti sugli istanti di trasmissione e ricezione dei messaggi PTP, e ogni incertezza
-introdotta nella generazione del timestamp si va a riflettere direttamente sulla qualità
-della sincoronizzazione. Questo è il motivo fondate rispetto al quale il
-protocollo distingue in messaggi per i quali il timestamp è critico, cioè gli \texttt{event
-messages}, e messaggi che trasportano informazioni di supporto ma non richiedono la
-stessa accuratezza temporale, cioè i \texttt{general messages} \cite{IEEEStandardPrecision2020}
+L'accuratezza della sincronizzazione PTP dipende in modo diretto dalla qualità
+dei timestamp associati ai messaggi temporali. La stima delle offset e delay si basa
+infatti sugli istanti di trasmissione e ricezione dei messaggi PTP, e ogni
+incertezza introdotta nella generazione del timestamp si va a riflettere
+direttamente sulla qualità della sincoronizzazione. Questo è il motivo fondate rispetto
+al quale il protocollo distingue in messaggi per i quali il timestamp è critico,
+cioè gli \texttt{event messages}, e messaggi che trasportano informazioni di
+supporto ma non richiedono la stessa accuratezza temporale, cioè i \texttt{general
+messages} \cite{IEEEStandardPrecision2020}
 
-Il timestamp può essere generato in livelli differenti rispetto ai layer di
-comunicazione, impattando direttamente sulla sincronizzazione. Nel timestamping
-software,l'istante di invio o ricezione viene registrato dal sistema operativo o
-dal software di sincronizzazione. Tale approccio è più semplice da realizzare,
-ma introduce una componente di incertezza dovuta allo scheduling del sistema
-operativo, alla gestione dello stack di rete, al carico della macchina e alla
-distanza logica tra il punto in cui il timestamp viene prodotto e l'effettivo
-evento fisico di trasmissione o ricezione del pacchetto.
+Il timestamp può essere generato in livelli differenti rispetto ai layer di comunicazione,
+impattando direttamente sulla sincronizzazione. Nel timestamping software,l'istante
+di invio o ricezione viene registrato dal sistema operativo o dal software di sincronizzazione.
+Tale approccio è più semplice da realizzare, ma introduce una componente di incertezza
+dovuta allo scheduling del sistema operativo, alla gestione dello stack di rete, al
+carico della macchina e alla distanza logica tra il punto in cui il timestamp viene
+prodotto e l'effettivo evento fisico di trasmissione o ricezione del pacchetto.
 
 Nel timestamping hardware, invece, il timestamp viene generato più vicino all'interfaccia
-di rete, spesso direttamente dalla scheda di rete o da un clock hardware associato
-all'interfaccia. In questo modo si riduce l'incertezza introdotta dal software e
-si ottiene una misura più fedele dell'istante in cui il messaggio PTP attraversa
-effettivamente il livello fisico o il MAC. Questo aspetto è particolarmente rilevante
-per PTP, poiché il protocollo è progettato per sfruttare timestamp accurati e
-dispositivi di rete compatibili con la sincronizzazione temporale.
+di rete, spesso direttamente dalla scheda di rete o da un clock hardware
+associato all'interfaccia. In questo modo si riduce l'incertezza introdotta dal software
+e si ottiene una misura più fedele dell'istante in cui il messaggio PTP attraversa
+effettivamente il livello fisico o il MAC. Questo aspetto è particolarmente
+rilevante per PTP, poiché il protocollo è progettato per sfruttare timestamp accurati
+e dispositivi di rete compatibili con la sincronizzazione temporale.
 
-La distinzione tra clock \texttt{one-step} e \texttt{two-step} è direttamente
-connessa alla gestione dei timestamp. Nel primo, il timestamp preciso di
-trasmissione viene inserito direttamente nel messaggio \texttt{Sync}. Nei clock
-two-step, invece, il messaggio \texttt{Sync} viene inviato prima e il timestamp effettivo
-di trasmissione viene comunicato successivamente attraverso un messaggio \texttt{Follow\_Up}.
-Questa modalità è utile quando il timestamp preciso viene determinato solo dopo la
-trasmissione del messaggio, ad esempio perché generato a livello hardware.
+La distinzione tra clock \texttt{one-step} e \texttt{two-step} è direttamente connessa
+alla gestione dei timestamp. Nel primo, il timestamp preciso di trasmissione viene
+inserito direttamente nel messaggio \texttt{Sync}. Nei clock two-step, invece, il
+messaggio \texttt{Sync} viene inviato prima e il timestamp effettivo di
+trasmissione viene comunicato successivamente attraverso un messaggio \texttt{Follow\_Up}.
+Questa modalità è utile quando il timestamp preciso viene determinato solo dopo
+la trasmissione del messaggio, ad esempio perché generato a livello hardware.
 
-Anche i dispositivi intermedi possono influenzare l'accuratezza della
-sincronizzazione. In una rete non compatibile con PTP, switch e bridge possono
-introdurre ritardi variabili non direttamente osservabili dal protocollo. Al contrario,
-dispositivi PTP-aware, come boundary clock e transparent clock, possono
-contribuire a limitare o compensare tali errori. In particolare, un transparent
-clock misura il tempo di permanenza dei messaggi PTP al proprio interno e
-aggiorna il campo \texttt{correctionField}, rendendo esplicito il ritardo
-introdotto dal dispositivo.
+Anche i dispositivi intermedi possono influenzare l'accuratezza della sincronizzazione.
+In una rete non compatibile con PTP, switch e bridge possono introdurre ritardi variabili
+non direttamente osservabili dal protocollo. Al contrario, dispositivi PTP-aware,
+come boundary clock e transparent clock, possono contribuire a limitare o compensare
+tali errori. In particolare, un transparent clock misura il tempo di permanenza dei
+messaggi PTP al proprio interno e aggiorna il campo \texttt{correctionField}, rendendo
+esplicito il ritardo introdotto dal dispositivo.
 
-Quindi la scelta della struttura di base adottata per l'implementazione del
-protocollo è fondamentale al fine di ottenere una sincronizzazione accurata. Timestamping
-hardware, dispositivi intermedi compatibili con PTP, stima corretta del path delay
-e riduzione delle asimmetrie di rete contribuiscono complessivamente a migliorare
-la precisione della sincronizzazione. Viceversa, timestamping software, code di
-rete, jitter, congestione e dispositivi non PTP-aware possono aumentare l'incertezza
-delle misure e degradare la qualità della sincronizzazione.
+Quindi la scelta della struttura di base adottata per l'implementazione del protocollo
+è fondamentale al fine di ottenere una sincronizzazione accurata. Timestamping
+hardware, dispositivi intermedi compatibili con PTP, stima corretta del path
+delay e riduzione delle asimmetrie di rete contribuiscono complessivamente a
+migliorare la precisione della sincronizzazione. Viceversa, timestamping
+software, code di rete, jitter, congestione e dispositivi non PTP-aware possono aumentare
+l'incertezza delle misure e degradare la qualità della sincronizzazione.
 
-Nell'approccio sperimentale addottato in fase di progetto, è stata perseguita la realizzazione
-attraverso l'uso del timestamping software. Ottenendo un confronto più diretto
-tra protocolli differenti.
+Nell'approccio sperimentale addottato in fase di progetto, è stata perseguita la
+realizzazione attraverso l'uso del timestamping software. Ottenendo un confronto più
+diretto tra protocolli differenti.
 
 \subsection{linuxptp e il demone \texttt{ptp4l}}
 \label{subsec:linuxptp_ptp4l}
 
-\texttt{linuxptp} è una suite software per sistemi Linux che implementa il
-\texttt{Precision Time Protocol} secondo lo standard IEEE 1588. Il progetto è orientato
-a fornire una implementazione robusta del protocollo utilizzando le API disponibili
-nel kernel Linux per la gestione del timestamping e dei clock hardware associati alle
-interfacce di rete \cite{linuxptp-doc}.
+\texttt{linuxptp} è una suite software per sistemi Linux che implementa il \texttt{Precision
+Time Protocol} secondo lo standard IEEE 1588. Il progetto è orientato a fornire
+una implementazione robusta del protocollo utilizzando le API disponibili nel
+kernel Linux per la gestione del timestamping e dei clock hardware associati
+alle interfacce di rete \cite{linuxptp-doc}.
 
-Il componente principale della suite è \texttt{ptp4l}, un demone che implementa PTP
-su una o più interfacce di rete Linux. Secondo la documentazione ufficiale, \texttt{ptp4l}
-può operare come \texttt{Ordinary Clock}, \texttt{Boundary Clock} oppure \texttt{Transparent
-Clock}, rendendolo adatto a diverse configurazioni di rete PTP \cite{linuxptp-ptp4l}.
-Nel caso di un ordinary clock, il nodo partecipa alla sincronizzazione attraverso
-una singola porta PTP; nel caso di un boundary clock, il demone gestisce più porte
-e può ricevere sincronizzazione su una porta e distribuirla su altre; nel caso
-di un transparent clock, il nodo contribuisce invece alla compensazione dei ritardi
-introdotti dal dispositivo sul percorso dei messaggi PTP.
+Il componente principale della suite è \texttt{ptp4l}, un demone che implementa
+PTP su una o più interfacce di rete Linux. Secondo la documentazione ufficiale,
+\texttt{ptp4l} può operare come \texttt{Ordinary Clock}, \texttt{Boundary Clock}
+oppure \texttt{Transparent Clock}, rendendolo adatto a diverse configurazioni di
+rete PTP \cite{linuxptp-ptp4l}. Nel caso di un ordinary clock, il nodo partecipa
+alla sincronizzazione attraverso una singola porta PTP; nel caso di un boundary clock,
+il demone gestisce più porte e può ricevere sincronizzazione su una porta e
+distribuirla su altre; nel caso di un transparent clock, il nodo contribuisce
+invece alla compensazione dei ritardi introdotti dal dispositivo sul percorso
+dei messaggi PTP.
 
-Dal punto di vista del trasporto, \texttt{linuxptp} supporta l'esecuzione di PTP su
-UDP/IPv4, UDP/IPv6 e direttamente su Ethernet a livello 2. Questa flessibilità
-riflette le modalità previste dallo standard e consente di adattare il demone a
-reti PTP realizzate sopra infrastrutture IP oppure direttamente su collegamenti
-Ethernet \cite{linuxptp-doc}.
+Dal punto di vista del trasporto, \texttt{linuxptp} supporta l'esecuzione di PTP
+su UDP/IPv4, UDP/IPv6 e direttamente su Ethernet a livello 2. Questa flessibilità
+riflette le modalità previste dallo standard e consente di adattare il demone a reti
+PTP realizzate sopra infrastrutture IP oppure direttamente su collegamenti Ethernet
+\cite{linuxptp-doc}.
 
-Un aspetto rilevante di \texttt{ptp4l} è il supporto al timestamping sia software
-sia hardware. Con timestamping hardware, il demone può sincronizzare il \texttt{PTP
-Hardware Clock} associato all'interfaccia di rete rispetto al master PTP; con timestamping
-software, invece, la sincronizzazione si basa sui timestamp prodotti dallo stack software
-del sistema. \cite{linuxptp-doc} \cite{redhat-ptp4l}.
+Un aspetto rilevante di \texttt{ptp4l} è il supporto al timestamping sia
+software sia hardware. Con timestamping hardware, il demone può sincronizzare il
+\texttt{PTP Hardware Clock} associato all'interfaccia di rete rispetto al master PTP;
+con timestamping software, invece, la sincronizzazione si basa sui timestamp
+prodotti dallo stack software del sistema. \cite{linuxptp-doc} \cite{redhat-ptp4l}.
 
-La suite comprende anche strumenti ausiliari. Tra questi, \texttt{phc2sys} consente
-di sincronizzare il clock di sistema rispetto a un PTP Hardware Clock, oppure
-viceversa, mentre \texttt{pmc} fornisce un'interfaccia di gestione per
-interrogare e modificare alcune informazioni delle istanze PTP.
+La suite comprende anche strumenti ausiliari. Tra questi, \texttt{phc2sys}
+consente di sincronizzare il clock di sistema rispetto a un PTP Hardware Clock, oppure
+viceversa, mentre \texttt{pmc} fornisce un'interfaccia di gestione per interrogare
+e modificare alcune informazioni delle istanze PTP.

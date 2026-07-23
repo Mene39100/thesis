@@ -245,19 +245,15 @@ costituisce solamente una porprietà del collegamento stesso, ma entra direttame
 nella stima effettuata dall'offset tra il clock locale e la sorgente temporale di
 riferimento.
 
-Denominando con $d_{1}$ il ritardo rispetto alla direzione nodo locale -> nodo
-sorgente, mentre con $d_{2}$ indicando la direzione nodo sorgente -> nodo locale,
-la stima del tempo dipende dalla capacità del protocollo nel separare la componente
+Denominando con $d_{1}$ il ritardo rispetto alla direzione nodo locale ${->}$ nodo
+sorgente, mentre con $d_{2}$ indicando la direzione nodo sorgente ${->}$ nodo
+locale, la stima del tempo dipende dalla capacità del protocollo nel separare la componente
 del offset puro, quindi scostamento tra i clock, da quella dei ritardi di propagazione
 dei messaggi. Nei sistemi bidirezionali, come quelli alla base di NTP e di diverse
 applicazioni del protocollo PTP, tale separazione viene effettuata assumendo
 alla base che il ritardo complessivo osservato possa essere utilizzato per
 approssimare il contributo del percorso di rete
 \cite{martinNetworkTimeProtocol2010, IEEEStandardPrecision2020}
-
-Nei meccanismi bidirezionali, come quelli alla base di NTP e di diverse modalità
-di PTP, questa separazione viene effettuata assumendo che il ritardo complessivo osservato
-possa essere utilizzato per approssimare il contributo del percorso di rete~\cite{martinNetworkTimeProtocol2010,IEEEStandardPrecision2020}.
 
 In condizioni perfette, con un ritardo simmetricio tale che $d_{1}= d_{2}$, la componente
 di propagazione può essere compensata mediante la stima del round-trip delay. La

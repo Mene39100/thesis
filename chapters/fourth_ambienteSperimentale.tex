@@ -3,57 +3,47 @@
 
 \section{Obiettivo e criteri di progettazione del testbed}
 
-L'Obiettivo alla base della progettazione del testbed sperimentale è quello di creare
-un ambiente controllato, riproducibile e parametrizzabile all'interno del quale
-poter valutare il differente comportamento dei demoni di sincronizzazione
-temporale, in particolare linuxptp, chrony e ntpsec in condizioni di rete
-variabili. L'impostazione è stata scelta per evidenziare non la precisione assoluta
-dei nodi rispetto a una sorgente temporale esterna, quindi con un riferimento
-UTC, bensì la capacità dei demoni di mantenere una relazione temporale coerente all'interno
-dell'ambiente sperimentale, al differire delle condizioni dei canali di
-comunicazione.
+L'Obiettivo di base per la progettazione del testbed è quello di creare un ambiente
+controllato, riproducibile e parametrizzabile all'interno del quale poter
+valutare il differente comportamento dei demoni di sincronizzazione temporale in
+condizioni di rete variabili. Nel caso in questione: linuxptp, chrony e ntpsec.
+L'impostazione è stata scelta per mettere in evidenza non la precisione assoluta
+dei nodi rispetto a una sorgente temporale esterna, quindi con un riferimento UTC,
+ma la loro capacità nel mantenere una relazione temporale coerente all'interno
+dell'ambiente sperimentale, al differire delle condizioni dei canali di comunicazione.
 
-L'ambiente è stato realizzato tenendo a conto di tre criteri fondamentali. Il primo
-è stato isolare completamente il testbed dalla rete esterna, poichè l'obiettivo
-non includeva avere un riferimento temporale corretto con fonti esterne è stato
-possibile disabilitare ogni forma di connettività esterna, garantendo il massimo isolamento
-e costringendo i nodi a sincronizzarsi all'interno della sola topologia di rete.
-Il secondo criterio è stato la riproducibilità dell'ambiente. Ogni run sperimentale
-deve poter essere rieseguita ripristinando la stessa topologia, gli stessi
-parametri di rete e la stessaconfigurazione dei demoni. Infine l'ultimo ciriterio
-coinvolgeva la parametrizzazione degli impairment di rete, i quali dovevano
-essere facilmetne modificabili da file esterni, separati dagli scritp di esecuzione,
-potendo gestire in modo indipendente la loro logica di applicazione.
+L'ambiente si basa su tre criteri fondamentali. Per primo bisogna isolare
+completamente il testbed dalla rete esterna. Non essendoci necessità di riferimenti
+esterni è stato possibile disabilitare ogni forma di connettività, garantendo il
+massimo isolamento e costringendo i nodi a sincronizzarsi all'interno della sola
+topologia di rete. Il secondo criterio è stato la riproducibilità dell'ambiente.
+Infine l'ultimo ciriterio coinvolgeva la parametrizzazione degli impairment di
+rete, i quali devono essere facilmetne modificabili, potendo gestire in modo
+indipendente da ogni script la loro applicazione.
 
-La topolgia, relizzata mediante l'utilizzo di container Docker, è stata
-realizzata mantenendo separati i rami logici e/o gli stessi script sono stati
-realizzati con l'obiettivo di ridurre al minimo interferenze tra demoni e
-protocolli differenti, garantendo massima indipendenza. Le condizioni di rete
-sono state modificate mediante l'utilizzo di Linux Traffic Control.
+La topolgia è stata creata con l'utilizzo dei container Docker. I rami logici sono
+stati opportunamenti separati e lo stesso ragionamento è stato applicato agli script,
+con l'obiettivo di ridurre al minimo interferenze tra demoni e protocolli
+differenti. Le condizioni di rete sono state modificate mediante l'utilizzo di Linux
+Traffic Control.
 
 \section{Topologia di rete}
-La topologia di rete è stata divida su due reti logiche sperate, che rappresentano
-una evoluzione della topologia T1, utilizzata per la fase di test preliminari, ma
-poi obsoleta al fine di verificare gli scenari di rete selezionati. La rete A è
-stata associata a una subnet \texttt{10.0.10.0/24}, mentre la rete B è stata
-associata ad una subnet \texttt{10.0.20.0/24}. Rispettivamente i nodi \texttt{servergm},
-\texttt{serverntp}, \texttt{clientchrony} e l'interfaccia \texttt{eth0} di
-\texttt{boundary} sono stati collocati nella rete A, mentre \texttt{clientptp},
-\texttt{clientntp} e l'interfaccia \texttt{eth1} di\texttt{boundary} sono stati
-collocati nella rete B. La scelta alla base della sperazione della rete è stata ai
-fini di praticità operativa, evitare i conflitti di configurazioni tra demoni e
-protocolli differenti, e poter verifcare effettivamente il loro comportamento in tali
-condizioni.
+La topologia si divide su due reti logiche sperate, rappresentative dell'evoluzione
+della topologia T1, utilizzata per la fase di test preliminari, ma poi risultata
+obsoleta. La rete A è stata associata a una subnet \texttt{10.0.10.0/24}, mentre la
+rete B è stata associata ad una subnet \texttt{10.0.20.0/24}. I nodi \texttt{servergm},
+\texttt{serverntp}, \texttt{clientchrony} e l'interfaccia \texttt{eth0} di \texttt{boundary}
+sono stati collocati nella rete A, mentre \texttt{clientptp}, \texttt{clientntp}
+e l'interfaccia \texttt{eth1} di\texttt{boundary} sono stati collocati nella rete
+B. La scelta si basa sulla praticità operativa, si è cercato di evitare i conflitti
+di configurazioni tra demoni e protocolli differenti, raccogliendo al meglio, sucessivamente,
+i dati.
 
-Il nodo \texttt{boundary} è stato configurato come nodo intermedio tra le due
-reti Assume un ruole diffrente al variare del demone considerato. Nel caso specifico
-di PTP,assume un ruolo di boundary clock ricevendo sincronizzazione dalla rete A e
-propagandola verso la rete B, mentrenel caso di NTPsec, può essere utilizzato come
-nodo semplice intermedio tra \texttt{serverntp} e \texttt{clientntp}. Nel caso
-specifico di Chrony non è stato necessario. Le diverse configurazioni sono state opportunamente
-separate, evitando quindi di comporomettere l'integrità della sincronizzazione
-del nodo \texttt{boundary} tra i diversi protocolli, e garantendo la massima
-indipendenza.
+Il nodo \texttt{boundary} è stato configurato come nodo intermedio tra le due reti
+assumendo un differente ruolo al variare del demone considerato. Nel caso di PTP,
+assume un ruolo di boundary clock ricevendo sincronizzazione dalla rete A e propagandola
+verso la rete B, mentrenel caso di NTPsec, è utilizzato come nodo intermedio tra \texttt{serverntp}
+e \texttt{clientntp}. Per Chrony non è stato necessario il suo utilizzo.
 
 { \setlength{\intextsep}{8pt} \setlength{\textfloatsep}{8pt} \setlength{\floatsep}{8pt}
 
@@ -105,12 +95,353 @@ Per ragioni configurative, si è reso necessario spearare la sorgente temporale
 in due nodi differenti, distinguendo tra PTP e Chrony da un lato, e NTPsec dall'altro.
 Conflitti di configurazione, installazione e permessi rendevano incompatibile l'installazione
 di implementazioni software differenti sullo stesso nodo, soprattutto nei casi in
-cui più servizi potevano tentare di intervenire sullo stesso clock locale.
+cui più servizi potevano tentare di intervenire sullo stesso clock locale.Inoltre
+la separazione logica delle rete permette di avere una distinzione più chiara tra
+le diverse catene di sincronizzazione analizzate nel testbed.
 
 \section{Ambiente containerizzato}
+
+Il testbed è realizzato tramite la creazione di una topologia di rete
+containerizzata attraverso l'ausilio di Kathará, cioè un sisteama di emulazione di
+rete open source basato su container. Questa scelta ha reso possibile la
+riproduzione di una rete composta da un insieme di nodi Linux isolati, ognuno dotato
+di una sua interfaccia, di file di configurazioni personalizzati e degli
+specifici demoni di sincronizzazione. L'utilizzo dei container ha permesso inoltre
+di automatizzare l'intero ciclo sperimentale, rendendo possibile l'inizializzazione
+della topologia, la configuazione degli indirizzi IP, l'installazione dei
+pacchetti necessari, la copia dei file di configurazione, l'avvio dei demoni, l'applicazione
+degli impairment di rete e infine la raccolta dei log.
+
+Ogni run può essere eseguita a partire da uno stato pulito della topologia,
+riducendo il rischio che processi residui, configurazioni di rete precedenti o discipline
+di coda già applicate influenzino le misurazioni successive.
+
 \subsection{Kathará e organizzazione dei container}
+
+La topologia T2 viene descritta nel file \texttt{lab.conf}, dove vengono
+definiti i nodi del testbed, le differenti reti virtuali a cui essi appartengono,
+i volumi condivisi montati all'interno dei container e le capability necessarie
+all'esecuzione degli esperimenti.
+
+Nella topologia, descritta come T2, i nodi sono associati a due reti logiche
+distinte, indicate come rete A e rete B. I nodi \texttt{servergm}, \texttt{serverntp},
+\texttt{clientchrony} e l'interfaccia \texttt{eth0} di \texttt{boundary} appartengono
+alla rete A. I nodi \texttt{clientntp}, \texttt{clientptp} e l'interfaccia \texttt{eth1}
+di \texttt{boundary} appartengono alla rete B. Il nodo \texttt{boundary} è l'unico
+container connesso a entrambe le reti interne e costituisce il punto di interconnessione
+tra i due domini.
+
+\begin{lstlisting}[language=bash,caption={Estratto del file \texttt{lab.conf}: assegnazione dei nodi alle reti A e B.},label={lst:labconf_topologia}]
+
+# Topologia T2
+
+servergm[0]=A
+serverntp[0]=A
+boundary[0]=A
+boundary[1]=B
+clientchrony[0]=A
+clientntp[0]=B
+clientptp[0]=B
+\end{lstlisting}
+
+Nella fase iniziale di avvio, ogni contanier va ad eseguire il proprio file di inizializzazione
+\texttt{.startup}. Essi contengono gli indirizzi IP delle interfacce, attivano i
+link, popolano il file \texttt{/etc/hosts}, installano i pacchetti necessari e copiano
+i file di configurazione dei demoni dalle directory condivise del progetto verso i
+percorsi attesi dal sistema.
+
+Nel nodo \texttt{boundary}, per esempio, si configurano due interfacce interne: \texttt{eth0}
+sulla rete A e \texttt{eth1} sulla rete B.
+
+\begin{lstlisting}[language=bash,caption={Estratto di \texttt{boundary.startup}: configurazione delle interfacce interne.},label={lst:boundary_startup_ip}]
+ip addr add 10.0.10.2/24 dev eth0
+ip addr add 10.0.20.1/24 dev eth1
+ip link set eth0 up
+ip link set eth1 up
+\end{lstlisting}
+
+Per quanto riguarda la risoluzione locale dei nomi, ogni nodo mantiene un file \texttt{/etc/hosts}
+che associa gli hostname ai rispettivi indirizzi IP, evitando problematiche derivate
+dalla dipendenza da servizi DNS esterni e rende esplicita la corrispondenza tra hostname
+e indirizzi IP della topologia.
+
+\begin{lstlisting}[language=bash,caption={Mappatura locale degli hostname nei container.},label={lst:hosts_mapping}]
+10.0.10.1 servergm
+10.0.10.4 serverntp
+10.0.10.2 boundary0
+10.0.20.1 boundary1
+10.0.10.3 clientchrony
+10.0.20.2 clientntp
+10.0.20.3 clientptp
+\end{lstlisting}
+
+Distinguendo tra \texttt{boundary0} e \texttt{boundary1} si riesce a
+identificare in modo chiaro le due interfacce del nodo \texttt{boundary}.
+\texttt{boundary0} corrisponde all'interfaccia sulla rete A (\texttt{10.0.10.2}),
+mentre \texttt{boundary1} corrisponde all'interfaccia sulla rete B (\texttt{10.0.20.1}).
+Ciò è utile ai fini del testNTPsec, nei quali il nodo \texttt{clientntp}
+utilizza il boundary come sorgente temporale raggiungibile sulla rete B.
+
+All'interno del file \texttt{lab.conf} viene montata una directory del progetto all'interno
+di tutti i container. Tale volume condiviso viene utilizzato sia per rendere
+accessibili i file di configurazione ai nodi, sia per salvare i log prodotti durante
+le run sperimentali.
+
+\begin{lstlisting}[language=bash,caption={Estratto del file \texttt{lab.conf}: volume condiviso tra host e container.},label={lst:labconf_volume}]
+servergm[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+serverntp[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+boundary[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+clientchrony[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+clientntp[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+clientptp[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
+\end{lstlisting}
+
+L'obiettivo alla base di tale scelta è duplice. Se da un lato permette di mantenere
+tutti i file di configurazione all'interno della repository del progetto e copirali
+nei differenti container in fase di avvio, allo stesso modo consente ai demoni e
+agli script di scrivere i log in una directory persistente accessibile dall'host,
+evitando problematicità dovute alla chiusura della topologia.
+
+Ad esempio, il nodo \texttt{servergm} installa Chrony e linuxptp, copia la
+configurazione Chrony lato server e predispone il file di configurazione PTP da
+utilizzare come grandmaster interno del dominio sperimentale.
+
+\begin{lstlisting}[language=bash,caption={Estratto di \texttt{servergm.startup}: installazione e copia delle configurazioni.},label={lst:servergm_startup}]
+apt update -y
+apt install -y chrony linuxptp
+
+cp /tesi_sync_lab/configs/chrony/server_chrony.conf /etc/chrony/chrony.conf
+
+pkill chronyd 2>/dev/null
+sleep 2
+chronyd &
+
+mkdir -p /etc/ptp
+cp /tesi_sync_lab/configs/ptp/server_ptp.conf /etc/ptp/server_gm.conf
+\end{lstlisting}
+
+Analogamente, il nodo \texttt{clientchrony} installa Chrony, copia la
+configurazione client e avvia manualmente il demone \texttt{chronyd}. La scelta
+dell'avvio manuale è stata preferita poichè, all'interno dei container, la
+gestione tramite \texttt{systemctl} non è necessaria e può risultare meno adatta rispetto
+all'avvio diretto del processo.
+
+\begin{lstlisting}[language=bash,caption={Estratto di \texttt{clientchrony.startup}: configurazione e avvio del client Chrony.},label={lst:clientchrony_startup}]
+apt update -y
+apt install -y chrony
+
+cp /tesi_sync_lab/configs/chrony/client_chrony.conf /etc/chrony/chrony.conf
+
+pkill chronyd 2>/dev/null
+sleep 2
+chronyd &
+\end{lstlisting}
+
+In NTPsec, il nodo \texttt{serverntp} installa il pacchetto \texttt{ntpsec},
+copia la configurazione server e avvia \texttt{ntpd}. Una procedura simile viene
+adottata per il nodo\texttt{clientntp} che però utilizza una confiurazione lato
+client. Per quanto riguarda invece il nodo \texttt{boundary} si ha sia la
+configurazione PTP sia la configurazione NTPsec, ma i demoni non vengono mantenuti
+attivi simultaneamente in quanto potrebbero essere causa di conflitti interni,
+come problematicità di permessi.
+
+\begin{lstlisting}[language=bash,caption={Estratto di \texttt{serverntp.startup}: configurazione e avvio di NTPsec.},label={lst:serverntp_startup}]
+apt update -y
+apt install -y ntpsec
+
+cp /tesi_sync_lab/configs/ntp/server_ntp.conf /etc/ntpsec/ntp.conf
+
+pkill ntpd 2>/dev/null
+sleep 2
+/usr/sbin/ntpd -g -c /etc/ntpsec/ntp.conf &
+\end{lstlisting}
+
+Il nodo \texttt{clientptp} installa invece \texttt{linuxptp} e copia il file di configurazione
+PTP lato client. L'avvio effettivo del demone \texttt{ptp4l} non avviene direttamente
+nel file \texttt{.startup}, ma viene gestito successivamente dagli script di esecuzione,
+in modo da controllare l'ordine di avvio del grandmaster, del boundary clock e del
+client PTP.
+
+\begin{lstlisting}[language=bash,caption={Estratto di \texttt{clientptp.startup}: predisposizione della configurazione PTP lato client.},label={lst:clientptp_startup}]
+apt update -y
+apt install -y linuxptp
+
+mkdir -p /etc/ptp
+cp /tesi_sync_lab/configs/ptp/client_ptp.conf /etc/ptp/client_ptp.conf
+\end{lstlisting}
+
+Uno script differente, indicato come \texttt{bootstrapT3\_V2.sh}, viene utilizzato
+per coordinare l'intera esecuzione sperimentale. Esso definisce gli scenari da
+eseguire, l'insieme delle run, la directory di output dei log, il percorso della topologia
+Kathará e l'interfaccia su cui applicare gli impairment per i test che perturbano
+il ramo B.
+
+\begin{lstlisting}[language=bash,caption={Variabili principali dello script \texttt{bootstrapT3\_V2.sh}.},label={lst:bootstrap_vars}]
+SCENARIOS=("low" "medium" "high")
+SCENARIO_DIR="$(dirname "$0")/scenarios"
+RAWLOG_ROOT="analysis/raw_logs/T3_multiplerun"
+NETNS="boundary"
+IFACE="eth1"   # boundary lato rete B
+TOPOLOGY_DIR="topologies/T2"
+
+RUNS=15
+
+mkdir -p "$RAWLOG_ROOT"
+\end{lstlisting}
+
+Ogni scenario viene eseguito più volte. Nel caso mostrato, per ciascuno scenario
+sono previste quindici run indipendenti. Permettendo di ridurre eventuali rumori statistici
+e di ottenere una distribuzione più affidabile dei risultati.
+
 \subsection{Privilegi e capability}
+
+Ogni esecuzione dei demoni di sincronizzazione richiede specifici privilegi all'interno
+dei container, e lo stesso accade per l'applicazione degli impairment di rete introdotti,
+da qui nasce la necessità di avviare in modalità privilegiata la topologia e di
+assegnare capability aggiuntive ai nodi, \texttt{--privileged}. Così facendo si sono
+ridotti problemi leagti alle restrizioni imposte dal runtime dei container.
+
+Le capacibility sono un meccanismo del kernel Linux che consente di concedere privilegi
+specifici a processi o container senza dover concedere loro l'accesso completo come
+utente root. Di seguito sono riportate le capability principali utilizzate nel
+testbed: \texttt{SYS\_TIME}, \texttt{NET\_RAW} e \texttt{NET\_ADMIN}.
+
+\begin{lstlisting}[language=bash,caption={Estratto del file \texttt{lab.conf}: capability assegnate ai container.},label={lst:labconf_capabilities}]
+clientptp[cap_add]=SYS_TIME,NET_RAW,NET_ADMIN
+boundary[cap_add]=SYS_TIME,NET_RAW,NET_ADMIN
+servergm[cap_add]=SYS_TIME,NET_RAW,NET_ADMIN
+serverntp[cap_add]=SYS_TIME,NET_RAW,NET_ADMIN
+clientchrony[cap_add]=SYS_TIME,NET_RAW,NET_ADMIN
+\end{lstlisting}
+
+\texttt{SYS\_TIME} consente processi nel container di intervenire sull'orologio di
+sistema, questo indipendentemente se poi avviene o meno. Si è reso necessario l'aggiunta
+di essa poiché era origine di conflitti internii, in quanto essa è necessaria
+per i demoni che disciplinano il clock locale, come \texttt{chronyd}, \texttt{ntpd}
+e \texttt{ptp4l}. La capability \texttt{NET\_ADMIN} è necessaria per operazioni amministrative
+sulle interfacce di rete, tra cui l'applicazione di qdisc tramite \texttt{tc}.
+La capability \texttt{NET\_RAW} abilita invece funzionalità legate all'uso di socket
+raw e operazioni di rete richieste da alcuni strumenti o implementazioni.
+
+\begin{lstlisting}[language=bash,caption={Avvio privilegiato della topologia nello script di automazione.},label={lst:kathara_privileged}]
+sudo -v
+printf 'n\n' | sudo -n kathara lstart -d "$TOPOLOGY_DIR" --privileged
+\end{lstlisting}
+
+Nella fase di testbed la topologia viene "ripulita" e riavviata prima di ogni
+scenario o run. È stato effettuato tramite \texttt{kathara lclean} elimnando i
+container della run precedente, evitando che processi attivi, configurazioni
+residue o discipline di coda rimangano applicate all'esecuzione successiva.
+
+\begin{lstlisting}[language=bash,caption={Reset della topologia prima dell'avvio di una run.},label={lst:kathara_lclean}]
+kathara lclean -d "$TOPOLOGY_DIR" || true
+sudo -v
+printf 'n\n' | sudo -n kathara lstart -d "$TOPOLOGY_DIR" --privileged
+\end{lstlisting}
+
+L'uso di \texttt{|| true} impedisce che un eventuale errore nella fase di
+pulizia, ad esempio dovuto all'assenza di una topologia già attiva, interrompa
+lo script.
+
+Un'ulteriore precauzione riguarda l'esecuzione dei demoni sul nodo \texttt{boundary}.
+Poiché tale nodo può essere coinvolto sia nei test PTP sia nei test NTPsec, gli script
+evitano di mantenere attivi contemporaneamente demoni che potrebbero tentare di disciplinare
+lo stesso clock locale. Nel caso PTP, prima dell'avvio di \texttt{ptp4l} sul
+grandmaster viene terminato \texttt{chronyd}; nel caso NTPsec, \texttt{ntpd}
+viene avviato soltanto quando necessario e con PTP non attivo.
+
+\begin{lstlisting}[language=bash,caption={Esempio di avvio controllato dei demoni PTP.},label={lst:ptp_start_sequence}]
+kathara exec -d "$TOPOLOGY_DIR" servergm -- bash -lc 
+"pkill chronyd 2>/dev/null || true; 
+sleep 1; 
+ptp4l -f /etc/ptp/server_gm.conf -m -i eth0 -S 
+&> /tesi_sync_lab/$RUN_DIR/ptp_server.log &"
+
+sleep 3
+
+kathara exec -d "$TOPOLOGY_DIR" boundary -- bash -lc 
+"ptp4l -f /etc/ptp/bc.conf -m -i eth0 -i eth1 -S 
+&> /tesi_sync_lab/$RUN_DIR/ptp_boundary.log &"
+
+sleep 3
+
+kathara exec -d "$TOPOLOGY_DIR" clientptp -- bash -lc 
+"ptp4l -f /etc/ptp/client_ptp.conf -m -i eth0 -S -s 
+&> /tesi_sync_lab/$RUN_DIR/ptp_client.log &"
+\end{lstlisting}
+
+La sequenza di avvio è rilevante perché permette di inizializzare prima il grandmaster,
+poi il boundary clock e infine il client PTP. In questo modo, il dominio PTP
+viene costruito secondo la gerarchia attesa, riducendo la presenza di transitori dovuti
+all'assenza iniziale di una sorgente temporale.
+
 \subsection{Isolamento dalla rete esterna}
+
+Nella fase di avvio si è reso necessario mantenere la connettività verso l'esterno
+per consentire l'installazione dei pacchetti necessari, quali \texttt{chrony}, \texttt{ntpsec}
+e \texttt{linuxptp}, e l'aggiornametno delle repository. Questo spiega la presenza
+di bridge temporanei verso l'esterno, che vengono successivamente disabilitati
+per garantire l'isolamento del testbed.
+
+\begin{lstlisting}[language=bash,caption={Estratto del file \texttt{lab.conf}: bridge temporaneo verso l'esterno.},label={lst:labconf_bridged}]
+servergm[bridged]=true
+serverntp[bridged]=true
+boundary[bridged]=true
+clientchrony[bridged]=true
+clientntp[bridged]=true
+clientptp[bridged]=true
+\end{lstlisting}
+
+Successivamente, terminata l'inzializzazione della T2, la connettività esterna è stata
+disabilitata utilizzando lo script \texttt{endInternetConnection.sh}.
+
+Lo script disabilita l'interfaccia esterna sui nodi dotati di una sola
+interfaccia interna e disabilita l'interfaccia esterna dedicata sul nodo \texttt{boundary}.
+Nei nodi collegati a una sola rete interna, l'interfaccia \texttt{eth0} è
+utilizzata per la topologia sperimentale, mentre \texttt{eth1} rappresenta l'interfaccia
+bridged verso l'esterno. Nel nodo \texttt{boundary}, invece, \texttt{eth0} ed \texttt{eth1}
+sono già utilizzate per le reti A e B; l'interfaccia esterna risulta quindi \texttt{eth2}.
+
+\begin{lstlisting}[language=bash,caption={Script \texttt{endInternetConnection.sh}: disabilitazione della connettività esterna.},label={lst:end_internet}]
+#!/bin/bash
+source ./scripts/envT2.sh
+
+echo "[+] Disattivo eth1 in tutti i nodi (post-start)"
+for node in servergm serverntp clientchrony clientntp clientptp; do
+if kathara exec -d "$TOPOLOGY_DIR" "$node" 'ip link set eth1 down' >/dev/null 2>&1; then
+echo "[+] eth1 disattivata in $node"
+else
+echo "[!] eth1 non presente in $node"
+fi
+done
+
+if kathara exec -d "$TOPOLOGY_DIR" boundary 'ip link set eth2 down' >/dev/null 2>&1; then
+echo "[+] eth2 disattivata in boundary"
+else
+echo "[!] eth2 non presente in boundary"
+fi
+
+echo "[DONE] Connessione Internet disattivata in tutti i nodi."
+\end{lstlisting}
+
+Questo script viene eseguito in ogni run dopo l'avvio della topologia.
+
+\begin{lstlisting}[language=bash,caption={Punto del workflow in cui viene disabilitata la rete esterna.},label={lst:end_internet_workflow}]
+kathara lclean -d "$TOPOLOGY_DIR" || true
+sudo -v
+printf 'n\n' | sudo -n kathara lstart -d "$TOPOLOGY_DIR" --privileged
+
+sleep 25
+
+./scripts/endInternetConnection.sh
+
+sleep 5
+\end{lstlisting}
+
+Togliendo connettività esterna, garantiamo che disturbi non controllati possono essere
+introdotti all'interno del testbed, e allo stesso modo garantiamo che i
+riferimenti temporali siano interni rispetto ai nodi preventivamente stabiliti, quali
+sono rispettivametne i nodi \texttt{servergm} e \texttt{serverntp}.
 
 \section{Configurazione logica dei protocolli}
 \subsection{Configurazione PTP}
