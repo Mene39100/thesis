@@ -7,7 +7,9 @@
   "latex-workshop.synctex.afterBuild.enabled": true,
   "latex-workshop.view.pdf.zoom": "page-fit",
   "[latex]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
