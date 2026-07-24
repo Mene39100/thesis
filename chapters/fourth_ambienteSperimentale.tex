@@ -661,10 +661,551 @@ Differentemente dalla configurazione PTP, il nodo \texttt{boundary} opera come c
 nodo intermedio e non come boundary clock nel senso del protocollo IEEE 1588.
 
 \section{Emulazione degli impairment di rete}
+
+Per la valutazione del comportamento adottato dai demoni di sincronizzazione in condizioni
+non ideali, sono stati introdotti impairment di rete controllati attraverso l'ausilio
+di Linux Traffic Control. La topologia di rete è rimasta invariata in tutte la run,
+garantendo omogeneità, ma allo stesso tempo sono cambiati i parametri degli impairment
+stessi.
+
+TC, ovvero Linux Traffic Control, permette di controllare, classificare, modellare
+e pianificare il traffico di rete. Si dispone di discipline di accodamento (qdisc)
+e filtri per gestire e manipolare la trasmissione dei pacchetti, inclusa la modifica
+del loro contenuto. \cite{Chapter32Linux}. Nel caso specifico è stato utilizzata una
+combinazione di \texttt{netem} e \texttt{tbf}. La prima qdisc (CLASSLESS QDISC), cioè
+Network Emulator (netem) è un miglioramento delle funzionalità di controllo del traffico
+di Linux che consente di aggiungere ritardo, perdita di pacchetti, duplicazione e
+altre caratteristiche ai pacchetti in uscita da un'interfaccia di rete selezionata.
+\cite{Tc8LinuxManual}
+
+Invece la seconda (CLASSLESS QDISC), cioè tbf, è il filtro Token Bucket che è adatto
+a rallentare il traffico a una velocità configurata con precisione, quindi
+limitare la bandwidth . \cite{Tc8LinuxManual}
+
+Gli scenari sono stati definiti in modo parametrico mediante file di configurazione
+separati dal codice di esecuzione.
+
 \subsection{Linux Traffic Control}
+
+Linux Traffic Control, viene richiamato tramite il comando \texttt{tc}.
+
+Le due qdisc sono state combinate, la prima qdisc \texttt{netem} è stata
+applicata come root. Diversamente la seconda è stata agganciata come qdisc figlia
+della prima. La struttura logica si configura come segue: qdisc root di tipo \texttt{netem}
+con handle \texttt{1:}, e qdisc figlia di tipo \texttt{tbf} con handle \texttt{10:}.
+
+\begin{lstlisting}[language=bash,caption={Schema generale di applicazione di netem e tbf.},label={lst:tc-netem-tbf-generale}]
+tc qdisc replace dev $IFACE root handle 1: netem \
+  delay $DELAY $JITTER \
+  loss $LOSS \
+  reorder $REORDER
+
+tc qdisc add dev $IFACE parent 1: handle 10: tbf \
+  rate $RATE \
+  burst 32kbit \
+  latency 400ms
+\end{lstlisting}
+
+\texttt{tc qdisc replace} è un comado utilizzato per sostituire o per creare in
+caso non esistesse la qdisc root sull'interfaccia. Così facendo, l'applicazione
+dello scenario risulta idempotente rispetto alla configurazione della qdisc
+principale.
+
+\texttt{tc qdisc add} è il comando adottato all'aggiunta della qdisc figlia alla root,
+agganciandola al parent \texttt{1:}, riuscendo cosi ad introdurre sia
+perturbazioni temporali e probabilistiche, sia una limitazione del rate.
+
+Per avere un quadro più chiaro, nei file del testbed sono presenti anche due
+script di supporto, \texttt{apply\_netem.sh} e \texttt{cleanup\_netem.sh}, i
+quali però non sono utilizzati nel flusso principale del testbed, ma hanno solo funzione
+di debugging. Il primo è stato pensato per applicare singoli disturbi su un'interfaccia
+specifica, mentre il secondo consente di rimuovere manualmente la qdisc root da un'interfaccia.
+
+\begin{lstlisting}[language=bash,caption={Rimozione manuale di una qdisc da un'interfaccia.},label={lst:tc-cleanup}]
+tc qdisc del dev <interface> root
+\end{lstlisting}
+
+Necessitando però l'aggiunta simultanea di più parametri, gli script di supporto non
+vegono quindi gestiti direttamente dallo script princpale. Lo stesso avviene per
+la rimozione in quanto andando a chiudere i container ogni run, le qdisc vengono automaticamente
+rimosse.
+
 \subsection{Parametri di degrado}
+
+I file \texttt{.conf} contengono le variabili che definiscono i parametri di degrado,
+sono presenti nella directory \texttt{scripts/netem/scenarios/} e vengono importati
+dallo script principale tramite \texttt{source}. In ogni file vi sono variabili Bash
+che specificano gli esatti parametri da passare ai comandi \texttt{tc}. La struttura
+della directory degli scenari è la seguente:
+
+\begin{lstlisting}[caption={Organizzazione dei file di scenario.},label={lst:scenario-directory}]
+scripts/netem/
+|-- scenarios/
+|   |-- low.conf
+|   |-- medium.conf
+|   |-- high.conf
+|   `-- scenario_matrix.md
+|-- apply_netem.sh
+|-- cleanup_netem.sh
+`-- bootstrapT3.sh
+\end{lstlisting}
+
+Nella seguente tabella venogno riportati i parametri utilizzati~\ref{tab:parametri-degrado}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lll}
+    \hline
+    \textbf{Parametro} & \textbf{Significato}     & \textbf{Uso nel testbed}    \\
+    \hline
+    \texttt{DELAY}     & Ritardo medio introdotto & Parametro di \texttt{netem} \\
+    \texttt{JITTER}    & Variabilità del ritardo  & Parametro di \texttt{netem} \\
+    \texttt{LOSS}      & Probabilità di perdita   & Parametro di \texttt{netem} \\
+    \texttt{REORDER}   & Probabilità di riordino  & Parametro di \texttt{netem} \\
+    \texttt{RATE}      & Limite di banda          & Parametro di \texttt{tbf}   \\
+    \hline
+  \end{tabular}
+  \caption{Parametri utilizzati per definire gli scenari di degrado.}
+  \label{tab:parametri-degrado}
+\end{table}
+
+Un esempio di file di scenario è rappresentato da \texttt{low.conf}:
+
+\begin{lstlisting}[language=bash,caption={Esempio di file di scenario low.conf.},label={lst:low-conf}]
+DELAY="5ms"
+JITTER="1ms"
+LOSS="0.1%"
+REORDER="1%"
+RATE="50Mbit"
+\end{lstlisting}
+
+È importante notare che i valori presenti nel file di configurazione sono parte della
+sintassi interpretata da \texttt{tc}. Si ha quindi che i valori temporali sono espressi
+in millisecondi, le probabilità in percentuale e il limite di banda in unità
+compatibili con il comando \texttt{tbf}.
+
+La logica, successivamente descritta nel paragrafo \ref{cha:AnalisiSperimentale},
+distingue tre scenari (livelli) di degrado progressivo, identificati come
+\texttt{low}, \texttt{medium} e \texttt{high}.
+
 \subsection{Applicazione degli scenari}
 
+Per quanto riguarda l'applicazione degli impairment, si è deciso di degradare il
+tratto di rete tra il nodo boundary e il client finale, sia per PTP che per NTPsec.
+Questo asseconda la logica di \texttt{qdisc} che si applica sulla traffico in uscita
+da un'interfaccia di rete, cioè in egress. Nei due scenari quindi, si è
+applicato gli impairmentsull'interfaccia \texttt{eth1} del nodo \texttt{boundary}.
+Tale interfaccia collega il boundary alla rete B e rappresenta quindi il ramo downstream
+verso i client \texttt{clientptp} e \texttt{clientntp}. In questo modo, la sorgente
+temporale sulla rete A rimane non perturbata, mentre viene degradato il
+collegamento verso il client finale.
+
+\begin{lstlisting}[language=bash,caption={Selezione dell'interfaccia degradata per PTP e NTPsec.},label={lst:ptp-ntpsec-iface}]
+NETNS="boundary"
+IFACE="eth1"   # boundary lato rete B
+\end{lstlisting}
+
+L'applicazione effettiva della qdisc su \texttt{boundary:eth1} avviene tramite
+\texttt{kathara exec}, eseguendo il comando \texttt{tc} all'interno del container
+del nodo \texttt{boundary}.
+
+\begin{lstlisting}[language=bash,caption={Applicazione di netem e tbf su boundary:eth1.},label={lst:tc-boundary-eth1}]
+kathara exec -d "$TOPOLOGY_DIR" $NETNS -- bash -lc \
+  "tc qdisc replace dev $IFACE root handle 1: netem \
+      delay $DELAY $JITTER \
+      loss $LOSS \
+      reorder $REORDER"
+
+kathara exec -d "$TOPOLOGY_DIR" $NETNS -- bash -lc \
+  "tc qdisc add dev $IFACE parent 1: handle 10: tbf \
+      rate $RATE \
+      burst 32kbit \
+      latency 400ms"
+\end{lstlisting}
+
+In PTP è quindi possibile osservare l'effetto del degrado sul ramo downstream del
+dominio PTP, distinguendo il comportamento del boundary clock da quello del
+client finale.
+
+Analogamente anche in NTPsec, poichè il \texttt{clientntp} riceve dal nodo
+\texttt{boundary} la sincronizzazione attraverso il collegamento degradato, è
+possibile valutare l'effetto dell'hop intermedio e del degrado downstream sulla
+qualità della sincronizzazione del client.
+
+Per Chrony, invece, la catena logica è diretta tra \texttt{servergm} e \texttt{clientchrony},
+entrambi collocati sulla rete A. Per questo motivo sono state considerate due
+modalità distinte di applicazione dello scenario: una con qdisc applicata sull'interfaccia
+\texttt{eth0} di \texttt{clientchrony} e una con qdisc applicata sull'interfaccia
+\texttt{eth0} di \texttt{servergm}.
+
+\begin{lstlisting}[language=bash,caption={Applicazione di netem e tbf su clientchrony:eth0.},label={lst:tc-clientchrony}]
+CLIENT_IFACE="eth0"
+
+kathara exec -d "$TOPOLOGY_DIR" clientchrony -- bash -lc \
+  "tc qdisc replace dev $CLIENT_IFACE root handle 1: netem \
+      delay $DELAY $JITTER loss $LOSS reorder $REORDER"
+
+kathara exec -d "$TOPOLOGY_DIR" clientchrony -- bash -lc \
+  "tc qdisc add dev $CLIENT_IFACE parent 1: handle 10: tbf \
+      rate $RATE burst 32kbit latency 400ms"
+\end{lstlisting}
+
+La seconda modalità applica gli stessi parametri all'interfaccia \texttt{eth0} di
+\texttt{servergm}.
+
+\begin{lstlisting}[language=bash,caption={Applicazione di netem e tbf su servergm:eth0.},label={lst:tc-servergm}]
+CLIENT_IFACE="eth0"
+
+kathara exec -d "$TOPOLOGY_DIR" servergm -- bash -lc \
+  "tc qdisc replace dev $CLIENT_IFACE root handle 1: netem \
+      delay $DELAY $JITTER loss $LOSS reorder $REORDER"
+
+kathara exec -d "$TOPOLOGY_DIR" servergm -- bash -lc \
+  "tc qdisc add dev $CLIENT_IFACE parent 1: handle 10: tbf \
+      rate $RATE burst 32kbit latency 400ms"
+\end{lstlisting}
+
+Questa scelta, come poi evidenziato nella fase di analisi dei dati
+\ref{cha:AnalisiSperimentale}, serve a mettere in evidenza l'effetto della perturbazione
+sul nodo che riceve la sincronizzazione rispetto al nodo che svolge il ruolo di sorgente
+temporale interna.
+
 \section{Automazione e raccolta dei log}
+
+Il flusso logico di esecuzione del testbed è realizzato con un script Bash
+principale, denominato \texttt{bootstrapT3\_V2.sh}. Coordina l'intera ciclo di funzionalità
+precedentemente descritte: dalla pulizia/creazione della topologia, alla logica dell'applicazione
+degli impairment, fino alla raccolta dati, garantendo ripetibilità e separazione funzionale
+tra le run sperimentali.
+
+Così facendo, sì è ridotto al minimo l'intervento manuale, evitando errori di alcun
+tipo, e soprattuto si è garantito interferenza tra processi residui o
+configurazioni differenti, semplificando anche quella che poi è stata l'analisi dati
+\ref{cha:AnalisiSperimentale}.
+
 \subsection{Script di esecuzione}
+
+Nello script vengono definiti gli scenari da eseguire (evidenziata dalla variabile
+\texttt{SCENARIOS}), le directory di output dei log (evidenziata dalla variabile \texttt{RAWLOG\_ROOT}),
+la topologia (evidenziata dalla variabile \texttt{TOPOLOGY\_DIR}), e la
+numerazione dei run (evidenziata dalla variabile \texttt{RUNS}).
+
+\begin{lstlisting}[language=bash,caption={Variabili globali dello script di automazione.},label={lst:auto-vars}]
+SCENARIOS=("low" "medium" "high")
+SCENARIO_DIR="$(dirname "$0")/scenarios"
+RAWLOG_ROOT="analysis/raw_logs/T3_multiplerun"
+NETNS="boundary"
+IFACE="eth1"   # boundary lato rete B
+TOPOLOGY_DIR="topologies/T2"
+
+RUNS=15
+
+mkdir -p "$RAWLOG_ROOT"
+\end{lstlisting}
+
+La struttura è basata su funzioni separate per i protocolli PTP, NTPsec e Chrony,
+ognuna opportunamente implementata, con la specifica applicata nel caso di Chrony,
+distinguendo il caso in cui l'impairment è applicato su \texttt{servergm} dal caso
+in cui è applicato su \texttt{clientchrony}.
+
+\begin{lstlisting}[language=bash,caption={Funzioni principali dello script di automazione.},label={lst:auto-functions}]
+run_ptp_scenario() {
+    ...
+}
+
+run_ntpsec_scenario() {
+    ...
+}
+
+run_chrony_scenario_servergm() {
+    ...
+}
+
+run_chrony_scenario_clientchrony() {
+    ...
+}
+\end{lstlisting}
+
+Le funzioni sono richiamate in un ciclo annidato, iterando prima sugli scenari e
+poi sulle run per ogni scenario, fetchate degli opportuni parametri. A partire
+da questi valori viene costruita una directory specifica in cui salvare i log
+della run. Un esempio:
+
+\begin{lstlisting}[language=bash,caption={Creazione della directory di output per una run PTP.},label={lst:auto-run-dir-ptp}]
+local S="$1"
+local RUN_ID="$2"
+local RUN_DIR="$RAWLOG_ROOT/ptp/$S/run$(printf "%02d" "$RUN_ID")"
+
+mkdir -p "$RUN_DIR"
+\end{lstlisting}
+
+Nota: \texttt{printf "\%02d"}serve a numerare le run, formattando le directory
+rendendo più complesibile l'attività di logging.
+
+All'inizio di ogni run viene importato il file di scenario corrispondente
+tramite \texttt{source}. In questo modo le variabili \texttt{DELAY}, \texttt{JITTER},
+\texttt{LOSS}, \texttt{REORDER} e \texttt{RATE} diventano disponibili nello
+shell corrente e possono essere passate direttamente ai comandi \texttt{tc}.
+
+\begin{lstlisting}[language=bash,caption={Importazione dei parametri dello scenario corrente.},label={lst:auto-source-scenario}]
+source "$SCENARIO_DIR/$S.conf"
+
+echo "[DEBUG] delay=$DELAY jitter=$JITTER loss=$LOSS reorder=$REORDER rate=$RATE"
+\end{lstlisting}
+
+Pulizia dei container residui e avvio topologia.
+
+\begin{lstlisting}[language=bash,caption={Pulizia e avvio della topologia prima di una run.},label={lst:auto-lstart}]
+kathara lclean -d "$TOPOLOGY_DIR" || true
+
+sudo -v
+printf 'n\n' | sudo -n kathara lstart -d "$TOPOLOGY_DIR" --privileged
+
+sleep 25
+
+./scripts/endInternetConnection.sh
+
+sleep 5
+\end{lstlisting}
+
+I comandi di sleep presenti sono stati inseriti al fine di garantire la stabilizzazione
+della topologia e dei processi prima di procedere con il resto.
+
+Esempio di avvio processi PTP, con avvio container e implementazione impairment
+di rete.
+
+\begin{lstlisting}[language=bash,caption={Avvio dei processi PTP nella run automatizzata.},label={lst:auto-ptp-start}]
+kathara exec -d "$TOPOLOGY_DIR" servergm -- bash -lc \
+  "pkill chronyd 2>/dev/null || true; \
+  sleep 1; \
+  ptp4l -f /etc/ptp/server_gm.conf -m -i eth0 -S \
+  &> /tesi_sync_lab/$RUN_DIR/ptp_server.log &"
+
+sleep 3
+
+kathara exec -d "$TOPOLOGY_DIR" boundary -- bash -lc \
+  "ptp4l -f /etc/ptp/bc.conf -m -i eth0 -i eth1 -S \
+  &> /tesi_sync_lab/$RUN_DIR/ptp_boundary.log &"
+
+sleep 3
+
+kathara exec -d "$TOPOLOGY_DIR" clientptp -- bash -lc \
+  "ptp4l -f /etc/ptp/client_ptp.conf -m -i eth0 -S -s \
+  &> /tesi_sync_lab/$RUN_DIR/ptp_client.log &"
+\end{lstlisting}
+
+I log standard prodotti da \texttt{ptp4l} vengono rediretti nei file \texttt{ptp\_server.log},
+\texttt{ptp\_boundary.log} e \texttt{ptp\_client.log}. Dopo l'avvio dei processi,
+lo script attende una fase di stabilizzazione prima di chiudere la topologia.
+
+\begin{lstlisting}[language=bash,caption={Fase di stabilizzazione PTP e chiusura della run.},label={lst:auto-ptp-sleep}]
+echo "[+] Stabilizzazione PTP..."
+sleep 250
+
+kathara lclean -d "$TOPOLOGY_DIR"
+\end{lstlisting}
+
+Analogamente avviene per NTPsec, con opportune modifiche nel merito del demone e
+della raccolta dati tramite \texttt{ntpq -p}.
+
+\begin{lstlisting}[language=bash,caption={Avvio controllato di NTPsec sul boundary.},label={lst:auto-ntpsec-start}]
+kathara exec -d "$TOPOLOGY_DIR" boundary -- bash -lc \
+  'pkill ntpd 2>/dev/null; sleep 2; /usr/sbin/ntpd -g -c /etc/ntpsec/ntp.conf &'
+\end{lstlisting}
+
+La raccolta dei dati NTPsec viene effettuata tramite \texttt{ntpq -p}, eseguito
+periodicamente ogni 15 secondi. Il comando viene eseguito sia sul client sia sul boundary,
+così da osservare separatamente il comportamento del nodo intermedio e quello
+del client finale.
+
+\begin{lstlisting}[language=bash,caption={Loop di logging NTPsec sul client.},label={lst:auto-ntpsec-client-loop}]
+kathara exec -d "$TOPOLOGY_DIR" clientntp -- bash -lc "
+  nohup bash -c '
+    while true; do
+      echo \"--- \$(date +%T) ---\"
+      ntpq -p
+      sleep 15
+    done
+  ' > /tesi_sync_lab/$RUN_DIR/ntp_client_live.log 2>&1 &
+"
+\end{lstlisting}
+
+Un loop analogo viene eseguito sul nodo \texttt{boundary}, salvando l'output nel file
+\texttt{ntp\_boundary\_live.log}. La durata della run NTPsec è più lunga rispetto
+a quella PTP, poiché il protocollo può richiedere più tempo per l'inizializzazione,
+la selezione della sorgente e la stabilizzazione delle metriche osservabili tramite
+\texttt{ntpq}.
+
+\begin{lstlisting}[language=bash,caption={Durata della fase di raccolta NTPsec.},label={lst:auto-ntpsec-sleep}]
+sleep 1500
+
+kathara lclean -d "$TOPOLOGY_DIR"
+\end{lstlisting}
+
+In Chrony la funzione che applica il degrado su \texttt{servergm} costruisce la
+directory di output nella gerarchia \texttt{chrony\_servergm}. La funzione che
+applica il degrado su \texttt{clientchrony} utilizza invece la gerarchia \texttt{chrony\_clientchrony}.
+Questa distinzione consente di mantenere separati i dati delle due modalità sperimentali.
+
+\begin{lstlisting}[language=bash,caption={Directory di output per le due modalità Chrony.},label={lst:auto-chrony-dirs}]
+RUN_DIR="$RAWLOG_ROOT/chrony_servergm/$S/run$(printf "%02d" "$RUN_ID")"
+
+RUN_DIR="$RAWLOG_ROOT/chrony_clientchrony/$S/run$(printf "%02d" "$RUN_ID")"
+\end{lstlisting}
+
+Prima della raccolta, lo script salva lo stato effettivo della qdisc applicata.
+Questo file consente di verificare a posteriori che lo scenario sia stato
+effettivamente applicato all'interfaccia prevista.
+
+\begin{lstlisting}[language=bash,caption={Salvataggio dello stato della qdisc in una run Chrony.},label={lst:auto-chrony-qdisc-state}]
+kathara exec -d "$TOPOLOGY_DIR" clientchrony -- bash -lc \
+  "tc -s qdisc show dev $CLIENT_IFACE" \
+  > "$RUN_DIR/netem_state.txt"
+\end{lstlisting}
+
+Dopo l'applicazione della qdisc, lo script attende una breve fase di convergenza
+e inizializza i file destinati alla raccolta delle serie temporali.
+
+\begin{lstlisting}[language=bash,caption={Inizializzazione dei file di output Chrony.},label={lst:auto-chrony-files}]
+SAMPLES=20
+INTERVAL=60
+
+TRACK_FILE="$RUN_DIR/chrony_tracking_series.txt"
+SOURCES_FILE="$RUN_DIR/chrony_sources_series.txt"
+STATS_FILE="$RUN_DIR/chrony_sourcestats_series.txt"
+ACT_FILE="$RUN_DIR/chrony_activity_series.txt"
+
+: > "$TRACK_FILE"
+: > "$SOURCES_FILE"
+: > "$STATS_FILE"
+: > "$ACT_FILE"
+\end{lstlisting}
+
+Nel caso della funzione con impairment su \texttt{clientchrony}, lo script raccoglie
+venti campioni a intervalli di 60 secondi. Nella funzione con impairment su
+\texttt{servergm}, la struttura è analoga, ma il numero di campioni è impostato a
+dieci. Ogni campione viene marcato temporalmente tramite \texttt{date -Is}, in
+modo da mantenere un riferimento temporale testuale per la successiva analisi.
+
+\begin{lstlisting}[language=bash,caption={Raccolta periodica delle metriche Chrony.},label={lst:auto-chrony-loop}]
+for i in $(seq 1 $SAMPLES); do
+  ts="$(date -Is)"
+  echo "===== SAMPLE $i/$SAMPLES @ $ts =====" | tee -a "$TRACK_FILE" "$SOURCES_FILE" "$STATS_FILE" "$ACT_FILE" >/dev/null
+
+  kathara exec -d "$TOPOLOGY_DIR" clientchrony "chronyc tracking" \
+    >> "$TRACK_FILE" 2>&1
+  echo "" >> "$TRACK_FILE"
+
+  kathara exec -d "$TOPOLOGY_DIR" clientchrony "chronyc sources -v" \
+    >> "$SOURCES_FILE" 2>&1
+  echo "" >> "$SOURCES_FILE"
+
+  kathara exec -d "$TOPOLOGY_DIR" clientchrony "chronyc sourcestats" \
+    >> "$STATS_FILE" 2>&1
+  echo "" >> "$STATS_FILE"
+
+  kathara exec -d "$TOPOLOGY_DIR" clientchrony "chronyc activity" \
+    >> "$ACT_FILE" 2>&1
+  echo "" >> "$ACT_FILE"
+
+  sleep "$INTERVAL"
+done
+\end{lstlisting}
+
+Nella parte del main Bash, si ha un eseguzione sistematica di tutte le
+combinazioni di scenario e run.
+
+\begin{lstlisting}[language=bash,caption={Ciclo finale di esecuzione delle run.},label={lst:auto-final-loop}]
+for S in "${SCENARIOS[@]}"; do
+    for RUN_ID in $(seq 1 $RUNS); do
+        run_ptp_scenario "$S" "$RUN_ID"
+    done
+done
+
+for S in "${SCENARIOS[@]}"; do
+    for RUN_ID in $(seq 1 $RUNS); do
+        run_ntpsec_scenario "$S" "$RUN_ID"
+    done
+done
+
+for S in "${SCENARIOS[@]}"; do
+    for RUN_ID in $(seq 1 $RUNS); do
+        run_chrony_scenario_servergm "$S" "$RUN_ID"
+    done
+done
+
+for S in "${SCENARIOS[@]}"; do
+    for RUN_ID in $(seq 1 $RUNS); do
+        run_chrony_scenario_clientchrony "$S" "$RUN_ID"
+    done
+done
+
+echo "[OK] Tutti i test T3 completati."
+\end{lstlisting}
+
 \subsection{Organizzazione dei dati raccolti}
+
+I log sono salvati nella root directory \texttt{analysis/raw\_logs/T3\_multiplerun}
+con la seguente struttura:
+
+\begin{lstlisting}[caption={Organizzazione generale dei log sperimentali.},label={lst:auto-log-tree}]
+analysis/raw_logs/T3_multiplerun/
+|-- ptp/
+|   |-- low/
+|   |-- medium/
+|   `-- high/
+|-- ntpsec/
+|   |-- low/
+|   |-- medium/
+|   `-- high/
+|-- chrony_servergm/
+|   |-- low/
+|   |-- medium/
+|   `-- high/
+`-- chrony_clientchrony/
+    |-- low/
+    |-- medium/
+    `-- high/
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Esempio di percorso per una run PTP.},label={lst:auto-ptp-path}]
+analysis/raw_logs/T3_multiplerun/ptp/low/run01/
+\end{lstlisting}
+
+Nella dirctory PTP i file prodotti sono lo stato della qdisc e i tre log dei processi.
+
+\begin{lstlisting}[caption={File prodotti da una run PTP.},label={lst:auto-ptp-files}]
+ptp_server.log
+ptp_boundary.log
+ptp_client.log
+netem_state.txt
+\end{lstlisting}
+
+Per NTPsec, i file principali sono i log ottenuti tramite interrogazione periodica
+di \texttt{ntpq -p} sul client e sul boundary, oltre allo stato della qdisc.
+
+\begin{lstlisting}[caption={File prodotti da una run NTPsec.},label={lst:auto-ntpsec-files}]
+ntp_client_live.log
+ntp_boundary_live.log
+netem_state.txt
+\end{lstlisting}
+
+Per Chrony, i dati sono organizzati in quattro serie testuali, corrispondenti ai
+comandi \texttt{chronyc} utilizzati durante la raccolta.
+
+\begin{lstlisting}[caption={File prodotti da una run Chrony.},label={lst:auto-chrony-files-list}]
+chrony_tracking_series.txt
+chrony_sources_series.txt
+chrony_sourcestats_series.txt
+chrony_activity_series.txt
+netem_state.txt
+\end{lstlisting}
+
+Il file \texttt{chrony\_tracking\_series.txt} contiene lo stato del tracking del client
+Chrony. Il file \texttt{chrony\_sources\_series.txt} riporta le sorgenti viste dal
+client e il loro stato. Il file \texttt{chrony\_sourcestats\_series.txt} contiene
+le statistiche associate alla sorgente, mentre \texttt{chrony\_activity\_series.txt}
+descrive lo stato di attività delle sorgenti.
+
+Cosi facendo si è riusciti a ottenere una riconducibilità diretta tra i dati e i protocolli
+da cui essi sono dipesi.
