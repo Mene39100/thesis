@@ -3,7 +3,7 @@
 
 \section{Pipeline generale di elaborazione}
 
-Scripts Python, cioè \texttt{ptp\_analysis\_v3.py}, \texttt{chrony\_analysis\_v3.py} e 
+Gli script Python, cioè \texttt{ptp\_analysis\_v3.py}, \texttt{chrony\_analysis\_v3.py} e 
 \texttt{ntpsec\_analysis\_v3.py}, sono serviti per lo sviluppo dei log prodotti in dataset strutturati, 
 statistiche aggregate ed infine in grafici.
 
@@ -137,6 +137,47 @@ anche la sua dispersione e la variabilità osservata tra run distinte.
   \label{tab:pipeline-statistiche-aggregate}
 \end{table}
 
+La funzione comune usata per il calcolo delle statistiche aggregate è la seguente:
+
+\begin{listing}[H]
+\begin{minted}[
+  frame=single,
+  fontsize=\small,
+  breaklines,
+  linenos,
+  autogobble
+]{python}
+def agg_fn(g: pd.DataFrame) -> pd.Series:
+    vals = pd.to_numeric(g[metric], errors="coerce").dropna()
+    n = len(vals)
+    if n == 0:
+        return pd.Series(dtype=float)
+
+    mean = vals.mean()
+    std = vals.std(ddof=1) if n > 1 else 0.0
+    se = std / math.sqrt(n) if n > 1 else 0.0
+    tcrit = _t_critical_95(n)
+    ci_half = tcrit * se if n > 1 else 0.0
+
+    return pd.Series({
+        "n_runs": n,
+        "mean": mean,
+        "std": std,
+        "ci95_low": mean - ci_half,
+        "ci95_high": mean + ci_half,
+        "q10": vals.quantile(0.10),
+        "q25": vals.quantile(0.25),
+        "q50": vals.quantile(0.50),
+        "q75": vals.quantile(0.75),
+        "q90": vals.quantile(0.90),
+        "min": vals.min(),
+        "max": vals.max(),
+    })
+\end{minted}
+\caption{Calcolo delle statistiche aggregate applicato alle metriche dei tre protocolli.}
+\label{lst:pipeline-aggregate-stats-code}
+\end{listing}
+
 Gli output prodotti sono di due tipi. File CSV per-run, ovvero la conversione
 strutturata del raw-log e poi i file aggregati, salvati in una
 directory \texttt{\_aggregated}. Cioè il riassunto dell'andamento delle
@@ -148,8 +189,10 @@ La seconda mostra la media insieme all'intervallo interquartile e alla banda
 compresa tra il decimo e il novantesimo percentile.
 
 Per un confronto migliore tra scenari, vengono calcolati limiti comuni per l'asse y.
-Nel caso delle metriche che assumono valori positivi e negativi, il limite inferiore viene 
-posto a zero quando appropriato.
+Nel caso delle metriche che possono assumere valori sia positivi sia negativi,
+come gli offset, l'asse verticale viene reso simmetrico rispetto allo zero.
+Per le metriche non negative, come delay, jitter, RMS e deviazione standard,
+il limite inferiore viene invece posto a zero quando appropriato.
 
 \section{Metodologia di analisi PTP}
 
@@ -460,6 +503,10 @@ client_metrics = {
 \caption{Metriche PTP aggregate per boundary clock e client.}
 \label{lst:ptp-metric-specs}
 \end{listing}
+Le metriche indicate vengono quindi passate alla funzione comune di aggregazione
+descritta nella Pipeline generale. Per ogni combinazione di scenario, ruolo e
+metrica, lo script calcola media, deviazione standard, intervallo di confidenza
+al 95\%, quantili empirici, minimo e massimo.
 
 Il secondo elemento della tupla associata a ciascuna metrica indica se l'asse
 verticale dei grafici debba essere simmetrico rispetto allo zero.
@@ -643,18 +690,7 @@ if m:
 \label{lst:chrony-system-time-sign}
 \end{listing}
 
--------
--
--
--
--
----------
-I dati di tracking vengono poi trasformati in un \texttt{DataFrame}. Per ogni
-campione vengono salvati il timestamp originale, il tempo assoluto in secondi,
-il tempo relativo rispetto all'inizio della run, l'indice del campione, le
-metriche in secondi e le corrispondenti versioni in microsecondi. Lo script
-aggiunge inoltre le colonne \texttt{scenario} e \texttt{run\_id}, necessarie per
-l'aggregazione successiva.
+Analogalmente al caso PTP, anche qui avviene la conevrsione in un \texttt{DataFrame}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -682,12 +718,7 @@ rows.append({
 \label{lst:chrony-build-tracking-df}
 \end{listing}
 
-La seconda componente dell'analisi riguarda il file
-\texttt{chrony\_sourcestats\_series.txt}, ottenuto tramite il comando
-\texttt{chronyc sourcestats}. Questo file contiene statistiche relative alla
-sorgente temporale osservata da Chrony. Lo script estrae, per ciascuna riga
-valida della tabella, il nome della sorgente, il numero di campioni considerati,
-la frequenza stimata, lo skew, l'offset e la deviazione standard.
+Nella seconda componente si ha ciò che riguarda il comando \texttt{chronyc sourcestats}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -709,49 +740,8 @@ RE_SOURCESTATS_ROW = re.compile(
 \label{lst:chrony-regex-sourcestats}
 \end{listing}
 
-Poiché \texttt{chronyc sourcestats} può riportare offset e deviazione standard
-con unità differenti, lo script implementa una funzione di conversione verso i
-secondi. Sono gestite le unità \texttt{ns}, \texttt{us}, \texttt{ms} e
-\texttt{s}. In assenza di unità esplicita, il valore viene interpretato come
-espresso in secondi.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-def parse_quantity_with_unit(s: str) -> float:
-    s = s.strip()
-    m = re.fullmatch(r"(?P<num>[+-]?\d+(?:\.\d+)?)(?P<unit>ns|us|ms|s)?", s)
-    if not m:
-        raise ValueError(f"Cannot parse quantity: {s}")
-
-    num = float(m.group("num"))
-    unit = m.group("unit") or "s"
-
-    if unit == "s":
-        return num
-    if unit == "ms":
-        return num * 1e-3
-    if unit == "us":
-        return num * 1e-6
-    if unit == "ns":
-        return num * 1e-9
-
-    raise ValueError(f"Unknown unit: {unit}")
-\end{minted}
-\caption{Normalizzazione delle unità temporali nel parser Chrony.}
-\label{lst:chrony-unit-conversion}
-\end{listing}
-
 Anche i dati di \texttt{sourcestats} vengono trasformati in un
-\texttt{DataFrame}. Le metriche \texttt{offset} e \texttt{stddev} sono salvate
-sia in secondi sia in microsecondi. La presenza della colonna \texttt{source}
-permette di distinguere eventuali sorgenti differenti e di aggregare
-separatamente le metriche per ciascuna di esse.
+\texttt{DataFrame}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -780,10 +770,7 @@ rows.append({
 \label{lst:chrony-build-sourcestats-df}
 \end{listing}
 
-Per ogni run vengono prodotti due file CSV intermedi:
-\texttt{parsed\_tracking.csv} e \texttt{parsed\_sourcestats.csv}. Questi file
-sono salvati direttamente nella directory della run e rappresentano la versione
-strutturata dei log Chrony originali.
+Vegono prodotti per ogni run due file CSV:
 
 \begin{table}[H]
   \centering
@@ -799,13 +786,10 @@ strutturata dei log Chrony originali.
   \label{tab:chrony-csv-per-run}
 \end{table}
 
-La fase di riepilogo per-run produce due insiemi di statistiche sintetiche. Per
-il tracking vengono calcolate media e deviazione standard di
-\texttt{system\_time\_us} e \texttt{last\_offset\_us}. Per le statistiche della
-sorgente vengono calcolate media e deviazione standard di \texttt{offset\_us} e
-\texttt{stddev\_us}. Questi riepiloghi vengono poi salvati nei file
-\texttt{tracking\_summary\_all\_runs.csv} e
-\texttt{sourcestats\_summary\_all\_runs.csv}.
+Viene calcolato per il tracking la media e deviazione standard di
+\texttt{system\_time\_us} e \texttt{last\_offset\_us}.
+Per la source viene calcolata la media e e la deviazione standard di \texttt{offset\_us} e
+\texttt{stddev\_us}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -829,32 +813,8 @@ out = {
 \label{lst:chrony-tracking-summary}
 \end{listing}
 
-La directory aggregata è costruita all'interno della radice passata allo script,
-nella sottodirectory \texttt{\_aggregated}. Al suo interno vengono mantenute due
-aree distinte: una dedicata alle metriche di \texttt{tracking} e una dedicata
-alle metriche di \texttt{sourcestats}.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-agg_root = root / "_aggregated"
-tracking_dir = agg_root / "tracking"
-sourcestats_dir = agg_root / "sourcestats"
-tracking_dir.mkdir(parents=True, exist_ok=True)
-sourcestats_dir.mkdir(parents=True, exist_ok=True)
-\end{minted}
-\caption{Creazione della directory aggregata per l'analisi Chrony.}
-\label{lst:chrony-aggregated-dir}
-\end{listing}
-
 Le metriche aggregate per il tracking sono \texttt{system\_time\_us} e
-\texttt{last\_offset\_us}. Entrambe possono assumere valori positivi o negativi
-e vengono quindi trattate come metriche da rappresentare con asse verticale
+\texttt{last\_offset\_us}, si tiene sempre contro dell'asse verticale 
 simmetrico rispetto allo zero.
 
 \begin{listing}[H]
@@ -874,10 +834,7 @@ tracking_metrics = {
 \label{lst:chrony-tracking-metrics}
 \end{listing}
 
-Per \texttt{sourcestats}, invece, vengono aggregate le metriche
-\texttt{offset\_us} e \texttt{stddev\_us}. L'offset viene rappresentato con asse
-simmetrico, poiché può essere positivo o negativo. La deviazione standard è
-invece una grandezza non negativa e viene rappresentata con scala non simmetrica.
+Analogamente per \texttt{sourcestats}:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -896,11 +853,10 @@ sourcestats_metrics = {
 \label{lst:chrony-sourcestats-metrics}
 \end{listing}
 
-L'aggregazione delle metriche \texttt{sourcestats} viene effettuata anche per
-sorgente. Lo script individua le sorgenti disponibili nel dataset complessivo e
-costruisce tabelle aggregate distinte per ciascuna combinazione di scenario,
-metrica e sorgente. Questa scelta evita di mescolare misure provenienti da
-sorgenti diverse e preserva l'informazione sulla provenienza dei campioni.
+Anche in questo caso, le metriche elencate vengono elaborate tramite la funzione
+comune di aggregazione descritta nella Pipeline generale. L'aggregazione è
+effettuata rispetto a \texttt{sample\_idx}; nel caso di
+\texttt{sourcestats}, viene mantenuta anche la distinzione per sorgente.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -929,17 +885,11 @@ for metric in sourcestats_metrics:
 \label{lst:chrony-source-aggregation}
 \end{listing}
 
-Come negli altri parser, anche per Chrony l'aggregazione viene effettuata
-rispetto a \texttt{sample\_idx}. Per ciascun indice di campione vengono
-calcolati il numero di osservazioni disponibili, la media, la deviazione
-standard, l'intervallo di confidenza al 95\%, i quantili empirici e i valori
-estremi. Le tabelle aggregate vengono salvate in file CSV distinti per scenario,
-metrica e, nel caso di \texttt{sourcestats}, sorgente.
+Per ciascun indice di campione vengono calcolati il numero di osservazioni disponibili
+, la media, la deviazione standard, l'intervallo di confidenza al 95\%, i quantili empirici e i valori
+estremi.
 
-Per ogni metrica aggregata vengono prodotti due grafici: il primo rappresenta la
-media con intervallo di confidenza al 95\%, mentre il secondo rappresenta la
-media insieme all'intervallo interquartile e alla banda compresa tra il decimo e
-il novantesimo percentile.
+I grafici prodotti:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -969,11 +919,7 @@ plot_mean_iqr_p10p90(
 \label{lst:chrony-plot-generation}
 \end{listing}
 
-La struttura finale degli output aggregati Chrony mantiene separati i dati di
-tracking dai dati di sourcestats. Nel caso delle statistiche di sorgente, lo
-script crea inoltre una sottodirectory per ciascuna sorgente identificata,
-sanificando il nome della sorgente per ottenere un percorso valido nel
-filesystem.
+La struttura finale degli output aggregati Chrony:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1009,30 +955,10 @@ chrony_clientchrony/
 \label{lst:chrony-output-structure}
 \end{listing}
 
-La metodologia di analisi Chrony permette quindi di separare due livelli
-informativi. Il primo è costituito dalle metriche di tracking, che descrivono lo
-stato del clock locale rispetto alla sorgente temporale selezionata. Il secondo
-è costituito dalle statistiche della sorgente, che descrivono la qualità delle
-osservazioni utilizzate da Chrony, in particolare offset e deviazione standard.
-Questa separazione consente di analizzare sia l'effetto finale della disciplina
-del clock, sia la qualità dei campioni di sincronizzazione disponibili al demone.
-
 \section{Metodologia di analisi NTPsec}
 
-L'analisi dei dati NTPsec è stata realizzata tramite lo script
-\texttt{ntpsec\_analysis\_v3.py}. Lo script elabora i log prodotti dalle run
-NTPsec, nei quali lo stato delle associazioni viene osservato tramite
-interrogazioni periodiche del comando \texttt{ntpq -p}. A differenza di PTP,
-dove i log sono generati direttamente da \texttt{ptp4l}, in questo caso il dato
-analizzato è costituito da snapshot successivi dello stato del demone
-\texttt{ntpd}.
-
-La catena NTPsec sperimentale include due nodi di interesse: il nodo
-\texttt{boundary}, che si sincronizza con \texttt{serverntp} sulla rete A, e il
-nodo \texttt{clientntp}, che si sincronizza con \texttt{boundary} sulla rete B.
-Per questo motivo, lo script distingue esplicitamente due ruoli logici:
-\texttt{boundary} e \texttt{client}. Tale distinzione permette di analizzare
-separatamente il comportamento del nodo intermedio e quello del client finale.
+L'analisi dei dati prodotta da \texttt{ntpsec\_analysis\_v3.py} si concentra sulle
+informazioni realtive al nodo \texttt{boundary} e al nodo \texttt{clientntp}.
 
 La struttura attesa in input è la seguente:
 
@@ -1053,42 +979,9 @@ analysis/raw_logs/T3_multiplerun/ntpsec/
 \label{lst:ntpsec-input-structure}
 \end{listing}
 
-All'interno di ciascuna directory di scenario, lo script attraversa le directory
-delle singole run e cerca due file principali: \texttt{ntp\_client\_live.log} e
-\texttt{ntp\_boundary\_live.log}. Il primo contiene gli snapshot raccolti sul
-client NTPsec finale, mentre il secondo contiene gli snapshot raccolti sul nodo
-\texttt{boundary}. Se uno dei due file è presente, viene parsato e associato al
-ruolo corrispondente.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-for scenario in scenarios:
-    scenario_dir = root / scenario
-    if not scenario_dir.exists():
-        continue
-
-    for run_dir in sorted([p for p in scenario_dir.iterdir()
-                           if p.is_dir() and p.name.startswith("run")]):
-        run_id = run_dir.name
-
-        client_log = run_dir / "ntp_client_live.log"
-        boundary_log = run_dir / "ntp_boundary_live.log"
-\end{minted}
-\caption{Attraversamento delle directory di scenario e run nel parser NTPsec.}
-\label{lst:ntpsec-directory-walk}
-\end{listing}
-
-Il formato dei log NTPsec è composto da sequenze di snapshot. Ogni snapshot è
-preceduto da una riga temporale nel formato \texttt{--- HH:MM:SS ---}, seguita
-dall'output tabellare di \texttt{ntpq -p}. Lo script utilizza quindi un primo
-pattern per riconoscere il timestamp dello snapshot e un secondo pattern per
-riconoscere le righe relative ai peer NTP.
+Sequenze di snapshot formano il log NTPsec, ognuno preceduto da una riga temporale 
+nel formato \texttt{--- HH:MM:SS ---}, seguita dall'output a formato tabella di \texttt{ntpq -p}.
+Un pattern specifico è utilizzato per individuare i campioni.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1119,11 +1012,7 @@ RE_PEER_LINE = re.compile(
 \label{lst:ntpsec-regex}
 \end{listing}
 
-Il timestamp dello snapshot viene convertito in secondi dall'inizio della
-giornata. Lo script gestisce anche il caso in cui la run attraversi la mezzanotte:
-se il tempo corrente risulta inferiore al precedente, viene incrementato un
-offset giornaliero di 86400 secondi. In questo modo, la sequenza temporale resta
-monotona anche in presenza di cambio giorno.
+Viene gestito e convertito in secondi il timestamp.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1146,13 +1035,8 @@ last_clock_s = clock_s
 \label{lst:ntpsec-time-handling}
 \end{listing}
 
-Per ogni snapshot, il parser raccoglie le righe peer disponibili e seleziona la
-riga da usare come campione rappresentativo. Se è presente un peer marcato con
-il carattere \texttt{*}, cioè il peer selezionato da NTPsec come riferimento
-corrente, viene utilizzata quella riga. In caso contrario, viene utilizzata la
-prima riga disponibile dello snapshot. Questa scelta consente di mantenere una
-sequenza di campioni anche nelle fasi in cui il demone non ha ancora selezionato
-formalmente una sorgente.
+In ogni snapshot, vengono scelte le righe peer disponibili e seleziona la
+riga da usare come campione rappresentativo.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1206,11 +1090,7 @@ selected = (sel_char == "*")
 \label{lst:ntpsec-selected-peer}
 \end{listing}
 
-Le metriche estratte da ogni riga peer includono lo stratum, il tipo di
-associazione, il tempo trascorso dall'ultimo pacchetto ricevuto, l'intervallo di
-polling, il registro di raggiungibilità, il delay, l'offset e il jitter. I valori
-di \texttt{delay}, \texttt{offset} e \texttt{jitter} sono mantenuti in
-millisecondi, coerentemente con l'output di \texttt{ntpq -p}.
+Le metriche estraibili sono le seguenti:
 
 \begin{table}[H]
   \centering
@@ -1235,38 +1115,7 @@ millisecondi, coerentemente con l'output di \texttt{ntpq -p}.
   \label{tab:ntpsec-fields}
 \end{table}
 
-Il registro di raggiungibilità viene conservato sia nella forma originale, sia
-come valore numerico interpretato in base ottale. Questa conversione permette di
-rappresentare il campo \texttt{reach} in una forma più adatta all'elaborazione
-automatica, mantenendo comunque il valore grezzo restituito da NTPsec.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-reach_raw = m_peer.group("reach")
-reach_oct = None
-try:
-    if re.fullmatch(r"\d+", reach_raw):
-        reach_oct = int(reach_raw, 8)
-except Exception:
-    reach_oct = None
-\end{minted}
-\caption{Conversione del campo \texttt{reach} in forma numerica.}
-\label{lst:ntpsec-reach-conversion}
-\end{listing}
-
 Oltre ai campioni numerici, lo script costruisce anche un dataset di eventi.
-Due tipi di evento sono particolarmente rilevanti. Il primo è l'evento
-\texttt{init}, generato quando il campo \texttt{refid} è pari a
-\texttt{.INIT.}; esso indica una fase in cui il peer non ha ancora completato
-l'inizializzazione della sincronizzazione. Il secondo è l'evento
-\texttt{selected\_peer}, generato quando lo snapshot contiene un peer marcato
-come selezionato.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1298,40 +1147,7 @@ if chosen["selected"]:
 \label{lst:ntpsec-events}
 \end{listing}
 
-Come negli altri parser, i dati vengono normalizzati rispetto all'inizio della
-run. La funzione di normalizzazione introduce il tempo relativo
-\texttt{t\_rel\_s}, il tempo arrotondato \texttt{t\_bin\_s} e l'indice
-progressivo \texttt{sample\_idx}. Quest'ultimo è utilizzato nella fase di
-aggregazione per allineare campioni omologhi provenienti da run differenti.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-def _normalize_time(df: pd.DataFrame, t_col: str = "t_s") -> pd.DataFrame:
-    if df.empty:
-        return df
-    out = df.copy()
-    t0 = float(out[t_col].min())
-    out["t_rel_s"] = out[t_col] - t0
-    out["t_bin_s"] = out["t_rel_s"].round().astype(int)
-
-    out = out.reset_index(drop=True)
-    out["sample_idx"] = out.index.astype(int)
-
-    return out
-\end{minted}
-\caption{Normalizzazione temporale degli snapshot NTPsec.}
-\label{lst:ntpsec-normalize-time}
-\end{listing}
-
-Ogni run parsata viene rappresentata tramite una struttura \texttt{ParsedRun},
-che contiene il ruolo del nodo, lo scenario, l'identificativo della run, il file
-sorgente, i campioni estratti e gli eventi rilevati.
+L struttura \texttt{ParsedRun} contiene le informazioni rilevanti, rappresentato come segue:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1354,11 +1170,7 @@ class ParsedRun:
 \label{lst:ntpsec-parsedrun}
 \end{listing}
 
-Per ciascuna run vengono generati file CSV intermedi. Se il file di log del
-client è presente, lo script produce \texttt{parsed\_client\_samples.csv} e, se
-sono stati rilevati eventi, \texttt{parsed\_client\_events.csv}. In modo analogo,
-per il boundary vengono prodotti \texttt{parsed\_boundary\_samples.csv} e
-\texttt{parsed\_boundary\_events.csv}.
+I file CSV generati sono i seguenti:
 
 \begin{table}[H]
   \centering
@@ -1400,11 +1212,7 @@ post = s[s["selected"]].copy() if not s.empty and "selected" in s.columns else p
 \label{lst:ntpsec-post-selection}
 \end{listing}
 
-Per ogni run vengono calcolate statistiche relative a offset, jitter e delay
-nella fase post-selezione. Per l'offset vengono calcolate media, deviazione
-standard, percentile 95 e massimo valore assoluto. Per jitter e delay vengono
-calcolate media e percentile 95. Vengono inoltre salvati il valore finale del
-registro di reachability, sia in forma grezza sia convertito in valore numerico.
+Analogamente ai protocolli precedenti, vengono calcolate le statistiche:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1440,39 +1248,7 @@ out = {
 \label{lst:ntpsec-run-summary}
 \end{listing}
 
-I riepiloghi di tutte le run vengono concatenati e salvati nel file
-\texttt{summary\_all\_runs.csv}, collocato nella directory aggregata
-\texttt{\_aggregated}. Tale file consente di confrontare rapidamente le
-statistiche sintetiche tra scenario, ruolo e run.
-
-\begin{listing}[H]
-\begin{minted}[
-  frame=single,
-  fontsize=\small,
-  breaklines,
-  linenos,
-  autogobble
-]{python}
-agg_root = root / "_aggregated"
-client_dir = agg_root / "client"
-boundary_dir = agg_root / "boundary"
-client_dir.mkdir(parents=True, exist_ok=True)
-boundary_dir.mkdir(parents=True, exist_ok=True)
-
-if summaries:
-    pd.concat(summaries, ignore_index=True).to_csv(
-        agg_root / "summary_all_runs.csv", index=False
-    )
-\end{minted}
-\caption{Creazione della directory aggregata e salvataggio dei riepiloghi NTPsec.}
-\label{lst:ntpsec-aggregated-dir}
-\end{listing}
-
-La fase di aggregazione opera separatamente per ruolo e scenario. Le metriche
-aggregate sono \texttt{offset\_ms}, \texttt{jitter\_ms} e \texttt{delay\_ms}.
-L'offset viene trattato come metrica a segno, quindi rappresentabile con asse
-verticale simmetrico rispetto allo zero. Jitter e delay sono invece metriche non
-negative e vengono rappresentate con scala non simmetrica.
+Le metriche aggregate sono \texttt{offset\_ms}, \texttt{jitter\_ms} e \texttt{delay\_ms}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1492,11 +1268,10 @@ metric_specs = {
 \label{lst:ntpsec-metric-specs}
 \end{listing}
 
-L'aggregazione avviene rispetto a \texttt{sample\_idx}, mantenendo separati i
-ruoli \texttt{client} e \texttt{boundary}. Per ogni combinazione di ruolo,
-scenario e metrica, lo script combina i campioni provenienti dalle diverse run e
-calcola media, deviazione standard, intervallo di confidenza al 95\%, quantili,
-minimo e massimo.
+Le tre metriche vengono aggregate tramite la stessa funzione statistica descritta
+nella Pipeline generale. L'elaborazione viene mantenuta separata per ruolo,
+distinguendo tra \texttt{client} e \texttt{boundary}, e per scenario
+sperimentale.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1518,12 +1293,7 @@ for scenario in scenarios:
 \label{lst:ntpsec-role-aggregation}
 \end{listing}
 
-Per ogni metrica aggregata vengono generati un file CSV e due grafici. Il file
-CSV contiene la tabella aggregata rispetto all'indice del campione. Il primo
-grafico rappresenta la media con intervallo di confidenza al 95\%; il secondo
-rappresenta la media con intervallo interquartile e banda compresa tra decimo e
-novantesimo percentile. Gli output sono prodotti separatamente per ruolo e
-scenario.
+Vi è poi il plot delle metriche aggregate:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1559,9 +1329,7 @@ plot_mean_iqr_p10p90(
 \label{lst:ntpsec-output-generation}
 \end{listing}
 
-La struttura finale degli output mantiene separati il client e il boundary,
-coerentemente con la struttura logica della catena NTPsec. All'interno di ciascun
-ruolo, i risultati vengono ulteriormente organizzati per scenario.
+La struttura finale degli output:
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1586,12 +1354,3 @@ ntpsec/
 \caption{Organizzazione degli output aggregati prodotti dal parser NTPsec.}
 \label{lst:ntpsec-output-structure}
 \end{listing}
-
-Questa metodologia consente di analizzare NTPsec su due livelli. Il primo livello
-riguarda il nodo \texttt{boundary}, osservato come nodo intermedio che riceve la
-sincronizzazione da \texttt{serverntp}. Il secondo livello riguarda
-\texttt{clientntp}, che riceve la sincronizzazione attraverso il collegamento
-degradato sulla rete B. La distinzione tra questi due ruoli permette di separare
-gli effetti osservati sul nodo intermedio da quelli visibili sul client finale,
-mantenendo coerente l'analisi con la struttura a due hop della configurazione
-NTPsec.
