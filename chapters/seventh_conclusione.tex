@@ -1,2 +1,43 @@
 \chapter{Discussione dei risultati - Conclusioni}
 \label{cha:conclusioni}
+
+L'analisi condotta ha evidenziato le differenze tra i demoni di sincronizzazione 
+in presenza di degrado sulla rete.
+
+Nel caso di NTPsec, si nota un costante e graduale incremento degli effetti 
+degli impairment applicato al ramo downstream nei confronti del clientntp.
+Si evidenzia un peggioramento progressivo dallo scenario \texttt{low} allo scenario
+\texttt{medium}, fino allo scenario \texttt{high}.
+A evidenza di ciò si vede come l'analisi condotta sul ramo upstream del nodo \texttt{boundary}
+non è soggetto, a meno di variazioni non significative, a simili andamenti.
+Si ha un comportamento che è coerente con la logica ricercata.
+
+L'analisi rivolta a linuxptp mostra un comportamento analogo ma meno marcato.
+Si è evidenziato un peggioramento del livello medio e della variabilità, 
+tuttavia meno evidente rispetto a \texttt{NTPsec}. Diversamente si nota come
+nel caso \texttt{high}, la connettività del nodo client, venga meno, non riuscendo 
+a stabilizzarsi a conferma di un alto degrado di rete e di un diretto impatto.
+
+Per quanto riguarda Chrony invece, si ha un risultato differente rispetto hai precedenti.
+In entrambe le analisi condotto sul protocollo, non si sono verificati progressivi e costanti
+cambiamenti sui livelli medi o di variabilità. Non vi è quindi presente una linearità, 
+ottenendo inconsistenza nei risultati attesi al variare dagli scenari di rete scelti.
+Ciò suggerisce una forte presenza di meccanismi interni di stima e filtraggio che hanno 
+prodotto comportamenti più articolati, prevenendo il classico risultato atteso, 
+come nei due casi precedenti.
+
+Complessivamente non emerge una superiorità assoluta e generale tra un demone e l'altro.
+I tre considerati producono metriche differenti ed operano secondo modelli diversi.
+NTPsec mostra un comportamento leggibile e progressivo sul client finale.
+linuxptp risulta particolarmente sensibile allo scenario
+\texttt{high}, nel quale il client non raggiunge stabilità operativa. Chrony
+mostra invece una buona capacità di mantenere attiva la sincronizzazione, ma con
+risposte non sempre monotone rispetto agli scenari di degrado.
+
+Va evidenziato che i risultati ottenuti vanno interpretati alla luce dei limiti
+dell'ambiente sperimentale precedentemente descritto.
+
+In conclusione, si evidenzia come la qualità della sincronizzazione non solo dipenda 
+in modo significativo dalle condizioni di rete, ma anche come algoritmi interni e gestione
+delle informazioni da parte dei protocolli, possano o meno prevenire il degrado effettivo 
+dei canali di comunicazione stessa.

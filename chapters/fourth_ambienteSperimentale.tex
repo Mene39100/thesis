@@ -17,12 +17,12 @@ completamente il testbed dalla rete esterna. Non essendoci necessità di riferim
 esterni è stato possibile disabilitare ogni forma di connettività, garantendo il
 massimo isolamento e costringendo i nodi a sincronizzarsi all'interno della sola
 topologia di rete. Il secondo criterio è stato la riproducibilità dell'ambiente.
-Infine l'ultimo ciriterio coinvolgeva la parametrizzazione degli impairment di
-rete, i quali devono essere facilmetne modificabili, potendo gestire in modo
+Infine l'ultimo criterio coinvolgeva la parametrizzazione degli impairment di
+rete, i quali devono essere facilmente modificabili, potendo gestire in modo
 indipendente da ogni script la loro applicazione.
 
-La topolgia è stata creata con l'utilizzo dei container Docker. I rami logici sono
-stati opportunamenti separati e lo stesso ragionamento è stato applicato agli script,
+La topologia è stata creata con l'utilizzo dei container Docker. I rami logici sono
+stati opportunamente separati e lo stesso ragionamento è stato applicato agli script,
 con l'obiettivo di ridurre al minimo interferenze tra demoni e protocolli
 differenti. Le condizioni di rete sono state modificate mediante l'utilizzo di Linux
 Traffic Control.
@@ -36,13 +36,13 @@ rete B è stata associata ad una subnet \texttt{10.0.20.0/24}. I nodi \texttt{se
 sono stati collocati nella rete A, mentre \texttt{clientptp}, \texttt{clientntp}
 e l'interfaccia \texttt{eth1} di\texttt{boundary} sono stati collocati nella rete
 B. La scelta si basa sulla praticità operativa, si è cercato di evitare i conflitti
-di configurazioni tra demoni e protocolli differenti, raccogliendo al meglio, sucessivamente,
+di configurazioni tra demoni e protocolli differenti, raccogliendo al meglio, successivamente,
 i dati.
 
 Il nodo \texttt{boundary} è stato configurato come nodo intermedio tra le due reti
 assumendo un differente ruolo al variare del demone considerato. Nel caso di PTP,
 assume un ruolo di boundary clock ricevendo sincronizzazione dalla rete A e propagandola
-verso la rete B, mentrenel caso di NTPsec, è utilizzato come nodo intermedio tra \texttt{serverntp}
+verso la rete B, mentre nel caso di NTPsec, è utilizzato come nodo intermedio tra \texttt{serverntp}
 e \texttt{clientntp}. Per Chrony non è stato necessario il suo utilizzo.
 
 { \setlength{\intextsep}{8pt} \setlength{\textfloatsep}{8pt} \setlength{\floatsep}{8pt}
@@ -91,7 +91,7 @@ e \texttt{clientntp}. Per Chrony non è stato necessario il suo utilizzo.
 
 \vspace{0.4cm} }
 
-Per ragioni configurative, si è reso necessario spearare la sorgente temporale
+Per ragioni configurative, si è reso necessario separare la sorgente temporale
 in due nodi differenti, distinguendo tra PTP e Chrony da un lato, e NTPsec dall'altro.
 Conflitti di configurazione, installazione e permessi rendevano incompatibile l'installazione
 di implementazioni software differenti sullo stesso nodo, soprattutto nei casi in
@@ -102,13 +102,13 @@ le diverse catene di sincronizzazione analizzate nel testbed.
 \section{Ambiente containerizzato}
 
 Il testbed è realizzato tramite la creazione di una topologia di rete
-containerizzata attraverso l'ausilio di Kathará, cioè un sisteama di emulazione di
+containerizzata attraverso l'ausilio di Kathará, cioè un sistema di emulazione di
 rete open source basato su container. Questa scelta ha reso possibile la
 riproduzione di una rete composta da un insieme di nodi Linux isolati, ognuno dotato
 di una sua interfaccia, di file di configurazioni personalizzati e degli
 specifici demoni di sincronizzazione. L'utilizzo dei container ha permesso inoltre
 di automatizzare l'intero ciclo sperimentale, rendendo possibile l'inizializzazione
-della topologia, la configuazione degli indirizzi IP, l'installazione dei
+della topologia, la configurazione degli indirizzi IP, l'installazione dei
 pacchetti necessari, la copia dei file di configurazione, l'avvio dei demoni, l'applicazione
 degli impairment di rete e infine la raccolta dei log.
 
@@ -197,9 +197,9 @@ clientptp[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
 \end{lstlisting}
 
 L'obiettivo alla base di tale scelta è duplice. Se da un lato permette di mantenere
-tutti i file di configurazione all'interno della repository del progetto e copirali
+tutti i file di configurazione all'interno della repository del progetto e copiarli
 nei differenti container in fase di avvio, allo stesso modo consente ai demoni e
-agli script di scrivere i log in una directory persistente accessibile dall'host,
+agli script di scrivere i log in una directory persistente accessibile dal host,
 evitando problematicità dovute alla chiusura della topologia.
 
 Ad esempio, il nodo \texttt{servergm} installa Chrony e linuxptp, copia la
@@ -232,7 +232,7 @@ cp /tesi_sync_lab/configs/ptp/server_ptp.conf /etc/ptp/server_gm.conf
 
 Analogamente, il nodo \texttt{clientchrony} installa Chrony, copia la
 configurazione client e avvia manualmente il demone \texttt{chronyd}. La scelta
-dell'avvio manuale è stata preferita poichè, all'interno dei container, la
+dell'avvio manuale è stata preferita poiché, all'interno dei container, la
 gestione tramite \texttt{systemctl} non è necessaria e può risultare meno adatta rispetto
 all'avvio diretto del processo.
 
@@ -457,11 +457,11 @@ all'assenza iniziale di una sorgente temporale.
 
 \subsection{Isolamento dalla rete esterna}
 
-Nella fase di avvio si è reso necessario mantenere la connettività verso l'esterno
-per consentire l'installazione dei pacchetti necessari, quali \texttt{chrony}, \texttt{ntpsec}
-e \texttt{linuxptp}, e l'aggiornametno delle repository. Questo spiega la presenza
-di bridge temporanei verso l'esterno, che vengono successivamente disabilitati
-per garantire l'isolamento del testbed.
+Nella fase di avvio si è reso necessario mantenere la connettività 
+verso l'esterno per consentire l'installazione dei pacchetti necessari, 
+quali \texttt{chrony}, \texttt{ntpsec} e \texttt{linuxptp}, e l'aggiornametno 
+delle repository. Questo spiega la presenza di bridge temporanei verso l'esterno,
+ che vengono successivamente disabilitati per garantire l'isolamento del testbed.
 
 \begin{lstlisting}[language=bash,caption={Estratto del file \texttt{lab.conf}: bridge temporaneo verso l'esterno.},label={lst:labconf_bridged}]
 servergm[bridged]=true
@@ -824,8 +824,8 @@ principale.
 agganciandola al parent \texttt{1:}, riuscendo cosi ad introdurre sia
 perturbazioni temporali e probabilistiche, sia una limitazione del rate.
 
-Per avere un quadro più chiaro, nei file del testbed sono presenti anche due
-script di supporto, \texttt{apply\_netem.sh} e \texttt{cleanup\_netem.sh}, i
+Per avere un quadro più chiaro, nei file del testbed sono presenti 
+anche due script di supporto, \texttt{apply\_netem.sh} e \texttt{cleanup\_netem.sh}, i
 quali però non sono utilizzati nel flusso principale del testbed, ma hanno solo funzione
 di debugging. Il primo è stato pensato per applicare singoli disturbi su un'interfaccia
 specifica, mentre il secondo consente di rimuovere manualmente la qdisc root da un'interfaccia.

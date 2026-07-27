@@ -8,7 +8,7 @@ Gli script Python, cioè \texttt{ptp\_analysis\_v3.py}, \texttt{chrony\_analysis
 statistiche aggregate ed infine in grafici.
 
 Diversi formati di log e semantica differente hanno reso necessario l'utilizzo di parser
-distinti per ciascun demone. Diffatti, PTP \texttt{ptp4l}, genera messaggi relativi allo stato delle porte, alla selezione
+distinti per ciascun demone. Difatti, PTP \texttt{ptp4l}, genera messaggi relativi allo stato delle porte, alla selezione
 del master, all'offset e al path delay. Chrony genera log attraverso i comandi \texttt{chronyc}, come \texttt{tracking} e
 \texttt{sourcestats}. NTPsec produce snapshot periodici grazie al comando \texttt{ntpq -p}. 
 Nonostante questa eterogeneità, i tre script seguono una pipeline metodologica comune, schematizzata come segue:
@@ -59,18 +59,18 @@ analysis/raw_logs/T3_multiplerun/
 \end{listing}
 
 Inizialmente viene fatto il parsing dei log. Espressioni regolari vengono utilizzata 
-per riconoscere righe rilevanti dei log, estaendo campi numerici o simbolici necessari, 
-informazioni superflue vegono ignorate permettendo di isolare solamente le informazioni 
+per riconoscere righe rilevanti dei log, estraendo campi numerici o simbolici necessari, 
+informazioni superflue vengono ignorate permettendo di isolare solamente le informazioni 
 utili al fine della costruzione di metriche.
 
-I dati estratti vegono convertiti in oggetti \texttt{DataFrame} di
+I dati estratti vengono convertiti in oggetti \texttt{DataFrame} di
 \texttt{pandas}. Ogni riga del dataset rappresenta un'osservazione associata a
 una specifica run, a uno scenario e, quando necessario, a un ruolo logico del
 nodo analizzato.
 
 
 Viene poi condotta una normalizzazione temporale. I tempi estratti dai log vengono
-ricondotti ad una scala comune relativa, facendo conicedere l'inzio della produzione
+ricondotti ad una scala comune relativa, facendo coincidere l'inizio della produzione
 dei log come l'istante zero. Si introduce quindi colonne come
 \texttt{t\_rel\_s}, che rappresenta il tempo relativo in secondi, e
 \texttt{sample\_idx}, che identifica l'indice progressivo del campione. 
@@ -78,7 +78,7 @@ Così facendo si può avere un'indipendenza dall'orario assoluto di esecuzione,
 confrontando run differenti.
 
 L'aggregazione è stata effettuata principalmente rispetto a \texttt{sample\_idx},
-per assincronie causate tal volta dai timestamp stessi. L'uso dell'indice di campione
+per asincronie causate tal volta dai timestamp stessi. L'uso dell'indice di campione
 permette quindi di allineare osservazioni omologhe tra run diverse dello stesso
 scenario.
 
@@ -185,7 +185,7 @@ metriche per scenario e ruolo, combinando le differenti run. A partire da
 quest'ultimi sono prodotti i grafici, rappresentati da due tipi di visualizzazione. 
 
 La prima mostra la media della metrica con l'intervallo di confidenza al 95\%. 
-La seconda mostra la media insieme all'intervallo interquartile e alla banda 
+La seconda mostra la media insieme all'intervallo inter-quartile e alla banda 
 compresa tra il decimo e il novantesimo percentile.
 
 Per un confronto migliore tra scenari, vengono calcolati limiti comuni per l'asse y.
@@ -197,7 +197,7 @@ il limite inferiore viene invece posto a zero quando appropriato.
 \section{Metodologia di analisi PTP}
 
 L'analisi dei dati prodotta da \texttt{ptp\_analysis\_v3.py} si concentra sulle
-informazioni realtive al nodo \texttt{boundary} e al nodo \texttt{clientptp}.
+informazioni relative al nodo \texttt{boundary} e al nodo \texttt{clientptp}.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -387,7 +387,7 @@ Per il Boundary, viene stimata la convergenza individuando la prima
 transizione verso lo stato \texttt{SLAVE}. È calcolato anche  il numero di
 eventi di fault e vengono considerate, per il calcolo delle metriche post
 stabilizzazione, soltanto le osservazioni con \texttt{servo\_state} pari a 2.
-Concentrado le statistiche sui campioni associati allo stato operativo del servo.
+Concentrando le statistiche sui campioni associati allo stato operativo del servo.
 
 \begin{listing}[H]
 \begin{minted}[
@@ -578,7 +578,7 @@ ptp/
 
 
 L'analisi dei dati prodotta da \texttt{chrony\_analysis\_v3.py} si concentra sulle
-informazioni realtive al nodo \texttt{clientchrony} nei due scenari di impairment, 
+informazioni relative al nodo \texttt{clientchrony} nei due scenari di impairment, 
 lato client e lato server. Distinzione non direttamente codificata nello script.
 
 La versione finale dello script usa i file \texttt{chrony\_tracking\_series.txt} e
@@ -611,7 +611,7 @@ analysis/raw_logs/T3_multiplerun/chrony_clientchrony/
 \label{lst:chrony-input-structure}
 \end{listing}
 
-L'espressione riconosce i campioni poichè è preceduto da una riga del tipo
+L'espressione riconosce i campioni poiché è preceduto da una riga del tipo
 \texttt{===== SAMPLE i/n @ timestamp =====}. Viene utilizzata per
 associare le misure successive a un istante temporale esplicito. Il timestamp è
 letto in formato ISO e convertito in oggetto \texttt{datetime}.
