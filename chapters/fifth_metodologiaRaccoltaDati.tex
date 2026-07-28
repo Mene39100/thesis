@@ -267,7 +267,7 @@ RE_BOUNDARY_SAMPLE = re.compile(
 
 RE_CLIENT_SAMPLE = re.compile(
     RE_TS
-    + r"rms\s+(?P<rms>\d+)\s+max\s+(?P<max>\d+)\s+freq\s+(?P<freq>[+-]?\d+)\s+\+/-\s+(?P<freq_pm>\d+)"
+    + r"rms\s+(?P<rms>\d+)\s+max\s+(?P<max>\d+)\s+freq\s+(?P<freq>[+-]?\d+) \s+\+/-\s+(?P<freq_pm>\d+)"
     + r"(?:\s+delay\s+(?P<delay>\d+)(?:\s+\+/-\s+(?P<delay_pm>\d+))?)?"
 )
 \end{minted}
@@ -296,7 +296,7 @@ separato.
 ]{python}
 RE_STATE = re.compile(
     RE_TS
-    + r"port\s+(?P<port>\d+):\s+(?P<from>[A-Z_]+)\s+to\s+(?P<to>[A-Z_]+)\s+on\s+(?P<reason>[A-Z0-9_]+)"
+    + r"port\s+(?P<port>\d+):\s+(?P<from>[A-Z_]+)\s+to\s+(?P<to>[A-Z_]+)\s+ on\s+(?P<reason>[A-Z0-9_]+)"
 )
 
 RE_FAULT = re.compile(RE_TS + r".*\bFAULTY\b.*")
@@ -651,7 +651,7 @@ Estratti due campi principali: \texttt{System time} e \texttt{Last offset}.
   autogobble
 ]{python}
 RE_TRACKING_SYSTEM_TIME = re.compile(
-    r"^System time\s*:\s*(?P<val>[+-]?\d+(?:\.\d+)?)\s+seconds\s+(?P<dir>slow|fast)\s+of\s+NTP\s+time\s*$"
+    r"^System time\s*:\s*(?P<val>[+-]?\d+(?:\.\d+)?)\s+seconds\s+(?P<dir>slow|fast) \s+of\s+NTP\s+time\s*$"
 )
 
 RE_TRACKING_LAST_OFFSET = re.compile(

@@ -742,13 +742,13 @@ diretto tra protocolli differenti.
 Time Protocol} secondo lo standard IEEE 1588. Il progetto è orientato a fornire
 una implementazione robusta del protocollo utilizzando le API disponibili nel
 kernel Linux per la gestione del timestamping e dei clock hardware associati
-alle interfacce di rete \cite{linuxptp-doc}.
+alle interfacce di rete \cite{IEEEStandardPrecision2020}.
 
 Il componente principale della suite è \texttt{ptp4l}, un demone che implementa
 PTP su una o più interfacce di rete Linux. Secondo la documentazione ufficiale,
 \texttt{ptp4l} può operare come \texttt{Ordinary Clock}, \texttt{Boundary Clock}
 oppure \texttt{Transparent Clock}, rendendolo adatto a diverse configurazioni di
-rete PTP \cite{linuxptp-ptp4l}. Nel caso di un ordinary clock, il nodo partecipa
+rete PTP \cite{PrecisionTimeProtocol2026}. Nel caso di un ordinary clock, il nodo partecipa
 alla sincronizzazione attraverso una singola porta PTP; nel caso di un boundary clock,
 il demone gestisce più porte e può ricevere sincronizzazione su una porta e
 distribuirla su altre; nel caso di un transparent clock, il nodo contribuisce
@@ -759,13 +759,13 @@ Dal punto di vista del trasporto, \texttt{linuxptp} supporta l'esecuzione di PTP
 su UDP/IPv4, UDP/IPv6 e direttamente su Ethernet a livello 2. Questa flessibilità
 riflette le modalità previste dallo standard e consente di adattare il demone a reti
 PTP realizzate sopra infrastrutture IP oppure direttamente su collegamenti Ethernet
-\cite{linuxptp-doc}.
+\cite{IEEEStandardPrecision2020}.
 
 Un aspetto rilevante di \texttt{ptp4l} è il supporto al timestamping sia
 software sia hardware. Con timestamping hardware, il demone può sincronizzare il
 \texttt{PTP Hardware Clock} associato all'interfaccia di rete rispetto al master PTP;
 con timestamping software, invece, la sincronizzazione si basa sui timestamp
-prodotti dallo stack software del sistema. \cite{linuxptp-doc} \cite{redhat-ptp4l}.
+prodotti dallo stack software del sistema. \cite{IEEEStandardPrecision2020} \cite{PTP_net}.
 
 La suite comprende anche strumenti ausiliari. Tra questi, \texttt{phc2sys}
 consente di sincronizzare il clock di sistema rispetto a un PTP Hardware Clock, oppure
