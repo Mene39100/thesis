@@ -238,10 +238,10 @@ messaggi di sincronizzazione, mentre la stima del delay viene effettuata
 mediante messaggi aggiuntivi, secondo meccanismi end-to-end o peer-to-peer.
 \cite{IEEEStandardPrecision2020}
 
-%Delay, jitter e assimetria di rete
+%Delay, jitter e asimmetria di rete
 \section{Delay, jitter e asimmetria di rete}
 Nei modelli di sincronizzazione tramite rete, il ritardo di comunicazione non
-costituisce solamente una porprietà del collegamento stesso, ma entra direttamente
+costituisce solamente una proprietà del collegamento stesso, ma entra direttamente
 nella stima effettuata dall'offset tra il clock locale e la sorgente temporale di
 riferimento.
 
@@ -255,26 +255,26 @@ alla base che il ritardo complessivo osservato possa essere utilizzato per
 approssimare il contributo del percorso di rete
 \cite{martinNetworkTimeProtocol2010, IEEEStandardPrecision2020}
 
-In condizioni perfette, con un ritardo simmetricio tale che $d_{1}= d_{2}$, la componente
+In condizioni perfette, con un ritardo simmetrico tale che $d_{1}= d_{2}$, la componente
 di propagazione può essere compensata mediante la stima del round-trip delay. La
-difficolta nasce nel momento in cui vi è un assimetria nel ritardo rispetto alle
+difficolta nasce nel momento in cui vi è un asimmetria nel ritardo rispetto alle
 due direzioni, quindi la stima dell'offset incorpora un errore, semplificato, della
 forma:
 \[
   \varepsilon_{\theta}= \frac{d_{1}- d_{2}}{2}.
 \]
 
-Ne deriva quindi che un'asimetria ricorrente non si manifesta necessariamente come
+Ne deriva quindi che un'asimmetria ricorrente non si manifesta necessariamente come
 instabilità della misura in sé, ma come bias sistematico dell'offset stimato. Il nodo
 può quindi produrre una sequenza di stime regolare e poco dispersa, pur
 rimanendo stabilmente disallineato rispetto alla sorgente temporale.
 
 Un ruolo diverso è rappresentato dal jitter, ossia la componente rappresentativa della
-variabile del ritardo. Se viene modelato come grandezza dipendente dal tempo
-$d(t)$, esso può essere interpetato come la variabilità di tale grandezza rispetto
+variabile del ritardo. Se viene modellato come grandezza dipendente dal tempo
+$d(t)$, esso può essere interpretato come la variabilità di tale grandezza rispetto
 al suo livello medio. A livello sperimentale introduce rumore nelle osservazioni
-successive, indipendentemente dall'assimetria temporale reale, la sequenza delle
-stime può oscillare perchè ogni messaggio attraversa la rete con un tempo di
+successive, indipendentemente dall'asimmetria temporale reale, la sequenza delle
+stime può oscillare perché ogni messaggio attraversa la rete con un tempo di
 percorrenza differente. Esso ne determina quindi la precisione complessiva e stabilità
 della misura.
 
@@ -285,7 +285,7 @@ può essere espresso in termini di densità spettrale. \cite{Jitter2026}
 
 L'incremento di delay medio modifica il livello del ritardo stimato, ma è
 facilmente compensabile se il fenomeno assume forma regolare nel tempo. Diverso avviene
-nel caso del jitte, senza la necessitù di uno spostamento sistematico dal valore
+nel caso del jitter, senza la necessità di uno spostamento sistematico dal valore
 centrale.L'asimmetria persistente, infine, introduce un errore direzionale nella
 stima dell'offset, perché altera in modo diverso i due versi dello scambio temporale.
 
@@ -300,10 +300,10 @@ sorgente di riferimento.
 La perdita di pacchetti va a ridurre il numero di campioni utilizzabile dal
 demone di sincronizzazione. Nei protocolli basati sulla periodicità della ricezione
 dei messaggi, ogni pacchetto è ricevuto contribuisce in termini proporzionali
-alla stima. Se una percentuale importante viene persa, il protocolo dipsone di
+alla stima. Se una percentuale importante viene persa, il protocollo dispone di
 una sequenza meno densa e regolare di campioni, non riuscendo a ricostruire una misura
 perfetta della differenza temporale rispetto alla sorgente. L'effetto indiretto
-è un aumento dell'incertezza, poichè il demone deve continuare a produrre delle misure
+è un aumento dell'incertezza, poiché il demone deve continuare a produrre delle misure
 su una quantità inferiore di informazioni.
 
 Perdite isolate possono essere mitigate dalla struttura algoritmica del protocollo
@@ -327,7 +327,7 @@ invio, o tal volta quello previsto, i quali possono effettivamente differire, il
 demone può dover scartare osservazioni, ricostruire correttamente la corrispondenza
 tra messaggi correlati, o marcare campioni come non utilizzabili, filtrandoli.
 Nei casi in cui il riordinamento non venisse preventivato o eliminato potrebbe
-costituire problmeatiche di incoerenza delle misure ricostruite, introducendo discontinuità.
+costituire problematiche di incoerenza delle misure ricostruite, introducendo discontinuità.
 Dal punto di vista statistico, il riordinamento tende a manifestarsi come irregolarità
 della serie osservata più che come semplice aumento del valore medio di una metrica.
 Per questo motivo, nelle analisi sperimentali, i suoi effetti possono risultare
@@ -336,7 +336,7 @@ outlier che non nella sola media aggregata.
 
 Infine vi è la limitazione di banda, la quale agisce invece attraverso la
 capacità del collegamento. Nel momento in cui la banda di rete viene ridotta, da
-cause endogene al sistema o esogne come nel caso di impairment volontariamente
+cause endogene al sistema o esogene come nel caso di impairment volontariamente
 introdotti, i pacchetti possono accumularsi nelle code dei dispositivi di rete o dell'interfaccia
 di uscita. Questo scenario introduce una componente di ritardo variabile non
 solo dipendente dal traffico presente ma anche dallo stato delle code e dalle

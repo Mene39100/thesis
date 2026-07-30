@@ -88,14 +88,9 @@ o client. \cite{martinNetworkTimeProtocol2010}
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}
-    {0.32\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{
-      images/theory/Network_Time_Protocol_servers_and_clients.png
-    }
-    \caption{NTP hierarchy \cite{NetworkTimeProtocol2026}}
-  \end{subfigure}
+  \includegraphics[width=0.80\textwidth]{images/theory/Network_Time_Protocol_servers_and_clients.png}
+  \caption{Gerarchia NTP~\cite{NetworkTimeProtocol2026}.}
+  \label{fig:ntp_hierarchy}
 \end{figure}
 
 Il protocollo generalmente opera sopra UDP, sulla porta 123, e utilizza lo
@@ -284,47 +279,28 @@ correzioni necessarie al clock locale. Accanto al demone, la suite fornisce
 strumenti di interrogazione e controllo, come \texttt{ntpq}, utilizzabili per osservare
 lo stato delle associazioni e le metriche prodotte dal servizio.
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{lll}
-    \hline
-    \textbf{Comando / fonte} & \textbf{Metrica / campo}       & \textbf{Significato}                                           \\
-    \hline
-    \texttt{ntpq -p}         & \texttt{remote}                & Sorgente o peer NTP remoto configurato.                        \\
-    \texttt{ntpq -p}         & \texttt{refid}                 & Identificativo della sorgente temporale di riferimento.        \\
-    \texttt{ntpq -p}         & \texttt{st}                    & Stratum della sorgente remota.                                 \\
-    \texttt{ntpq -p}         & \texttt{t}                     & Tipo di associazione NTP.                                      \\
-    \texttt{ntpq -p}         & \texttt{when}                  & Tempo trascorso dall'ultimo pacchetto ricevuto dalla sorgente. \\
-    \texttt{ntpq -p}         & \texttt{poll}                  & Intervallo di polling verso la sorgente.                       \\
-    \texttt{ntpq -p}         & \texttt{reach}                 & Registro di raggiungibilità della sorgente.                    \\
-    \texttt{ntpq -p}         & \texttt{delay}                 & Ritardo stimato del percorso verso la sorgente.                \\
-    \texttt{ntpq -p}         & \texttt{offset}                & Scostamento stimato tra clock locale e sorgente temporale.     \\
-    \texttt{ntpq -p}         & \texttt{jitter}                & Variabilità delle misure associate alla sorgente.              \\
-    \hline
-    \texttt{peerstats}       & \texttt{offset}                & Scostamento stimato rispetto al peer remoto.                   \\
-    \texttt{peerstats}       & \texttt{delay}                 & Ritardo stimato dell'associazione con il peer.                 \\
-    \texttt{peerstats}       & \texttt{dispersion}            & Incertezza stimata della misura temporale.                     \\
-    \texttt{peerstats}       & \texttt{jitter}                & Jitter RMS associato alle misure del peer.                     \\
-    \hline
-    \texttt{loopstats}       & \texttt{offset}                & Offset del clock locale rispetto alla sorgente selezionata.    \\
-    \texttt{loopstats}       & \texttt{frequency}             & Correzione di frequenza applicata al clock locale.             \\
-    \texttt{loopstats}       & \texttt{jitter}                & Variabilità stimata del clock locale.                          \\
-    \texttt{loopstats}       & \texttt{wander}                & Variabilità lenta della frequenza del clock locale.            \\
-    \hline
-    \texttt{rawstats}        & \texttt{originate timestamp}   & Timestamp di invio della richiesta da parte del client.        \\
-    \texttt{rawstats}        & \texttt{receive timestamp}     & Timestamp di ricezione della richiesta presso il server.       \\
-    \texttt{rawstats}        & \texttt{transmit timestamp}    & Timestamp di invio della risposta da parte del server.         \\
-    \texttt{rawstats}        & \texttt{destination timestamp} & Timestamp locale di ricezione della risposta presso il client. \\
-    \hline
-    \texttt{readvar}         & \texttt{rootdelay}             & Ritardo cumulativo verso la sorgente primaria.                 \\
-    \texttt{readvar}         & \texttt{rootdisp}              & Dispersione cumulativa verso la sorgente primaria.             \\
-    \texttt{readvar}         & \texttt{stratum}               & Livello gerarchico del sistema locale.                         \\
-    \texttt{readvar}         & \texttt{refid}                 & Identificativo della sorgente selezionata.                     \\
-    \texttt{readvar}         & \texttt{leap}                  & Stato relativo alla sincronizzazione e ai leap second.         \\
-    \hline
-  \end{tabular}
-  \caption{Principali metriche e campi esposti da NTPsec tramite \texttt{ntpd},
-  \texttt{ntpq} e file statistici, rielaborati dalla documentazione ufficiale~\cite{ntpsec-doc}.}
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.12}
+  \begin{tabularx}{\textwidth}{p{0.20\textwidth} p{0.20\textwidth} Y}
+    \toprule
+    \textbf{Comando / fonte} & \textbf{Metrica / campo} & \textbf{Significato} \\
+    \midrule
+    \texttt{ntpq -p} & \texttt{remote} & Sorgente o peer NTP remoto configurato. \\
+    \texttt{ntpq -p} & \texttt{refid} & Identificativo della sorgente temporale di riferimento. \\
+    \texttt{ntpq -p} & \texttt{st} & Stratum della sorgente remota. \\
+    \texttt{ntpq -p} & \texttt{t} & Tipo di associazione NTP. \\
+    \texttt{ntpq -p} & \texttt{when} & Tempo trascorso dall'ultimo pacchetto ricevuto dalla sorgente. \\
+    \texttt{ntpq -p} & \texttt{poll} & Intervallo di polling verso la sorgente. \\
+    \texttt{ntpq -p} & \texttt{reach} & Registro di raggiungibilità della sorgente. \\
+    \texttt{ntpq -p} & \texttt{delay} & Ritardo stimato del percorso verso la sorgente. \\
+    \texttt{ntpq -p} & \texttt{offset} & Scostamento stimato tra clock locale e sorgente temporale. \\
+    \texttt{ntpq -p} & \texttt{jitter} & Variabilità delle misure associate alla sorgente. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Principali metriche e campi esposti da NTPsec tramite \texttt{ntpd}, \texttt{ntpq} e file statistici, rielaborati dalla documentazione ufficiale~\cite{martinNetworkTimeProtocol2010}.}
   \label{tab:ntpsec_metriche}
 \end{table}
 
@@ -361,57 +337,61 @@ caratteristiche rendono Chrony particolarmente adatto a contesti nei quali la si
 deve rimanere efficace anche quando la disponibilità della sorgente temporale o la
 qualità del percorso di rete non sono costanti.
 
+\begin{sloppypar}
 Le metriche rese disponibili da Chrony, in particolare attraverso le
 informazioni di \texttt{tracking} e \texttt{sourcestats}, permettono di osservare
 lo stato del clock locale, la qualità della sorgente temporale e la variabilità
 delle misure utilizzate dal demone.
+\end{sloppypar}
 
-\begin{table}[h]
+\begin{table}[H]
   \centering
-  \begin{tabular}{lll}
-    \hline
-    \textbf{Comando / fonte} & \textbf{Metrica / campo} & \textbf{Significato}                                                         \\
-    \hline
-    \texttt{tracking}        & \texttt{Reference ID}    & Identificativo della sorgente selezionata.                                   \\
-    \texttt{tracking}        & \texttt{Stratum}         & Livello gerarchico del nodo rispetto alla sorgente primaria.                 \\
-    \texttt{tracking}        & \texttt{Ref time}        & Istante dell'ultimo aggiornamento dal riferimento.                           \\
-    \texttt{tracking}        & \texttt{System time}     & Scostamento residuo del clock di sistema rispetto al tempo stimato corretto. \\
-    \texttt{tracking}        & \texttt{Last offset}     & Ultimo offset misurato rispetto alla sorgente selezionata.                   \\
-    \texttt{tracking}        & \texttt{RMS offset}      & Valore quadratico medio degli offset recenti.                                \\
-    \texttt{tracking}        & \texttt{Frequency}       & Correzione di frequenza applicata al clock locale.                           \\
-    \texttt{tracking}        & \texttt{Residual freq}   & Frequenza residua stimata dopo la correzione.                                \\
-    \texttt{tracking}        & \texttt{Skew}            & Incertezza nella stima della frequenza del clock.                            \\
-    \texttt{tracking}        & \texttt{Root delay}      & Ritardo cumulativo verso la sorgente primaria.                               \\
-    \texttt{tracking}        & \texttt{Root dispersion} & Dispersione cumulativa verso la sorgente primaria.                           \\
-    \texttt{tracking}        & \texttt{Update interval} & Intervallo tra gli ultimi aggiornamenti della sincronizzazione.              \\
-    \texttt{tracking}        & \texttt{Leap status}     & Stato relativo alla sincronizzazione e ai leap second.                       \\
-    \hline
-    \texttt{sources}         & \texttt{MS}              & Tipo e stato della sorgente temporale.                                       \\
-    \texttt{sources}         & \texttt{Name/IP address} & Nome o indirizzo della sorgente.                                             \\
-    \texttt{sources}         & \texttt{Stratum}         & Stratum dichiarato dalla sorgente.                                           \\
-    \texttt{sources}         & \texttt{Poll}            & Intervallo di polling verso la sorgente.                                     \\
-    \texttt{sources}         & \texttt{Reach}           & Registro di raggiungibilità della sorgente.                                  \\
-    \texttt{sources}         & \texttt{LastRx}          & Tempo trascorso dall'ultimo campione ricevuto.                               \\
-    \texttt{sources}         & \texttt{Last sample}     & Ultimo offset misurato rispetto alla sorgente.                               \\
-    \hline
-    \texttt{sourcestats}     & \texttt{NP}              & Numero di campioni mantenuti per la sorgente.                                \\
-    \texttt{sourcestats}     & \texttt{NR}              & Numero di run dei residui con lo stesso segno.                               \\
-    \texttt{sourcestats}     & \texttt{Span}            & Intervallo temporale coperto dai campioni.                                   \\
-    \texttt{sourcestats}     & \texttt{Frequency}       & Frequenza stimata rispetto alla sorgente.                                    \\
-    \texttt{sourcestats}     & \texttt{Freq Skew}       & Incertezza della stima di frequenza.                                         \\
-    \texttt{sourcestats}     & \texttt{Offset}          & Offset stimato della sorgente.                                               \\
-    \texttt{sourcestats}     & \texttt{Std Dev}         & Deviazione standard dei residui delle misure.                                \\
-    \hline
-  \end{tabular}
+  \footnotesize
+  \setlength{\tabcolsep}{3.5pt}
+  \renewcommand{\arraystretch}{1.10}
+  \begin{tabularx}{\textwidth}{p{0.18\textwidth} p{0.21\textwidth} Y}
+    \toprule
+    \textbf{Comando / fonte} & \textbf{Metrica / campo} & \textbf{Significato} \\
+    \midrule
+    \texttt{tracking} & \texttt{Reference ID} & Identificativo della sorgente selezionata. \\
+    \texttt{tracking} & \texttt{Stratum} & Livello gerarchico del nodo rispetto alla sorgente primaria. \\
+    \texttt{tracking} & \texttt{Ref time} & Istante dell'ultimo aggiornamento dal riferimento. \\
+    \texttt{tracking} & \texttt{System time} & Scostamento residuo del clock di sistema rispetto al tempo stimato corretto. \\
+    \texttt{tracking} & \texttt{Last offset} & Ultimo offset misurato rispetto alla sorgente selezionata. \\
+    \texttt{tracking} & \texttt{RMS offset} & Valore quadratico medio degli offset recenti. \\
+    \texttt{tracking} & \texttt{Frequency} & Correzione di frequenza applicata al clock locale. \\
+    \texttt{tracking} & \texttt{Residual freq} & Frequenza residua stimata dopo la correzione. \\
+    \texttt{tracking} & \texttt{Skew} & Incertezza nella stima della frequenza del clock. \\
+    \texttt{tracking} & \texttt{Root delay} & Ritardo cumulativo verso la sorgente primaria. \\
+    \texttt{tracking} & \texttt{Root dispersion} & Dispersione cumulativa verso la sorgente primaria. \\
+    \texttt{tracking} & \texttt{Update interval} & Intervallo tra gli ultimi aggiornamenti della sincronizzazione. \\
+    \texttt{tracking} & \texttt{Leap status} & Stato relativo alla sincronizzazione e ai leap second. \\
+    \midrule
+    \texttt{sources} & \texttt{MS} & Tipo e stato della sorgente temporale. \\
+    \texttt{sources} & \texttt{Name/IP address} & Nome o indirizzo della sorgente. \\
+    \texttt{sources} & \texttt{Stratum} & Stratum dichiarato dalla sorgente. \\
+    \texttt{sources} & \texttt{Poll} & Intervallo di polling verso la sorgente. \\
+    \texttt{sources} & \texttt{Reach} & Registro di raggiungibilità della sorgente. \\
+    \texttt{sources} & \texttt{LastRx} & Tempo trascorso dall'ultimo campione ricevuto. \\
+    \texttt{sources} & \texttt{Last sample} & Ultimo offset misurato rispetto alla sorgente. \\
+    \midrule
+    \texttt{sourcestats} & \texttt{NP} & Numero di campioni mantenuti per la sorgente. \\
+    \texttt{sourcestats} & \texttt{NR} & Numero di run dei residui con lo stesso segno. \\
+    \texttt{sourcestats} & \texttt{Span} & Intervallo temporale coperto dai campioni. \\
+    \texttt{sourcestats} & \texttt{Frequency} & Frequenza stimata rispetto alla sorgente. \\
+    \texttt{sourcestats} & \texttt{Freq Skew} & Incertezza della stima di frequenza. \\
+    \texttt{sourcestats} & \texttt{Offset} & Offset stimato della sorgente. \\
+    \texttt{sourcestats} & \texttt{Std Dev} & Deviazione standard dei residui delle misure. \\
+    \bottomrule
+  \end{tabularx}
   \caption{Principali metriche e campi esposti da Chrony tramite \texttt{chronyc}.}
   \label{tab:chrony_metriche}
 \end{table}
 
-\newpage
-
 \section{Precision Time Protocol}
 \subsection{Caratteristiche generali di PTP}
 
+\begin{sloppypar}
 Lo standard IEEE 1588, noto come \texttt{Precision Time Protocol} (PTP), è stato
 progettato con l'obiettivo di fornire una sincronizzazione temporale accurata e
 precisa tra clock appartenenti a sistemi distribuiti. Il protocollo è pensato per
@@ -420,6 +400,7 @@ reti Ethernet, e supporta comunicazioni multicast, unicast oppure una
 combinazione delle due modalità. Lo standard definisce inoltre specifici mapping del
 protocollo su differenti tecnologie di trasporto, tra cui UDP su IPv4/IPv6 e
 IEEE 802.3 Ethernet \cite{IEEEStandardPrecision2020}.
+\end{sloppypar}
 
 Rispetto a protocolli general-purpose come NTP, PTP è orientato a contesti nei quali
 sono richiesti livelli di precisione più elevati e una maggiore integrazione con l'infrastruttura
@@ -429,13 +410,15 @@ di banda e di risorse computazionali dedicate alla gestione del clock locale.
 Tale accuratezza dipende tuttavia dalle caratteristiche della rete, dal supporto al
 timestamping e dal tipo di dispositivi coinvolti nella distribuzione del tempo ~\cite{IEEEStandardPrecision2020}.
 
+\begin{sloppypar}
 PTP organizza la sincronizzazione secondo una relazione gerarchica tra clock. All'interno
 di un dominio PTP viene individuato un riferimento temporale principale, detto
 \texttt{grandmaster clock}, rispetto al quale gli altri clock del dominio si
 sincronizzano. La sorgente della sincronizzazione è tradizionalmente indicata come
 \texttt{master}, mentre il nodo che riceve la sincronizzazione è indicato come \texttt{slave};
 nella terminologia più recente, tali ruoli possono essere descritti
-rispettivamente anche come \texttt{timeTransmitter} e \texttt{timeReceiver}.
+rispettivamente anche come \texttt{timeTransmitter} e \texttt{timeReceiver}.  
+\end{sloppypar}
 
 Un aspetto fondamentale del protocollo è il concetto di \texttt{PTP domain}. Un
 dominio PTP rappresenta un meccanismo di isolamento logico che consente di
@@ -520,12 +503,9 @@ topologia di rete, dai dispositivi presenti e dai requisiti di sincronizzazione 
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}
-    {0.32\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{images/theory/ptpnet_01.png}
-    \caption{Esempio rete PTP \cite{PTP_net}}
-  \end{subfigure}
+  \includegraphics[width=0.70\textwidth]{images/theory/ptpnet_01.png}
+  \caption{Esempio di rete PTP~\cite{PTP_net}.}
+  \label{fig:ptp_network_example}
 \end{figure}
 
 \subsection{Messaggi PTP e meccanismo di sincronizzazione}
@@ -539,25 +519,27 @@ accuratezza possibile. I secondi, invece, trasportano informazioni di supporto
 al protocollo, ma non richiedono necessariamente un timestamp accurato dell'evento
 fisico di invio o ricezione \cite{IEEEStandardPrecision2020}.
 
-I messaggi evento comprendono \texttt{Sync}, \texttt{Delay\_Req}, \texttt{Pdelay\_Req}
-e \texttt{Pdelay\_Resp}. Essi sono direttamente coinvolti nella misura dei tempi
-di trasmissione e ricezione, e quindi nella stima dell'offset e del ritardo di propagazione.
-I messaggi generali comprendono invece \texttt{Announce}, \texttt{Follow\_Up},
-\texttt{Delay\_Resp}, \texttt{Pdelay\_Resp\_Follow\_Up}, \texttt{Management} e \texttt{Signaling}.
-Tra questi, \texttt{Follow\_Up}, \texttt{Delay\_Resp} e \texttt{Pdelay\_Resp\_Follow\_Up}
-rientrano nei messaggi temporali PTP, poiché trasportano informazioni necessarie al
-calcolo della sincronizzazione, pur non essendo messaggi evento in senso stretto.
-Nel meccanismo di sincronizzazione ordinario tra master e slave, il messaggio
-\texttt{Sync} è utilizzato per trasferire l'informazione temporale dal master verso
-lo slave. Nei clock di tipo \texttt{one-step}, il timestamp preciso di
-trasmissione viene inserito direttamente nel messaggio \texttt{Sync}. Nei clock
-di tipo \texttt{two-step}, invece, il messaggio \texttt{Sync} viene seguito da
-un messaggio \texttt{Follow\_Up}, che contiene il timestamp effettivo associato
-all'invio del precedente messaggio \texttt{Sync}. Questa distinzione è legata al
-momento in cui il timestamp preciso diventa disponibile: in alcune implementazioni
-esso può essere generato più vicino all'interfaccia di rete o al livello hardware,
-e quindi comunicato successivamente tramite \texttt{Follow\_Up}.
-\cite{IEEEStandardPrecision2020}.
+\begin{sloppypar}
+  I messaggi evento comprendono \texttt{Sync}, \texttt{Delay\_Req}, \texttt{Pdelay\_Req}
+  e \texttt{Pdelay\_Resp}. Essi sono direttamente coinvolti nella misura dei tempi
+  di trasmissione e ricezione, e quindi nella stima dell'offset e del ritardo di propagazione.
+  I messaggi generali comprendono invece \texttt{Announce}, \texttt{Follow\_Up},
+  \texttt{Delay\_Resp}, \texttt{Pdelay\_Resp\_Follow\_Up}, \texttt{Management} e \texttt{Signaling}.
+  Tra questi, \texttt{Follow\_Up}, \texttt{Delay\_Resp} e \texttt{Pdelay\_Resp\_Follow\_Up}
+  rientrano nei messaggi temporali PTP, poiché trasportano informazioni necessarie al
+  calcolo della sincronizzazione, pur non essendo messaggi evento in senso stretto.
+  Nel meccanismo di sincronizzazione ordinario tra master e slave, il messaggio
+  \texttt{Sync} è utilizzato per trasferire l'informazione temporale dal master verso
+  lo slave. Nei clock di tipo \texttt{one-step}, il timestamp preciso di
+  trasmissione viene inserito direttamente nel messaggio \texttt{Sync}. Nei clock
+  di tipo \texttt{two-step}, invece, il messaggio \texttt{Sync} viene seguito da
+  un messaggio \texttt{Follow\_Up}, che contiene il timestamp effettivo associato
+  all'invio del precedente messaggio \texttt{Sync}. Questa distinzione è legata al
+  momento in cui il timestamp preciso diventa disponibile: in alcune implementazioni
+  esso può essere generato più vicino all'interfaccia di rete o al livello hardware,
+  e quindi comunicato successivamente tramite \texttt{Follow\_Up}.
+  \cite{IEEEStandardPrecision2020}.
+\end{sloppypar}
 
 La sincronizzazione degli \texttt{ordinary clock} e dei \texttt{boundary clock}
 può essere completata mediante il meccanismo \texttt{delay request-response}. In
@@ -685,7 +667,7 @@ L'accuratezza della sincronizzazione PTP dipende in modo diretto dalla qualità
 dei timestamp associati ai messaggi temporali. La stima delle offset e delay si basa
 infatti sugli istanti di trasmissione e ricezione dei messaggi PTP, e ogni
 incertezza introdotta nella generazione del timestamp si va a riflettere
-direttamente sulla qualità della sincoronizzazione. Questo è il motivo fondate rispetto
+direttamente sulla qualità della sincronizzazione. Questo è il motivo fondate rispetto
 al quale il protocollo distingue in messaggi per i quali il timestamp è critico,
 cioè gli \texttt{event messages}, e messaggi che trasportano informazioni di
 supporto ma non richiedono la stessa accuratezza temporale, cioè i \texttt{general
@@ -731,7 +713,7 @@ migliorare la precisione della sincronizzazione. Viceversa, timestamping
 software, code di rete, jitter, congestione e dispositivi non PTP-aware possono aumentare
 l'incertezza delle misure e degradare la qualità della sincronizzazione.
 
-Nell'approccio sperimentale addottato in fase di progetto, è stata perseguita la
+Nell'approccio sperimentale adottato in fase di progetto, è stata perseguita la
 realizzazione attraverso l'uso del timestamping software. Ottenendo un confronto più
 diretto tra protocolli differenti.
 

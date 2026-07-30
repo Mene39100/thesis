@@ -391,6 +391,8 @@ confermano quanto osservato. Vi è una dispersione superiore rispetto agli altri
 L’ampiezza media della banda interquartile è di ~$15 .17\,\mathrm{ms}$, La
 fascia $p10$--$p90$ di ~$29.44\, \mathrm{ms}$. Il minimo della curva media aggregata
 scende inoltre fino a circa $-30.12\,\mathrm{ms}$.
+Nella fase finale si osserva una presenza più marcata dagli outlier, con una curva media
+esterna alla banda inter-quartile.
 
 La misura dell'offset conferma un coerente e progressivo degrado al variare degli
 impairment. Nello scenario \texttt{high} si ha un peggioramento marcato.
@@ -1145,6 +1147,10 @@ tutti i campioni. Vi è un aumento della dispersione. L'ampiezza media dell'inte
 \texttt{p10-p90} è di ~\texttt{15.836 \,$\mu$s}, e l'IQR medio è di ~\texttt{3.693
 \,$\mu$s}.
 
+In tutti e tre gli scenari, in molteplici punti, la curva media è esterna alla banda interquartile.
+Quindi si ha un valore medio non coincidente con il comportamento tipico della run, risentendo maggiormente
+di anomalie o di code negative della distribuzione.
+
 Nei primi due casi i risultati sono sufficientemente uniformi, mentre nello scenario
 \texttt{high} vi è un peggioramento più marcato.
 
@@ -1430,7 +1436,8 @@ standard delle medie è di \texttt{53.570 \,$\mu$s}. L'IQR medio è di \texttt{7
 \,$\mu$s}, con picchi fino a \texttt{537.400 \,$\mu$s}. Si ha un massimo di
 \texttt{1622 \,$\mu$s}. Nel complesso, quindi, lo scenario \texttt{low} descrive una
 stima della deviazione standard elevata e accompagnata da una variabilità molto marcata
-tra le run.
+tra le run. In tale scenario, la media è più affetta dagli outlier che dai valori tipici, 
+si nota dalla presenza di un valore medio che si discosta dalla banda inter-quartile.
 
 Nel caso \texttt{medium} la media aggregata della curva è di \texttt{139.160 \,$\mu$s}.
 La deviazione standard delle medie è di \texttt{38.298 \,$\mu$s}. I valori medi
@@ -1627,7 +1634,8 @@ medie pari a \texttt{92.121 \,$\mu$s}. L'IQR medio è \texttt{115.127 \,$\mu$s},
 l'ampiezza media dell'intervallo \texttt{p10-p90} raggiunge \texttt{461.010 \,$\mu$s},
 con picchi fino a \texttt{817.440 \,$\mu$s}. Si ha un valore massimo pari a
 \texttt{2342.321 \,$\mu$s}.Il caso \texttt{low} descrive quindi una risposta
-molto instabile.
+molto instabile. È evidente la presenza di una media non congrua alle bande inter-quartile
+per la maggior parte della run.
 
 Nello scenario \texttt{medium}, la media aggregata della curva scende a \texttt{-10.765
 \,$\mu$s}. La deviazione standard delle medie si riduce a \texttt{49.927 \,$\mu$s},

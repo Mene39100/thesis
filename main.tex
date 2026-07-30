@@ -18,7 +18,7 @@
 % Letter
 \usepackage[utf8]{inputenc}
 % Language
-\usepackage[english]{babel}
+\usepackage[italian]{babel}
 % PDF/A
 \usepackage[a-1b]{pdfx}
 % Image
@@ -35,10 +35,6 @@
 % List
 \usepackage{enumitem}
 
-\usepackage{listings}
-
-\lstset{ basicstyle=\ttfamily\small, breaklines=true, frame=single, columns=fullflexible
-}
 
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, fit, backgrounds}
@@ -46,10 +42,51 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.6em}
 
+
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible
+}
+
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage[outputdir=build]{minted}
+
+% Nomi italiani per caption
+\addto\captionsitalian{%
+  \renewcommand{\figurename}{Figura}%
+  \renewcommand{\tablename}{Tabella}%
+}
+
+\renewcommand{\lstlistingname}{Listato}
+\renewcommand{\listingscaption}{Listato}
+\floatname{listing}{Listato}
+
 \usepackage{xurl}
+
+%\\\\\\\\\\\\\\\\\\\\\
+\usepackage{caption}
+\usepackage{placeins}
+
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+
+\captionsetup{skip=4pt}
+\captionsetup[subfigure]{skip=2pt}
+%\\\\\\\\\\\\\\\\\\\\\
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+%\\\\\\\\\\\\\\\\\\\\\
 
 % START: DELETE ME
 \usepackage{lipsum}
