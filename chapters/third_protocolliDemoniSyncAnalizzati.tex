@@ -15,31 +15,31 @@ operare particolari funzionalità di elaborazione necessarie all'espletamento di
 un certo servizio di rete.
 
 In senso lato, un protocollo di comunicazione definisce la struttura ex ante, la
-quale può essere adatta ad ogni sua possibile interpretazione attraverso l'implemntazione
+quale può essere adatta ad ogni sua possibile interpretazione attraverso l'implementazione
 pratica, delineando alla base le regole logiche dello scambio di messaggi, il
-formato delle informazioni trasmesse, il modello di sincornizzazione e più in generale,
-il comporamento atteso dai nodi coinvolte. \cite{ProtocolloDiRete2026}
+formato delle informazioni trasmesse, il modello di sincronizzazione e più in generale,
+il comportamento atteso dai nodi coinvolte. \cite{ProtocolloDiRete2026}
 
 L'implementazione software costituisce la parte pratica, ovvero la realizzazione concreta
 di tali regole all'interno di un sistema operativo.
 
 Infine un demone è un programma che viene eseguito come processo in background,
 anziché essere sotto il controllo diretto di un utente interattivo
-\cite{DaemonComputing2026}, nel caso specifico è responsabile dell'applivazione dell'alogritmo
+\cite{DaemonComputing2026}, nel caso specifico è responsabile dell'applicazione dell'algoritmo
 di sincronizzazione e della gestione del clock locale.
 
 Nel contesto della sincronizzazione temporale, i due protocolli presi ad esame
 sono rispettivamente NTP e PTP. Network Time Protocol, definito nella sua
 versione 4, dalla specifica \texttt{\textbf{RFC 5905}}. Precision Time Protocol definito
 dallo standard \texttt{\textbf{IEEE 1588}}. È importante notare come la analisi sperimentale
-che ne seguirà non deriva semplicemnte dalla differenza di protocollo utilizzato,
+che ne seguirà non deriva semplicemente dalla differenza di protocollo utilizzato,
 ma anche dalla sua implementazione plastica.
 
 Per questa ragione, nella presente tesi vengono distinti i protocolli in riferimento
 dagli strumenti software effettivamente analizzate. Nel dettaglio abbiamo NTPsec,
 Chrony e linuxptp.
 
-NTPsec e Chrony sono due distribuzioni che implmentano NTPv4 secondo RFC 5905,
+NTPsec e Chrony sono due distribuzioni che implementano NTPv4 secondo RFC 5905,
 derivate da NTP Classic, l'originale di Dave Mills, orientate a una
 realizzazione più moderna e mantenibile del protocollo.\cite{SecureNetworkTime}.
 
@@ -67,13 +67,13 @@ considerato è \texttt{\textbf{ptp4l}}.
 
 La distinzione sopra riportata è fondamentale nel distinguere i diversi piani di comparazione
 che ne seguiranno. Le metriche raccolte nel capitolo
-\ref{cha:AnalisiSperimentale} descirivono quindi il comportamento concreto dei
+\ref{cha:AnalisiSperimentale} descrivono quindi il comportamento concreto dei
 demoni in questione nelle condizioni sperimentali definite, oltre alle ovvie proprietà
-teoriche dei protocolli a cui essi si referiscono.
+teoriche dei protocolli a cui essi si riferiscono.
 
 \section{Network Time Protocol}
 \subsection{Caratteristiche generali}
-Network Time Protocol (NTP) è uno dei principali protocolli di sincronizzazionte temporale
+Network Time Protocol (NTP) è uno dei principali protocolli di sincronizzazione temporale
 utilizzati in reti di computer. NTP è stato progettato per sincronizzare gli
 orologi dei computer su Internet e su reti locali, garantendo che tutti i dispositivi
 coinvolti abbiano un tempo coerente. La versione più recente di NTP è la
@@ -178,7 +178,7 @@ temporale UTC al tempo t è
 dove e è un termine di errore stocastico.
 
 Quattro statistiche vengono aggiornate ogni volta che un client effettua una misurazione
-con un server. Lo scomostamento, ossia il \texttt{theta}, è rappresentazione dello
+con un server. Lo scostamento, ossia il \texttt{theta}, è rappresentazione dello
 scostamento temporale di massima verosimiglianza dell'orologio del server rispetto
 all'orologio di sistema. Vi è poi il ritardo,definito come \texttt{delta}, che è
 definito come il ritardo di andata e ritorno tra client e server. Vi è poi la dispersione,
@@ -265,10 +265,10 @@ viene trasformata in una correzione effettiva.
 \subsection{NTPsec e il demone ntpd}
 
 NTPsec è un progetto nato con l'obiettivo di fornire una implementazione più sicura
-e manutenibile del protocollo NTP, mantenendo la compatibilità con la specifica
+e mantenibile del protocollo NTP, mantenendo la compatibilità con la specifica
 RFC 5905. Il progetto si è sviluppato a partire da NTP Classic. L'obiettivo di NTPsec
 è quello di offrire una versione più robusta e semplificata del protocollo,
-ottenutos anche attraverso la rimozione di codice legacy e funzionalità obsolete.
+ottenuto anche attraverso la rimozione di codice legacy e funzionalità obsolete.
 Questa caratteristica è rilevante soprattutto in contesti in cui il demone di sincronizzazione
 è esposto in rete e deve operare come componente infrastrutturale affidabile \cite{SecureNetworkTime}.
 

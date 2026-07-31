@@ -99,10 +99,10 @@ cui più servizi potevano tentare di intervenire sullo stesso clock locale.Inolt
 la separazione logica delle rete permette di avere una distinzione più chiara tra
 le diverse catene di sincronizzazione analizzate nel testbed.
 
-\section{Ambiente containerizzato}
+\section{Ambiente testbed}
 
 Il testbed è realizzato tramite la creazione di una topologia di rete
-containerizzata attraverso l'ausilio di Kathará, cioè un sistema di emulazione di
+"containerizzato" attraverso l'ausilio di Kathará, cioè un sistema di emulazione di
 rete open source basato su container. Questa scelta ha reso possibile la
 riproduzione di una rete composta da un insieme di nodi Linux isolati, ognuno dotato
 di una sua interfaccia, di file di configurazioni personalizzati e degli
@@ -144,7 +144,7 @@ clientntp[0]=B
 clientptp[0]=B
 \end{lstlisting}
 
-Nella fase iniziale di avvio, ogni contanier va ad eseguire il proprio file di inizializzazione
+Nella fase iniziale di avvio, ogni container va ad eseguire il proprio file di inizializzazione
 \texttt{.startup}. Essi contengono gli indirizzi IP delle interfacce, attivano i
 link, popolano il file \texttt{/etc/hosts}, installano i pacchetti necessari e copiano
 i file di configurazione dei demoni dalle directory condivise del progetto verso i

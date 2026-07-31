@@ -2,74 +2,74 @@
 \label{cha:syncTempReti}
 
 \section{Il problema della sincronizzazione temporale}
-In una rete di calcolatri, ciascun nodo ha nozione locale del tempo. Essa è
-detrminata dal clock di sistema, il quale viene utilizzato dal sistema operativo e
+In una rete di calcolatori, ciascun nodo ha nozione locale del tempo. Essa è
+determinata dal clock di sistema, il quale viene utilizzato dal sistema operativo e
 dai processi per operare nella maniera più coerente con il sistema di riferimento
 nel quale è inserito. In un sistema complesso, composto da una molteplicità di calcolatori,
 tuttavia, non esiste garanzia che i clock locali siano sincroni o allineati.
 
-Alla base dei problemi di sincronizzazione temporale vi è quindi la necessità di mantere
+Alla base dei problemi di sincronizzazione temporale vi è quindi la necessità di mantenere
 i clock locali dei nodi sufficientemente vicini ad un riferimento temporale comune.
 Non è limitata alla inizializzazione di essi, ma nel richiede un processo continuo
-di correzione, poichè i clock locali tendono per loro natura a divergere nel
+di correzione, poiché i clock locali tendono per loro natura a divergere nel
 tempo. La divergenza è dovuta al fatto che gli oscillatori hardware non hanno frequenza
-perfettametne identica e possono essere influenzati da condizioni operative differenti,
+perfettamente identica e possono essere influenzati da condizioni operative differenti,
 come condizioni fisiche o di carico del sistema e caratteristiche dell'hardware
 stesso. \cite{millsInternetTimeSynchronization,martinNetworkTimeProtocol2010}
 
-In assenza di protocolli volti alla correzzione della assincronia temporale, due eventi
+In assenza di protocolli volti alla correzione della asincronia temporale, due eventi
 prodotti su calcolatori diversi possono essere marcati temporalmente in modo incoerente.
 
 Nel contesto delle reti, la sincronizzazione temporale viene generalmente
-ottenuta mediante lo scambio di messagistica tra un nodo che intende
+ottenuta mediante lo scambio di messaggistica tra un nodo che intende
 sincronizzarsi e una sorgente temporale di riferimento. Questo introduce un'ulteriore
-difficoltà: l'informazione temporale non vien osservata direttametne, ma trasmessa
+difficoltà: l'informazione temporale non vien osservata direttamente, ma trasmessa
 attraverso una rete soggetta a ritardi variazioni del ritardo, perdita di
 pacchetti, riordinamento e congestione. Di conseguenza, la qualità delle sincronizzazione
-dipende sia dalla stabitlità dei clock locali sia dalle condizioni del percorso di
+dipende sia dalla stabilità dei clock locali sia dalle condizioni del percorso di
 rete attraverso cui avviene lo scambio dei messaggi. Quest'ultimo problema è
 alla base dell'analisi sperimentale condotta nella seguente tesi.
 
-\section{Clock locali, clock di riferimetno e tempo di rete}
+\section{Clock locali, clock di riferimento e tempo di rete}
 Il clock locale di un nodo è la rappresentazione plastica del tempo mantenuta da
 una singola macchina. Si distingue su due piani, rispettivamente quello hardware
 e quello software. Nel primo, la nozione deriva solitamente da un oscillatore
 fisico, il quale genera segnali periodici utilizzati dal sistema per misurare il passare
 del tempo. A livello software, il sistema operativo utilizza questo riferimento hardware
-per manetenere il clock di sistema, cioè il tempo visibile ai processi e servizi
+per mantenere il clock di sistema, cioè il tempo visibile ai processi e servizi
 in esecuzione sulla macchina.
 
 Il clock di sistema essendo locale per definizione, non è necessariamente coerente
 con i rispettivi dei diversi nodi nello stesso sistema di riferimento, da qui
 nasce l'esigenza di un riferimento, il quale può o talvolta deve essere fornito da
 una sorgente esterna, da un server temporale, da un nodo configurato come master o
-da un dispostivo che riceve a sua volta il tempo da una sorgente più autorevole.
+da un dispositivo che riceve a sua volta il tempo da una sorgente più autorevole.
 Il ruolo del clock di riferimento non si limita alla sola informazione temporale,
 ma anche quello di costruire una scala rispetto alla quale vengono valutati gli scostamenti
 e derive dei clock locali.
 
 In una rete sincronizzata si possono distinguere quindi, in termini generali, nodi
-che forniscono informazione temporale e nodi che la necessitano al fine della correzzione
+che forniscono informazione temporale e nodi che la necessitano al fine della correzione
 del proprio riferimento. Nei protocolli di tipo client-server, un client interroga
-una o più sorgenti temporali e aggoriona il proprio clock sulla base delle risposte
+una o più sorgenti temporali e aggiorna il proprio clock sulla base delle risposte
 ricevute. Nei protocolli basati sulla gerarchia master-slave, un nodo master propaga
 l'informazione temporale verso nodi subordinati, i quali attraverso la ricezione
-dei pacchetti dati provvederano a correggere asincronie eventuali. La terminologia
+dei pacchetti dati provvederanno a correggere asincronie eventuali. La terminologia
 cambia a seconda del protocollo, ma il problema sottostante rimane comune.
 
 Il concetto di tempo di rete può essere inteso come la nozione temporale comune
-ricostruita dai nodi attrvaerso il protocollo di sincronizzazione. Esso non viene
+ricostruita dai nodi attraverso il protocollo di sincronizzazione. Esso non viene
 condiviso istantaneamente tra tutti i nodi del sistema, ma viene stimato
 localmente da ciascuno di essi sulla base delle informazioni ricevute e delle
 correzioni applicate al proprio clock. Ne deriva che i protocolli utilizzati quindi
-cercano di correggere nei limiti pratici tale scostamento al fine di manetnerlo in
-un range accettabile dal sitema in cui si opera.
+cercano di correggere nei limiti pratici tale scostamento al fine di mantenerlo in
+un range accettabile dal sistema in cui si opera.
 
 Nel contesto sperimentale di questa tesi, come precedentemente evidenziato, tale distinzione
 è fondamentale: le metriche che sono state osservate non descrivono
 semplicemente il valore assoluto dell'orologio di una macchina, mai il comportamento
 del processo di sincronizzazione rispetto a una sorgete temporale. Nel dettaglio
-dell'analisi sperimentale, l'ambiente di provo è stato configurato rispeto a nodi
+dell'analisi sperimentale, l'ambiente di provo è stato configurato rispetto a nodi
 che per ragione operative e implementative condividono la stessa base temporale del
 sistema host e non dispongono quindi di oscillatori hardware fisicamente indipendenti.
 Di conseguenza viene da se far notare come le divergenze osservata non fossero
@@ -79,13 +79,13 @@ ambito invece di riferimento, utilizzando un ambiente virtualizzato, le misure
 osservate sui singoli nodi descrivono la risposta dei demoni di sincronizzazione
 alle condizioni del percorso di rete, sia naturali sia indotte sperimentalmente.
 In questo senso, l'analisi si concentra sul modo in cui i protocolli e demoni differenti
-stimano, corregogno e mantengono la sincronizzazione in presenza di delay, jitter,
+stimano, correggono e mantengono la sincronizzazione in presenza di delay, jitter,
 loss, reorder e limitazione della banda.
 
 \section{Offset, drift e stabilità del clock}
 Una delle grandezze principali nella sincronizzazione temporale è l'offset,
-ossia lo scostamente tra il clock di un nodo e il clock di riferimento. Indicando
-con rispetivamente le due misure come $C_{l}(t)$ il e $C_{r}(t)$ le due misure nello
+ossia lo scostamento tra il clock di un nodo e il clock di riferimento. Indicando
+con rispettivamente le due misure come $C_{l}(t)$ il e $C_{r}(t)$ le due misure nello
 stesso istante, l'offset può essere espresso come
 
 \[
@@ -103,23 +103,23 @@ presentare lo stesso offset in un istante temporaneo ma successivamente evolvere
 diversamente.
 
 Tipicamente ciò è determinato da frequenze differenti nei due nodi considerati. Tipicamente
-la differenza della frequenza effettiva di avanzamento del clcol locale e quella associata
+la differenza della frequenza effettiva di avanzamento del clock locale e quella associata
 al drift, che per ovvie motivazioni quindi non è stata presa in considerazione
 in tale analisi. Un clock che accumula drift tende a distanziarsi nel progressivamente
 dal riferimento anche se lo stato iniziale era corretto.
 
-Dal punto di vista qualititativo, è utile fare distinzione tra l'accuratezza e
+Dal punto di vista qualitativo, è utile fare distinzione tra l'accuratezza e
 la stabilità. La prima descrive la distanza che è presente tra clock locale e quello
 di riferimento, rappresentata appunto dall'offset. La stabilità, invece, descrive
-quanto il cloc e le metriche di sincornizzazione rimangono regolari nel tempo.
+quanto il clock e le metriche di sincronizzazione rimangono regolari nel tempo.
 Un sistema può avere un offset medio ridotto ma oscillazioni elevate, risultando quindi
 poco stabile, al contrario, può avere un offset medio non nullo ma molto regolare,
-indicando un comportomaento stabile ma affetto da un bias sitematico.
+indicando un comportamento stabile ma affetto da un bias sistemico.
 
 \section{L'informazione nella sincronizzazione}
 
 La sincronizzazione dipende in misura diretta rispetto alla stima della relazione
-tra clock locale e di riferimento e viene ricostruta attraverso la messaggistica.
+tra clock locale e di riferimento e viene ricostruita attraverso la messaggistica.
 
 Per semplicità, si consideri uno scambio bidirezionale tra un nodo client e una
 sorgente temporale. Siano $t_{1}$ l'istante, misurato sul clock del client, in cui
@@ -164,13 +164,13 @@ Un elemento ulteriore critico è la variabilità temporale del delay. Quanto sop
 è un istantanea di di una singola osservazione, nella pratica però il protocollo
 ripete il susseguirsi di messaggi producendo una sequenza di stime. Un delay stabile
 produrrà osservazioni future più coerenti; viceversa un delay condizionato da
-degrado di rete può andare a compromettere le correzzioni e le stime derivanti
+degrado di rete può andare a compromettere le correzioni e le stime derivanti
 indipendentemente dalla sincronia reale dei clock. Il jitter di rete si traduce quindi
 in rumore sulla stima dell'offset e può aumentare la dispersione delle metriche osservate.
 
 Per questo motivo la sincronizzazione può essere letta come un problema di stima dinamica.
-Ogni messaggio contribuisce all'analisi e correzzione sistematica da parte del
-protocollo scelto. La qualità delle informazioni non è omogenea: una miusra
+Ogni messaggio contribuisce all'analisi e correzione sistematica da parte del
+protocollo scelto. La qualità delle informazioni non è omogenea: una misura
 ottenuta in condizioni di basso degrado di rete è più informativa. Da qui deriva la
 necessità di implementazioni pratiche che non si limitano alla applicazione meccanica
 della correzione, ma che filtrano le informazioni ricevute e selezionano o
@@ -179,10 +179,10 @@ pesano le osservazioni considerate più affidabili.
 La correzione può avvenire secondo differenti modalità. Vi sono casi in cui il clock
 locale subisce una correzione immediata del tempo, riducendo drasticamente l'offset
 ma ciò potrebbe indurre discontinuità. Vi sono poi altri demoni che modificano gradualmente
-la frequenza di anvanzamento rispetto alla sorgente, impattando su una
+la frequenza di avanzamento rispetto alla sorgente, impattando su una
 continuità nel tempo a discapito della singola osservazione.
 
-La qualità della sincronizzazione è dipesa anche dal moemnto in cui l'informazione
+La qualità della sincronizzazione è dipesa anche dal momento in cui l'informazione
 viene generata. Se il timestamp è prodotto a livello software, può essere
 soggetto a ritardi causati da scheduling del SO, alla gestione dello stack di rete
 e carico della macchina. Diversamente se è prodotto più vicino alla stessa
@@ -192,7 +192,7 @@ protocolli che mirano a precisioni più elevate, in quanto i ritardi interni all
 stesso calcolatore diventano rilevanti nel quadro complessivo.
 
 Nel contesto di questa tesi, gli impairment di rete introdotti agiscono direttamente
-sulle componenti che influenzno la qualità delle misure temporali.L 'aumento del
+sulle componenti che influenzano la qualità delle misure temporali.L 'aumento del
 delay modifica il tempo di percorrenza dei messaggi; il jitter rende tale tempo meno
 prevedibile; la perdita di pacchetti riduce la continuità delle osservazioni
 disponibili; il riordinamento può alterare la regolarità della sequenza di messaggi;
@@ -201,7 +201,7 @@ delle metriche raccolte dai demoni di sincronizzazione deve quindi essere letta 
 osservazione indiretta del modo in cui ciascun protocollo stima e corregge il clock
 locale a partire da misure temporali degradate dal comportamento della rete.
 
-Vi sono molteplici modelli rispetto ai quali i protocolli di sincornizzazione possono
+Vi sono molteplici modelli rispetto ai quali i protocolli di sincronizzazione possono
 stimare il ritardo andando a modificare il clock locale. Una prima grande
 distinzione va fatta in merito a meccanismi \textit{one-way} e \textit{two-way}.
 

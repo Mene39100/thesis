@@ -1,48 +1,48 @@
 \chapter{Analisi sperimentale}
 \label{cha:AnalisiSperimentale}
 
-Il presente capitolo è dedicato all’analisi dei dati raccolti per i demoni
+Il presente capitolo è dedicato all'analisi dei dati raccolti per i demoni
 \texttt{\textbf{NTPsec}}, \texttt{\textbf{ptp4l}} e \texttt{\textbf{Chronyd}}, con
-l’obiettivo di valutarne il comportamento al variare delle condizioni di rete introdotte
-nei tre scenari sperimentali. L’attenzione è rivolta all’esame delle principali
+l'obiettivo di valutarne il comportamento al variare delle condizioni di rete introdotte
+nei tre scenari sperimentali. L'attenzione è rivolta all'esame delle principali
 metriche di sincronizzazione temporale osservate durante la fase di testing, al fine
-di evidenziare l’impatto del progressivo incremento degli impairment di rete sulla
+di evidenziare l'impatto del progressivo incremento degli impairment di rete sulla
 stabilità del sistema e sulla qualità del processo di sincronizzazione.
 
-Pecr iascuna metrica di interesse non è stata considerata una singola esecuzione,
+Per ciascuna metrica di interesse non è stata considerata una singola esecuzione,
 bensì un insieme di run indipendenti, ottenute ripetendo più volte la medesima procedura
 sperimentale. Di conseguenza, i grafici e le statistiche riportati nel seguito non
-descrivono l’andamento di una sola acquisizione, ma una sintesi aggregata delle
+descrivono l'andamento di una sola acquisizione, ma una sintesi aggregata delle
 diverse run effettuate.
 
-L’analisi è organizzata per metrica. Per ciascuna grandezza considerata viene condotto
+L'analisi è organizzata per metrica. Per ciascuna grandezza considerata viene condotto
 un confronto sistematico tra i tre scenari sperimentali definiti in precedenza,
 corrispondenti a differenti livelli di degrado della rete (\texttt{low}, \texttt{medium},
-\texttt{high}). L’aggregazione dei dati è stata effettuata allineando i campioni
-omologhi delle diverse run rispetto all’indice di campionamento, così da rendere confrontabili
+\texttt{high}). L'aggregazione dei dati è stata effettuata allineando i campioni
+omologhi delle diverse run rispetto all'indice di campionamento, così da rendere confrontabili
 tra loro le varie esecuzioni anche in presenza di leggere differenze temporali nella
 raccolta.
 
 Per ogni metrica sono stati costruiti due differenti tipi di rappresentazione grafica.
 Nel primo caso, la curva centrale rappresenta la media dei valori osservati tra le
-run, mentre la banda associata corrisponde all’intervallo di confidenza al 95\%,
+run, mentre la banda associata corrisponde all'intervallo di confidenza al 95\%,
 fornendo una misura della stabilità della stima media ottenuta. Nel secondo caso,
 la curva centrale rimane la media aggregata, ma le bande descrivono direttamente la
-dispersione empirica dei dati: la banda interna rappresenta l’intervallo
-interquartile, compreso tra primo e terzo quartile, mentre la banda esterna
-rappresenta l’intervallo tra il decimo e il novantesimo percentile. I due grafici
+dispersione empirica dei dati: la banda interna rappresenta l'intervallo
+inter-quartile, compreso tra primo e terzo quartile, mentre la banda esterna
+rappresenta l'intervallo tra il decimo e il novantesimo percentile. I due grafici
 risultano quindi complementari: il primo è utile per valutare quanto la media
 osservata sia statisticamente stabile tra le run, mentre il secondo consente di apprezzare
 con maggiore immediatezza la variabilità effettiva dei valori misurati e la presenza
 di eventuali oscillazioni o dispersioni marcate.
 
-Nel seguito, l’interpretazione delle metriche verrà svolta confrontando i tre
+Nel seguito, l'interpretazione delle metriche verrà svolta confrontando i tre
 scenari sperimentali sia in termini di livello medio delle grandezze osservate, sia
 in termini di variabilità, robustezza e regolarità del comportamento dei diversi
 demoni di sincronizzazione.
 
 Nella discussione dei risultati verrà attribuito particolare rilievo ai grafici
-con intervallo interquartile e banda p10--p90, in quanto più adatti a
+con intervallo inter-quartile e banda p10--p90, in quanto più adatti a
 rappresentare la dispersione effettiva delle osservazioni aggregate.
 
 \begin{table}[H]
@@ -63,7 +63,7 @@ rappresentare la dispersione effettiva delle osservazioni aggregate.
 \end{table}
 \section{\texttt{NTPsec}}
 
-Nel caso di \texttt{\textbf{NTPsec}}, l’analisi si concentra su tre metriche principali:
+Nel caso di \texttt{\textbf{NTPsec}}, l'analisi si concentra su tre metriche principali:
 \texttt{\textbf{delay}}, \texttt{\textbf{jitter}} e \texttt{\textbf{offset}}. Queste
 grandezze permettono di caratterizzare, rispettivamente, sia il tempo di propagazione
 dei pacchetti NTP, sia la variabilità temporale delle misurazioni e lo
@@ -72,9 +72,9 @@ scenari permette di valutare la robustezza del demone rispetto al degrado delle 
 di rete e di analizzare la qualità del processo di sincronizzazione in termini sia
 di stabilità sia di accuratezza.
 
-I dati oggetto dell’analisi sono stati raccolti secondo la metodologia sperimentale
+I dati oggetto dell'analisi sono stati raccolti secondo la metodologia sperimentale
 illustrata nei capitoli precedenti. In questa sede non saranno quindi ripresi
-gli aspetti relativi alla configurazione dell’ambiente di prova o alla
+gli aspetti relativi alla configurazione dell'ambiente di prova o alla
 disposizione della topologia. Nel caso di \texttt{\textbf{NTPsec}}, le misurazioni
 considerate sono state rilevate sui nodi \texttt{clientntp} e \texttt{boundary} della
 topologia, in coerenza con il ruolo da essi ricoperto nel processo di
@@ -82,7 +82,7 @@ sincronizzazione.
 
 Ciascuna sezione seguente è quindi dedicata a una singola metrica e presenta, per
 i tre scenari sperimentali, i risultati osservati e il relativo confronto
-interpretativo, con l’obiettivo di individuare eventuali differenze significative
+interpretativo, con l'obiettivo di individuare eventuali differenze significative
 tra le condizioni di rete considerate e valutarne gli effetti sul comportamento del
 demone.
 
@@ -92,7 +92,7 @@ di inizializzazione, identificato da \texttt{refid=.INIT.}, \texttt{stratum=16},
 e \texttt{reach=0}. L'intervallo non è rappresentativo del regime operativo
 della sincronizzazione, per tanto non viene considerato nel confronto tra scenari,
 il quale viene condotto a partire dal primo campione valido. Ai fini interpretativi,
-l’attenzione è principalmente rivolta alla porzione \texttt{post-selected} della serie,
+l'attenzione è principalmente rivolta alla porzione \texttt{post-selected} della serie,
 cioè ai campioni successivi alla selezione del peer di riferimento.
 \subsubsection{Analisi metrica: \texttt{delay}}
 \begin{figure}[H]
@@ -158,47 +158,47 @@ cioè ai campioni successivi alla selezione del peer di riferimento.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientntp}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientntp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-L’analisi del delay misurato sul nodo \texttt{clientntp} per il demone \texttt{NTPsec}
+L'analisi del delay misurato sul nodo \texttt{clientntp} per il demone \texttt{NTPsec}
 mette in evidenza una dipendenza dagli impairment di rete introdotte nei tre
 scenari.
 
 Nello scenario \texttt{low}, il delay assume valori contenuti e presenta un
 andamento sostanzialmente regolare. La curva media si colloca stabilmente in una fascia
-di circa 6–8 ms, con oscillazioni sufficentemente moderante con delle bande di
+di circa 6–8 ms, con oscillazioni sufficientemente moderante con delle bande di
 dispersione relativamente strette. Il delay medio è circa 7.00 ms, con una
-mediana 6.82 ms e un intervallo interquartile uguale ~1.95 ms. La media della
-banda interquartile di circa 1.43 ms, invece la larghezza media della banda p10–p90
+mediana 6.82 ms e un intervallo inter-quartile uguale ~1.95 ms. La media della
+banda inter-quartile di circa 1.43 ms, invece la larghezza media della banda p10–p90
 è di circa 2.85 ms.
 
 Nel caso \texttt{medium}, il delay cresce e si posiziona in una fascia superiore rispetto
 al caso precedente. La curva media è nell'intervallo (16-19) ms per una parte
-consistente dell’osservazione, per poi diminuire in fase finale verso valori ~10
-ms. Il delay medio è ~15.5 ms, con mediana 16.5 ms e un intervallo interquartile di
+consistente dell'osservazione, per poi diminuire in fase finale verso valori ~10
+ms. Il delay medio è ~15.5 ms, con mediana 16.5 ms e un intervallo inter-quartile di
 ~5.18 ms. L'IQR lungo la curva è ~5.62 ms e la p10–p90 ~10.0 ms.
-Complessiavmente l'andamento rimane leggibile e non ha instabilità estrema, evidenziando
+Complessivamente l'andamento rimane leggibile e non ha instabilità estrema, evidenziando
 comunque un peggioramento generale.
 
 Nello scenario \texttt{high} si ha un comportamento con più degrado e meno
-regolare. Post peer-seelection, la curva media si posiziona in fase iniziale su
+regolare. Post peer-selection, la curva media si posiziona in fase iniziale su
 valori molto elevati, spesso compresi tra ~(40-65) ms, con oscillazioni ampie e una
 forte eterogeneità tra run, evidenziato dall'ampliamento delle bande di
-dispersione. Il ivello medio è verso valori ~(10–15) ms. Il delay medio è pari a ~35.0
-ms, con mediana 46.7 ms e l'intervallo interquartile molto ampio, pari a ~59.9 ms.
+dispersione. Il livello medio è verso valori ~(10–15) ms. Il delay medio è pari a ~35.0
+ms, con mediana 46.7 ms e l'intervallo inter-quartile molto ampio, pari a ~59.9 ms.
 Le statistiche della curva aggregata vanno confermano il trend, infatti si ha una
 larghezza media della banda IQR è ~31.0 ms e quella p10–p90 ~59.4 ms.
 
 Nel confronto tra scenari si evidenzia una progressione complessivamente coerente
-con l’aumento della severità degli impairment di rete. Da \texttt{low} a \texttt{medium},
+con l'aumento della severità degli impairment di rete. Da \texttt{low} a \texttt{medium},
 il delay del client cresce e contestualmente anche la sua dispersione,
 mantenendo una dinamica ancora sufficientemente controllata. Nello scenario \texttt{high}
 si evidenzia una maggiore discontinuità. Il livello medio è spostato su valori più
 alti e lo stesso comportamento vale per la variabilità. Qualitativamente, la metrica
 del delay risulta quindi efficace nel differenziare i tre scenari e nel mostrare come
-l’incremento del degrado di rete si traduca in un peggioramento sia del livello della
+l'incremento del degrado di rete si traduca in un peggioramento sia del livello della
 misura sia della sua regolarità temporale.
 
 \subsubsection{Analisi metrica: \texttt{jitter}}
@@ -265,29 +265,29 @@ misura sia della sua regolarità temporale.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientntp}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientntp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-L’analisi del jitter mostra un incremento di degrado attraverso un progressivo
+L'analisi del jitter mostra un incremento di degrado attraverso un progressivo
 aumento dell'livello medio e della variabilità.
 
 Nello scenario \texttt{low} il valore medio risulta ~1.05 ms, con una dispersione
-moderata. La banda interquartile media della curva aggregata è pari a ~0.65 ms,
+moderata. La banda inter-quartile media della curva aggregata è pari a ~0.65 ms,
 invece la banda p10--p90 si attesta intorno a ~1.46 ms. Il comportamento osservato
 è coerente con un degrado debole, evidenziando una condizione di rete stabile.
 
 Nel caso \texttt{medium}, il jitter cresce in modo evidente e si posiziona su
 una fascia sensibilmente superiore.Il valore medio è ~3.14 ms, all'incirca tre
 volte il corrispondente valore osservato nello scenario \texttt{low}. Si ha un
-aumento della dispersione, con banda interquartile media di ~2.40 ms e banda p10--p90
+aumento della dispersione, con banda inter-quartile media di ~2.40 ms e banda p10--p90
 di ~4.18 ms.
 
 Nello scenario \texttt{high} si manifesta un degradato più marcato. Il jitter
-assume valori elevati lungo l’intera serie aggregata, con una media all'incirca di
+assume valori elevati lungo l'intera serie aggregata, con una media all'incirca di
 20.9 ms. Sia ha un incremento rispetto agli scenari precedenti, in particolare rispetto
 allo scenario \texttt{low}, con un divario di un ordine di grandezza. La
-dispersione misruata aumenta con banda interquartile media ~9.38 ms e banda p10--p90
+dispersione misurata aumenta con banda inter-quartile media ~9.38 ms e banda p10--p90
 di circa 18.3 ms. Nel grafico si evidenzia una forte oscillazione, ampia e
 persiste.
 
@@ -359,17 +359,17 @@ da valori medi elevati e da una dispersione significativamente maggiore.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientntp}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientntp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-Nell’analisi dell’offset si evidenziano valori sistematicamente negativi.
+Nell'analisi dell'offset si evidenziano valori sistematicamente negativi.
 
-Nello scenario \texttt{low}, l’offset si stabilizza su valori nell'intervallo ~$-
+Nello scenario \texttt{low}, l'offset si stabilizza su valori nell'intervallo ~$-
 2.5$/$-3\,\mathrm{ms}$. La media è di ~$-2.55\,\mathrm{ms}$. La mediana è
 pressoché identica, $-2 .55\,\mathrm{ms}$. La dispersione è moderata, ($\sigma \approx
 0.91\,\mathrm{ms}$). La curva aggregata conferma il trend con un valore medio
-centrale di $-2.55\,\mathrm{ms}$, invece l’ampiezza banda interquartile è di ~($\mathrm{IQR}
+centrale di $-2.55\,\mathrm{ms}$, invece l'ampiezza banda inter-quartile è di ~($\mathrm{IQR}
 \approx 0.56\,\mathrm{ms}$) e la fascia $p10$--$p 90$ di circa ($\approx 1.21\,\mathrm{ms}$).Il
 comportamento è stabile e uno scostamento limitato rispetto al riferimento.
 
@@ -378,8 +378,8 @@ La misura è in un intervallo di $-7$/$-8\,\mathrm{ms}$, con un aumento nella
 fase finale della serie. La media è ~$-6.70\,\mathrm{ms}$, con mediana pari a $-7
 .08\,\mathrm{ms}$. La deviazione standard è di ~$2.81\,\mathrm{ms}$. La curva
 aggregata rimane coerente con un valor medio centrale di $-6.69\,\mathrm{ms}$. C'è
-una crescita anche della variabilità, mostrato dall’ampiezza media della banda
-interquartile ($\approx 2.74\,\mathrm{ms}$) e della fascia $p10$--$p90$ ($\approx
+una crescita anche della variabilità, mostrato dall'ampiezza media della banda
+inter-quartile ($\approx 2.74\,\mathrm{ms}$) e della fascia $p10$--$p90$ ($\approx
 4.97\,\mathrm{ms}$).
 
 Lo scenario \texttt{high}, conferma il trend. La curva aggregata evidenzia una
@@ -388,7 +388,7 @@ $-30\,\mathrm{ms}$ per poi avere valori che si stabiliscono nella parte finale
 della run. La media pari a circa $-16.42\,\mathrm{ms}$, la mediana a
 $-21.87\,\mathrm{ms}$ e la deviazione standard a circa $15.38\,\mathrm{ms}$
 confermano quanto osservato. Vi è una dispersione superiore rispetto agli altri scenari.
-L’ampiezza media della banda interquartile è di ~$15 .17\,\mathrm{ms}$, La
+L'ampiezza media della banda inter-quartile è di ~$15 .17\,\mathrm{ms}$, La
 fascia $p10$--$p90$ di ~$29.44\, \mathrm{ms}$. Il minimo della curva media aggregata
 scende inoltre fino a circa $-30.12\,\mathrm{ms}$.
 Nella fase finale si osserva una presenza più marcata dagli outlier, con una curva media
@@ -407,7 +407,7 @@ riferimento ma solamente nel ramo \texttt{downstream} tra \texttt{boundary} e
 teorica, risentirne. La sezione seguente quindi, ha come scopo verificare se i
 dati sono coerenti con il sistema.
 
-L’analisi è quindi orientata principalmente a verificare la coerenza tra tale
+L'analisi è quindi orientata principalmente a verificare la coerenza tra tale
 aspettativa teorica e i dati effettivamente osservati.
 
 È utile notare che nell'analisi il tempo di peer-selection differente rispetto a
@@ -478,7 +478,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}
   metrica: \texttt{delay}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -549,7 +549,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}
   metrica: \texttt{delay}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -620,7 +620,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
     \caption{Scenario HIGH}
   \end{subfigure}
 
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}
   metrica: \texttt{delay}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -637,11 +637,11 @@ di regime. La dispersione associata conferma le ipotesi, con metriche dello stes
 ordine di grandezza.
 
 Andamento analogo è osservabile per il jitter. I valori medi sono di circa 0.446
-ms in low, 0.442 ms in medium e 0.473 ms in high. Diffrenze ridotte, evidenziando
+ms in low, 0.442 ms in medium e 0.473 ms in high. Differenze ridotte, evidenziando
 una assenza di degrado del nodo \texttt{boundary}.La variabilità delle curve
 aggregate resta limitata, suggerendo un comportamento omogeneo nei tre casi.
 
-Infine l’offset, con valori anche essi contenuti in tutti gli scenari. La media di
+Infine l'offset, con valori anche essi contenuti in tutti gli scenari. La media di
 ~0.204 ms nel caso low, 0.254 ms nel caso medium e 0.236 ms nel caso high.
 Comportamento invariato, anche per la dispersione, con minime oscillazioni
 compatibili con l'ambiente sperimentale, ma non un andamento monotono né un incremento
@@ -652,7 +652,7 @@ osservate tra low, medium e high risultano contenute e prive di una tendenza sis
 confermando l'ipotesi iniziale.
 
 \section{\texttt{ptp4l}}
-L’analisi dei dati relativa al demone \texttt{\textbf{ptp4l}} è fatta su due nodi
+L'analisi dei dati relativa al demone \texttt{\textbf{ptp4l}} è fatta su due nodi
 della topologia. In particolare sui nodi \texttt{clientptp} e \texttt{boundary}, per
 i quali sono disponibili misurazioni direttamente riconducibili al comportamento del
 protocollo in termini di sincronizzazione e ritardo.
@@ -669,11 +669,11 @@ assume significato principalmente nel caso del nodo \texttt{clientptp}. Per
 quanto riguarda il nodo \texttt{boundary} ci si attende, in linea teorica, un impatto
 più contenuto, o una totale assenza di degrado.
 
-Alla luce di ciò, l’analisi viene sviluppata separatamente per i nodi \texttt{clientptp}
+Alla luce di ciò, l'analisi viene sviluppata separatamente per i nodi \texttt{clientptp}
 e \texttt{boundary}.
 
 \subsection{\texttt{clientptp}}
-Per quanto rigurada, l’analisi quantitativa delle metriche, non può essere estesa
+Per quanto riguarda, l'analisi quantitativa delle metriche, non può essere estesa
 in modo uniforme a tutti gli scenari. Infatti, nello scenario \texttt{high} non
 venendo raggiunta una stabile condizione operativa i campioni prodotti non sono
 utilizzabili per un confronto. Quindi l'analisi si limita agli scenari \texttt{low}
@@ -682,7 +682,7 @@ e \texttt{medium}.
 L'instabilità non raggiunta è evidenziata dal file di log, il quale mostra
 ripetute selezioni del clock locale come miglior master e un solo tentativo
 transitorio di passaggio verso un master esterno, seguito tuttavia da ritorno allo
-stato di \texttt{LISTENING}. L’assenza di campioni numerici confrontabili nello scenario
+stato di \texttt{LISTENING}. L'assenza di campioni numerici confrontabili nello scenario
 \texttt{high} rappresenta dunque un risultato sperimentale, e segnala un livello di
 degrado tale da impedire la normale operatività del client PTP. Il relativo
 output viene comunque richiamato a supporto di tale evidenza qualitativa.
@@ -731,7 +731,7 @@ output viene comunque richiamato a supporto di tale evidenza qualitativa.
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientptp}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientptp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
@@ -741,7 +741,7 @@ ritardo stimato lungo il percorso di sincronizzazione tra il client e il master.
 Nello scenario \texttt{low} vi è un andamento mediamente regolare, collocandosi su
 valori nell'ordine di centinaia di microsecondi. La curva aggregata ha un valore
 medio ~$606.8\,\mu s$ e la mediana è di ~$602.5\,\mu s$. La distribuzione dei valori
-centrali piuttosto contenuta, con un intervallo interquartile nell'intervallo
+centrali piuttosto contenuta, con un intervallo inter-quartile nell'intervallo
 $575.8\,\mu s$ e $638.6\,\mu s$. L'analisi dei grafici conferma un andamento stabile,
 pur con oscillazioni locali non trascurabili, ma complessivamente compatibili con
 una condizione di rete moderatamente controllata.
@@ -750,19 +750,19 @@ Nel caso \texttt{medium}, si ha un livello medio crescente ma sempre contenuto.
 La curva aggregata ha un valore medio di ~$6 42.2\,\mu s$, con mediana pari a ~$6
 45 .5\,\mu s$. L'incremento rispetto allo scenario precedente è nell'ordine di
 decine di microsecondi. Questo scenario, comunque, mostra una dispersione più elevata.
-L’intervallo interquartile della curva centrale è nell'intervallo di
+L'intervallo inter-quartile della curva centrale è nell'intervallo di
 $613.0\,\mu s$ e $672.3\, \mu s$, invece le bande di variabilità sono mediamente più
-ampie. L’ampiezza dell’IQR sia quella della fascia $p10$--$p 90$, segnalando una
+ampie. L'ampiezza dell'IQR sia quella della fascia $p10$--$p 90$, segnalando una
 minore regolarità della stima del ritardo di percorso.
 
 Vi è un chiaro aumento del degrado tra i primi due scenari, in termini misurazioni
-otteute. Nonostante il degrado della rete non produce un forte aumento del
+ottenute. Nonostante il degrado della rete non produce un forte aumento del
 valore medio del \texttt{path delay}, ma si riflette soprattutto in una maggiore
 variabilità delle misurazioni. La metrica risulta quindi sensibile al peggioramento
-dello scenario sperimentale, ma l’effetto osservato si manifesta principalmente
+dello scenario sperimentale, ma l'effetto osservato si manifesta principalmente
 come perdita di stabilità più che come incremento netto del livello centrale. Lo scenario
 \texttt{high}, come già discusso, evidenzia una totale perdita di connessione
-con il riferimento princpale.
+con il riferimento principale.
 
 \subsubsection{Analisi metrica: \texttt{RMS offset}}
 \begin{figure}[H]
@@ -808,34 +808,34 @@ con il riferimento princpale.
     }
     \caption{Scenario MEDIUM}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientptp}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientptp}}
   \label{fig:scenario_comparison}
 \end{figure}
 
-La metrica \texttt{RMS} sul nodo \texttt{clientptp} misura l’entità media dell’errore
+La metrica \texttt{RMS} sul nodo \texttt{clientptp} misura l'entità media dell'errore
 di sincronizzazione osservato dal client PTP fornendo una misura della qualità temporale
-raggiunta dal nodo nel corso dell’esperimento.
+raggiunta dal nodo nel corso dell'esperimento.
 
-Nello scenario \texttt{low}, i valori medi sono nell’ordine di alcune centinaia di
+Nello scenario \texttt{low}, i valori medi sono nell'ordine di alcune centinaia di
 microsecondi. Il valore medio della curva aggregata è di ~$406.7\,\mu s$, mentre
 la mediana è ~$378.1\,\mu s$. La distribuzione dei valori centrali è nell'intervallo
 $3 02.5\,\mu s$ e $493.2\,\mu s$, con presenza di picchi locali più elevati.
-L’andamento della serie risulta nel complesso irregolare ma ancora contenuto.
+L'andamento della serie risulta nel complesso irregolare ma ancora contenuto.
 
 Nello scenario \texttt{medium}, la RMS aumenta. Il valore medio della curva aggregata
 si attesta a ~$514.9\,\mu s$. La mediana ha un valore di ~$458.5\,\mu s$. Rispetto
 allo scenario \texttt{low} vi è un incremento sensibile pari a poco più di
-$100\,\mu s$. L'aspetto però più rilevante è rappresentato dall’aumento della dispersione.
-L’intervallo interquartile dei valori centrali è maggiore e le bande di
+$100\,\mu s$. L'aspetto però più rilevante è rappresentato dall'aumento della dispersione.
+L'intervallo inter-quartile dei valori centrali è maggiore e le bande di
 variabilità nei grafici risultano più estese. In generale la serie mostra una maggiore
 oscillazione.
 
 In generale, la metrica RMS mostra un marcato peggioramento al passaggio dallo
 scenario \texttt{low} a quello \texttt{medium}. A differenza di quanto osservato sul
 \texttt{path delay} vi è anche un incremento maggiore del livello medio
-dell’errore temporale. Per lo scenario \texttt{high} vale sempre la premessa
+dell'errore temporale. Per lo scenario \texttt{high} vale sempre la premessa
 iniziale, confermando l'eccessivo degrado di rete che non permette a \texttt{clientptp}
-di stabilizarsi.
+di stabilizzarsi.
 
 \subsection{\texttt{boundary}}
 L'analisi sul nodo \texttt{boundary} è simmetrica a quella effettuata con il demone
@@ -915,7 +915,7 @@ criticità operative osservate durante il testing.
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}}
   \label{fig:scenario_comparison}
 \end{figure}
 Per quanto riguarda il \texttt{path delay} vi è conferma, nel complesso, dell'ipotesi.
@@ -926,8 +926,8 @@ deterioramento sistematico e monotono.
 Da un punto di vista quantitativo, si ha un valore medio aggregato del \texttt{path
 delay} di ~697.227~\textmu s nello scenario \texttt{low}, 687.669~\textmu s nello
 scenario \texttt{medium} e 740.415~\textmu s nello scenario \texttt{high}.
-Differenze contennute nei tre casi, non indicano quindi una variazione sostanziale.
-L'ampiezza interquartile media e la banda p10--p90 non mostrano infatti un incremento
+Differenze contenute nei tre casi, non indicano quindi una variazione sostanziale.
+L'ampiezza inter-quartile media e la banda p10--p90 non mostrano infatti un incremento
 progressivo e coerente con il livello di stress applicato.
 
 Il grafico suggerisce, nello scenario \texttt{low} una curva media attorno a un stabile,
@@ -1002,7 +1002,7 @@ più plausibilmente come effetti indiretti del funzionamento complessivo del dem
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{boundary}}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}}
   \label{fig:scenario_comparison}
 \end{figure}
 
@@ -1017,7 +1017,7 @@ nei tre scenari,con valori di ~45.375~\textmu s, ~97.301~\textmu s e ~65.087~\te
 s. I risultati mostrano una lieve prevalenza di offset positivo, ma sempre compatibile
 con le premesse.
 
-L'ampiezza interquartile media è di ~279.114~\textmu s nello scenario \texttt{low},
+L'ampiezza inter-quartile media è di ~279.114~\textmu s nello scenario \texttt{low},
 ~327.530~\textmu s nello scenario \texttt{medium} e ~250.843~\textmu s nello scenario
 \texttt{high}. La banda p10--p90 media assume valori pari a circa 1017.673~\textmu
 s, 1243.040~\textmu s e 1122.148~\textmu s. L'osservazione dei profili temporali
@@ -1030,11 +1030,11 @@ diretto del degrado downstream sulla sincronizzazione del \texttt{boundary}
 rispetto al \texttt{servergm}.
 
 \section{\texttt{chronyd}}
-Per quanto riguarda il demone \texttt{Chrony}, l’analisi è stata svolta su una topologia
+Per quanto riguarda il demone \texttt{Chrony}, l'analisi è stata svolta su una topologia
 composta dal solo collegamento tra \texttt{servergm} e \texttt{clientchrony}. In
 questo contesto, il degrado di rete tramite \texttt{tc}/\texttt{netem} è stato applicato
-in due configurazioni distinte: in un primo caso sull’interfaccia del \texttt{clientchrony},
-in un secondo caso sull’interfaccia del \texttt{servergm}.
+in due configurazioni distinte: in un primo caso sull'interfaccia del \texttt{clientchrony},
+in un secondo caso sull'interfaccia del \texttt{servergm}.
 
 La doppia configurazione permette di osservare in modo separato effetti del degrado
 introdotto lungo le due direzioni logiche della comunicazione tra client e server.
@@ -1107,7 +1107,7 @@ di vista del client.
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -1123,7 +1123,7 @@ media di ~\texttt{-2.958 \,$\mu$s} e i valori medi sono compresi nell'intervallo
 globali sui campioni si ha la mediana pari a ~\texttt{-0.049 \,$\mu$s}, il primo quartile
 è ~\texttt{-0.927 \,$\mu$s} e il terzo quartile è ~\texttt{-0.002 \,$\mu$s}. L'ampiezza
 media dell'intervallo ~\texttt{p10-p90}, pari a ~\texttt{7.971 \,$\mu$s}. La
-banda interquartile media è contenuta, con un valore di ~\texttt{1.095 \,$\mu$s}.
+banda inter-quartile media è contenuta, con un valore di ~\texttt{1.095 \,$\mu$s}.
 In questo scenario il degrado introdotto sul client produce soltanto un lieve
 sbilanciamento negativo dell'offset, senza alterare in modo significativo il regime
 di sincronizzazione.
@@ -1134,7 +1134,7 @@ al caso \texttt{low}, ma i grafici evidenziano dei picchi più accentuati. La
 mediana è ~\texttt{-0.073 \,$\mu$s}, il primo quartile ~\texttt{-1.075 \,$\mu$s} e
 il terzo quartile ~\texttt{-0.004 \,$\mu$s}. Il peggioramento è principalmente
 evidente nella variabilità. L'ampiezza media della banda \texttt{p10-p90} è di ~\texttt{6.266
-\,$\mu$s}. La banda interquartile media cresce a \texttt{1.804 \,$\mu$s}; inoltre,
+\,$\mu$s}. La banda inter-quartile media cresce a \texttt{1.804 \,$\mu$s}; inoltre,
 il valore massimo dell'IQR raggiunge \texttt{10.978 \,$\mu$s}, segnale che in
 alcuni punti il comportamento tra le run diventa più irregolare.
 
@@ -1147,7 +1147,7 @@ tutti i campioni. Vi è un aumento della dispersione. L'ampiezza media dell'inte
 \texttt{p10-p90} è di ~\texttt{15.836 \,$\mu$s}, e l'IQR medio è di ~\texttt{3.693
 \,$\mu$s}.
 
-In tutti e tre gli scenari, in molteplici punti, la curva media è esterna alla banda interquartile.
+In tutti e tre gli scenari, in molteplici punti, la curva media è esterna alla banda inter-quartile.
 Quindi si ha un valore medio non coincidente con il comportamento tipico della run, risentendo maggiormente
 di anomalie o di code negative della distribuzione.
 
@@ -1214,7 +1214,7 @@ Nei primi due casi i risultati sono sufficientemente uniformi, mentre nello scen
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{servergm}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -1233,8 +1233,8 @@ Il comportamento nello scenario \texttt{low} è caratterizzato da variabilità
 inter-run e da outlier positivi che ampliano sensibilmente la dispersione
 osservata.
 
-Nel caso \texttt{medium}, c'è un comportamente più regolare. Si ha una media aggregata
-di ~\texttt{-3.863 \,$\mu$s}. La dispersione è ridotta notevolmentela deviazione
+Nel caso \texttt{medium}, c'è un comportamento più regolare. Si ha una media aggregata
+di ~\texttt{-3.863 \,$\mu$s}. La dispersione è ridotta notevolmente la deviazione
 standard delle medie scende a \texttt{1.935 \,$\mu$s}, mentre l'intervallo medio
 \texttt{p10-p90} è di ~\texttt{9.546 \,$\mu$s}.In questo caso l'offset contenuto vicino
 allo zero e mostra una variabilità minore rispetto al caso precedente.
@@ -1322,7 +1322,7 @@ con le aspettative.
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -1335,7 +1335,7 @@ centinaia di microsecondi.
 Nello scenario \texttt{low} si ha una media aggregata di ~\texttt{109.552 \,$\mu$s}.
 La dispersione non è trascurabile. La deviazione standard delle medie è di ~\texttt{21.838
 \,$\mu$s}, in un intervallo d \texttt{78.637 \,$\mu$s} e \texttt{154.733 \,$\mu$s}.
-Ci sono bande relativamente ampie, con IQR medio di ~\texttt{98.925 \,$\mu$s} e
+Ci sono bande relativamente ampie, con IQR medio di ~\texttt{98.925 \,$\mu$s} e
 ampiezza media \texttt{p10-p90} pari a \texttt{155.630 \,$\mu$s}. La mediana è ~\texttt{103
 \,$\mu$s}, il terzo quartile \texttt{167 \,$\mu$s} e il massimo \texttt{464 \,$\mu$s}.
 
@@ -1424,7 +1424,7 @@ caso \texttt{high}.
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{servergm}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -1525,7 +1525,7 @@ con variazioni meno estreme e una risposta non monotona centrata sul caso
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{clientchrony}}
   \label{fig:scenario_comparison}
 \end{figure}
@@ -1619,7 +1619,7 @@ ampia in tutti e tre i casi e non cresce in modo altrettanto netto.
     }
     \caption{Scenario HIGH}
   \end{subfigure}
-  \caption{Media con banda interquartile e banda p10-p90 - nodo: \texttt{clientchrony}
+  \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{clientchrony}
   - netem/tc: \texttt{servergm}}
   \label{fig:scenario_comparison}
 \end{figure}
