@@ -269,19 +269,25 @@ instabilità della misura in sé, ma come bias sistematico dell'offset stimato. 
 può quindi produrre una sequenza di stime regolare e poco dispersa, pur
 rimanendo stabilmente disallineato rispetto alla sorgente temporale.
 
-Un ruolo diverso è rappresentato dal jitter, ossia la componente rappresentativa della
-variabile del ritardo. Se viene modellato come grandezza dipendente dal tempo
-$d(t)$, esso può essere interpretato come la variabilità di tale grandezza rispetto
-al suo livello medio. A livello sperimentale introduce rumore nelle osservazioni
-successive, indipendentemente dall'asimmetria temporale reale, la sequenza delle
-stime può oscillare perché ogni messaggio attraversa la rete con un tempo di
-percorrenza differente. Esso ne determina quindi la precisione complessiva e stabilità
-della misura.
+Il jitter rappresenta un differente ruolo, cioè nello specifico delle reti a pacchetto 
+viene inteso come la variabilità del ritardo sperimentato dai pacchetti durante la trasmissione.
+Più formalmente, questo fenomeno si può ricondurre alle metriche
+di \emph{Packet Delay Variation} (PDV), che descrivono la variazione del
+delay tra pacchetti appartenenti a uno stesso flusso o a una stessa sequenza di
+osservazioni~\cite{demichelisIPPacketDelayVariation2002,mortonPacketDelayVariation2009}.
 
-Il jitter può essere quantificato con le stesse unità di misura utilizzate per tutti
-i segnali variabili nel tempo, ad esempio il valore quadratico medio (RMS) o lo
-spostamento picco-picco. Inoltre, come altri segnali variabili nel tempo, il jitter
-può essere espresso in termini di densità spettrale. \cite{Jitter2026}
+Nel contesto specifico della sincronizzazione temporale, il jitter introduce rumore nelle
+osservazioni successive utilizzate dai demoni per stimare offset e delay. 
+Indipendentemente dalla presenza di una variazione sistemica o di una reale asimmetria
+tra andata e ritorno, i differenti pacchetti possono attraversare la rete con differenti tempi
+di percorrenza. Di conseguenza, le stime prodotte dal protocollo possono
+oscillare nel tempo, riducendo la stabilità della misura e rendendo meno precisa
+la correzione del clock locale.
+
+Nel caso specifico di questa tesi, tale misura si interpreta come indicatore della
+regolarità temporale del percorso di rete. Valori contenuti indicano ritardi
+relativamente stabili tra osservazioni successive, mentre valori elevati
+segnalano una maggiore variabilità del delay.
 
 L'incremento di delay medio modifica il livello del ritardo stimato, ma è
 facilmente compensabile se il fenomeno assume forma regolare nel tempo. Diverso avviene

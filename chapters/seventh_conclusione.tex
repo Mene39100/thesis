@@ -1,28 +1,36 @@
-\chapter{Discussione dei risultati - Conclusioni}
+\chapter{Conclusioni}
 \label{cha:conclusioni}
 
-L'analisi condotta ha evidenziato le differenze tra i demoni di sincronizzazione 
+L'analisi condotta ha messo in evidenza le differenze tra i demoni di sincronizzazione 
 in presenza di degrado sulla rete.
 
 Nel caso di NTPsec, si nota un costante e graduale incremento degli effetti 
-degli impairment applicato al ramo downstream nei confronti del clientntp.
+degli impairment applicati al ramo downstream nei confronti del \texttt{clientntp}.
 Si evidenzia un peggioramento progressivo dallo scenario \texttt{low} allo scenario
 \texttt{medium}, fino allo scenario \texttt{high}.
-A evidenza di ciò si vede come l'analisi condotta sul ramo upstream del nodo \texttt{boundary}
-non è soggetto, a meno di variazioni non significative, a simili andamenti.
-Si ha un comportamento che è coerente con la logica ricercata.
+È un comportamento coerente con l'applicazione degli impairment di rete nel ramo downstream.
+Analogamente, sul nodo \texttt{boundary} nel collegamento upstream, l'assenza del degrado di rete
+è evidenziata da metriche stabili per l'interezza delle run. Si confermano risultati coerenti
+con le aspettative iniziali.
 
 L'analisi rivolta a linuxptp mostra un comportamento analogo ma meno marcato.
-Si è evidenziato un peggioramento del livello medio e della variabilità, 
-tuttavia meno evidente rispetto a \texttt{NTPsec}. Diversamente si nota come
-nel caso \texttt{high}, la connettività del nodo client, venga meno, non riuscendo 
-a stabilizzarsi a conferma di un alto degrado di rete e di un diretto impatto.
+Si ha un peggioramento del livello medio e della variabilità, 
+tuttavia meno evidente rispetto al demone \texttt{NTPsec}. 
+Si ha un effetto però più evidente nel caso \texttt{high}, quando la connettività 
+del nodo client non raggiunge una condizione operativa stabile.
+Si ha da parte del nodo \texttt{clientptp} una continua ricerca di un master di riferimento
+con conseguente scelta del clock locale come migliore sorgente disponibile.
+Per quanto riguarda il tratto upstream, le metriche ottenute dal nodo \texttt{boundary}
+confermano un comportamento coerente con l'assenza di impairment di rete.
 
-Per quanto riguarda Chrony invece, si ha un risultato differente rispetto hai precedenti.
-In entrambe le analisi condotto sul protocollo, non si sono verificati progressivi e costanti
-cambiamenti sui livelli medi o di variabilità. Non vi è quindi presente una linearità, 
-ottenendo inconsistenza nei risultati attesi al variare dagli scenari di rete scelti.
-Ciò suggerisce una forte presenza di meccanismi interni di stima e filtraggio che hanno 
+Chrony presenta un andamento meno lineare, divergendo dalle aspettative iniziali.
+Non si nota una differenza strutturale rispetto all'applicazione degli impariment
+lato server o lato client.
+Entrambe le metriche suggeriscono una assenza di variazione progressiva e costante
+ rispetto ai livelli medi o della variabilità al variare degli scenari. 
+Non è presente la linearità ricercata come nei casi precedenti, a evidenzia di ciò
+si hanno scenari \texttt{low} molto meno stabili dei seguenti \texttt{medium} e \texttt{high}.
+Questo suggerisce una forte presenza di meccanismi interni di stima e filtraggio che hanno 
 prodotto comportamenti più articolati, prevenendo il classico risultato atteso, 
 come nei due casi precedenti.
 
@@ -37,7 +45,12 @@ risposte non sempre monotone rispetto agli scenari di degrado.
 Va evidenziato che i risultati ottenuti vanno interpretati alla luce dei limiti
 dell'ambiente sperimentale precedentemente descritto.
 
-In conclusione, si evidenzia come la qualità della sincronizzazione non solo dipenda 
-in modo significativo dalle condizioni di rete, ma anche come algoritmi interni e gestione
-delle informazioni da parte dei protocolli, possano o meno prevenire il degrado effettivo 
-dei canali di comunicazione stessa.
+In conclusione si ha che la qualità della sincronizzazione temporale dipende sia 
+condizioni della rete sia dal modo in cui i demoni elaborano le misure temporali.
+I valori medi delle metriche, l'ampliamento della variabilità inter-run e tal volta
+l'assenza di stabilizzazione del client sono l'effetto diretto del degrado del percorso.
+Nell'analisi condotta si evidenzia, inoltre, come il degrado non produce un effetto comune su tutti i nodi.
+
+I risultati indicano che i meccanismi interni di stima,
+filtraggio e correzione possono influenzare in modo significativo la robustezza
+del sistema anche in presenza di degrado di rete.
