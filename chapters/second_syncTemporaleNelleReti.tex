@@ -68,8 +68,7 @@ un range accettabile dal sistema in cui si opera.
 Nel contesto sperimentale di questa tesi, come precedentemente evidenziato, tale distinzione
 è fondamentale: le metriche che sono state osservate non descrivono
 semplicemente il valore assoluto dell'orologio di una macchina, mai il comportamento
-del processo di sincronizzazione rispetto a una sorgete temporale. Nel dettaglio
-dell'analisi sperimentale, l'ambiente di provo è stato configurato rispetto a nodi
+del processo di sincronizzazione rispetto a una sorgete temporale. Nel dettaglio, l'ambiente di prova è stato configurato rispetto a nodi
 che per ragione operative e implementative condividono la stessa base temporale del
 sistema host e non dispongono quindi di oscillatori hardware fisicamente indipendenti.
 Di conseguenza viene da se far notare come le divergenze osservata non fossero
@@ -97,15 +96,15 @@ rispetto al riferimento, mentre un valore negativo indica un ritardo. L'obiettiv
 dei differenti protocolli è mantenere tale scostamento entro limiti compatibili
 con i requisiti del sistema considerato.
 
-È una misura istantanea dell'errore temporale, ma non è sufficiente da solo a descrivere
-il nella sua interezza il comportamento di un clock. Due nodi, infatti, possono
+È una misura istantanea dell'errore temporale, ma non sufficiente a descrivere
+ nella sua interezza il comportamento di un clock. Due nodi, infatti, possono
 presentare lo stesso offset in un istante temporaneo ma successivamente evolvere
 diversamente.
 
-Tipicamente ciò è determinato da frequenze differenti nei due nodi considerati. Tipicamente
+Tipicamente ciò è determinato da frequenze differenti nei due nodi considerati. Solitamente
 la differenza della frequenza effettiva di avanzamento del clock locale e quella associata
 al drift, che per ovvie motivazioni quindi non è stata presa in considerazione
-in tale analisi. Un clock che accumula drift tende a distanziarsi nel progressivamente
+in tale analisi. Un clock che accumula drift tende a distanziarsi progressivamente
 dal riferimento anche se lo stato iniziale era corretto.
 
 Dal punto di vista qualitativo, è utile fare distinzione tra l'accuratezza e
