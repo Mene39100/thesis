@@ -77,9 +77,8 @@ naturalmente accaduto in un testbed composto da macchine fisiche separate. Nel
 ambito invece di riferimento, utilizzando un ambiente virtualizzato, le misure
 osservate sui singoli nodi descrivono la risposta dei demoni di sincronizzazione
 alle condizioni del percorso di rete, sia naturali sia indotte sperimentalmente.
-In questo senso, l'analisi si concentra sul modo in cui i protocolli e demoni differenti
-stimano, correggono e mantengono la sincronizzazione in presenza di delay, jitter,
-loss, reorder e limitazione della banda.
+L'analisi si concentra quindi sul modo in cui i diversi protocolli e demoni 
+vanno a stimare, correggere e mantenere la sincronizzazione in presenza degli impairment.
 
 \section{Offset, drift e stabilità del clock}
 Una delle grandezze principali nella sincronizzazione temporale è l'offset,
@@ -91,8 +90,8 @@ stesso istante, l'offset può essere espresso come
   \theta(t) = C_{l}(t) - C_{r}(t).
 \]
 
-Un valore positivo di $\theta(t)$ indica che il clock locale è in anticipo
-rispetto al riferimento, mentre un valore negativo indica un ritardo. L'obiettivo
+Se il valore di $\theta(t)$ è positiva, questo indica che il clock locale è in anticipo
+rispetto al riferimento, invece se il valore è negativo è sintomo di ritardo. L'obiettivo
 dei differenti protocolli è mantenere tale scostamento entro limiti compatibili
 con i requisiti del sistema considerato.
 
@@ -101,10 +100,8 @@ con i requisiti del sistema considerato.
 presentare lo stesso offset in un istante temporaneo ma successivamente evolvere
 diversamente.
 
-Tipicamente ciò è determinato da frequenze differenti nei due nodi considerati. Solitamente
-la differenza della frequenza effettiva di avanzamento del clock locale e quella associata
-al drift, che per ovvie motivazioni quindi non è stata presa in considerazione
-in tale analisi. Un clock che accumula drift tende a distanziarsi progressivamente
+Tendenzialmente ciò è indice di frequenze differenti nei due nodi.
+Un clock che accumula drift tende a distanziarsi progressivamente
 dal riferimento anche se lo stato iniziale era corretto.
 
 Dal punto di vista qualitativo, è utile fare distinzione tra l'accuratezza e
@@ -150,30 +147,27 @@ di propagazione sotto l'ipotesi di simmetria del percorso.
 
 Il comportamento della rete è fondamentale nella stima dell'offset. Indicando
 con $d_{1}$ il ritardo nel verso client-sorgente e con $d_{2}$ il ritardo nel
-verso sorgente-client, l'ipotesi ideale è $d_{1}\approx d_{2}$. Se la condizione
-viene soddisfatta, la componente di ritardo può essere compensata. Se invece il
-percorso è asimmetrico, cioè $d_{1}\neq d_{2}$, una parte dell'asimmetria viene
+verso sorgente-client, l'ipotesi ideale è $d_{1}\approx d_{2}$. 
+Se la condizione è soddisfatta, si può andare a compensare la componente di ritardo.
+Se si ha un asimmetria nel percorso, cioè $d_{1}\neq d_{2}$, una parte di essa viene
 incorporata nella stima dell'offset. In forma semplificata, l'errore introdotto
 dall'asimmetria è proporzionale a $(d_{1}- d_{2})/2$
 \cite{martinNetworkTimeProtocol2010}. Di conseguenza, anche un sistema con clock
 locali stabili può produrre una stima dell'offset distorta quando i tempi di
 percorrenza nelle due direzioni non sono bilanciati.
 
-Un elemento ulteriore critico è la variabilità temporale del delay. Quanto sopra descritto
-è un istantanea di di una singola osservazione, nella pratica però il protocollo
-ripete il susseguirsi di messaggi producendo una sequenza di stime. Un delay stabile
-produrrà osservazioni future più coerenti; viceversa un delay condizionato da
-degrado di rete può andare a compromettere le correzioni e le stime derivanti
-indipendentemente dalla sincronia reale dei clock. Il jitter di rete si traduce quindi
-in rumore sulla stima dell'offset e può aumentare la dispersione delle metriche osservate.
+Un altro elemento di criticità è dovuto alla variabilità temporale del delay.
+Quanto sopra descritto è solamente un istantanea di un osservazione. Nella pratica il protocollo 
+ripete il susseguirsi di messaggi producendo una sequenza di stime. 
+Se il delay è stabile si avranno osservazioni future più coerenti. Se invece esso è condizionato 
+da un degrado di rete, le stime prodotte comprometteranno la correzione dalla sincronia reale dei clock.
+Il jitter viene quindi tradotto come rumore sulla stima dell'offset, andando ad aumentare la dispersione delle metriche osservate.
 
-Per questo motivo la sincronizzazione può essere letta come un problema di stima dinamica.
-Ogni messaggio contribuisce all'analisi e correzione sistematica da parte del
-protocollo scelto. La qualità delle informazioni non è omogenea: una misura
-ottenuta in condizioni di basso degrado di rete è più informativa. Da qui deriva la
-necessità di implementazioni pratiche che non si limitano alla applicazione meccanica
-della correzione, ma che filtrano le informazioni ricevute e selezionano o
-pesano le osservazioni considerate più affidabili.
+La sincronizzazione è quindi un problema di stima dinamico. Ogni messaggio 
+contribuisce nel processo di analisi e correzione da parte del protocollo.
+Le informazioni non sono omogenee e da qui nasce la necessità di filtrare le osservazioni, selezionandole
+o pesandole in base alla loro affidabilità.
+
 
 La correzione può avvenire secondo differenti modalità. Vi sono casi in cui il clock
 locale subisce una correzione immediata del tempo, riducendo drasticamente l'offset
@@ -182,23 +176,10 @@ la frequenza di avanzamento rispetto alla sorgente, impattando su una
 continuità nel tempo a discapito della singola osservazione.
 
 La qualità della sincronizzazione è dipesa anche dal momento in cui l'informazione
-viene generata. Se il timestamp è prodotto a livello software, può essere
-soggetto a ritardi causati da scheduling del SO, alla gestione dello stack di rete
-e carico della macchina. Diversamente se è prodotto più vicino alla stessa
-interfaccia di rete, o direttamente a livello hardware, l'incertezza può essere
-considerevolmente ridotta. È fondamentale prestare tale attenzione nei rispetti di
-protocolli che mirano a precisioni più elevate, in quanto i ritardi interni allo
-stesso calcolatore diventano rilevanti nel quadro complessivo.
-
-Nel contesto di questa tesi, gli impairment di rete introdotti agiscono direttamente
-sulle componenti che influenzano la qualità delle misure temporali.L 'aumento del
-delay modifica il tempo di percorrenza dei messaggi; il jitter rende tale tempo meno
-prevedibile; la perdita di pacchetti riduce la continuità delle osservazioni
-disponibili; il riordinamento può alterare la regolarità della sequenza di messaggi;
-la limitazione di banda può produrre accodamento e congestione. L'analisi sperimentale
-delle metriche raccolte dai demoni di sincronizzazione deve quindi essere letta come
-osservazione indiretta del modo in cui ciascun protocollo stima e corregge il clock
-locale a partire da misure temporali degradate dal comportamento della rete.
+viene generata. Quando il timestamp viene prodotto nel livello software, esso può essere 
+soggetto a ritardi dovuti allo scheduling del SO, alla gestione dello stack di rete e talvolta 
+al carico della macchina stessa. Quando invece si parla di timestamp hardware, l'incertezza si riduce considerevolmente. 
+Questa distinzione è essenziale per i protocolli che necessitano di precisione più elevate.
 
 Vi sono molteplici modelli rispetto ai quali i protocolli di sincronizzazione possono
 stimare il ritardo andando a modificare il clock locale. Una prima grande
@@ -232,8 +213,7 @@ Sia NTP sia PTP utilizzano scambi di messaggi in entrambe le direzioni per
 stimare la relazione temporale tra nodi, ma adottano modelli differenti. NTP si
 basa su un meccanismo client-server di tipo request-response, dal quale ricava delay
 e offset tramite quattro timestamp \cite{martinNetworkTimeProtocol2010}. PTP, invece,
-segue un modello master-slave: il master distribuisce l'informazione temporale tramite
-messaggi di sincronizzazione, mentre la stima del delay viene effettuata
+segue un modello master-slave: il master distribuisce l'informazione con i messaggi di sync, invece la stima del delay viene effettuata
 mediante messaggi aggiuntivi, secondo meccanismi end-to-end o peer-to-peer.
 \cite{IEEEStandardPrecision2020}
 
@@ -275,18 +255,16 @@ di \emph{Packet Delay Variation} (PDV), che descrivono la variazione del
 delay tra pacchetti appartenenti a uno stesso flusso o a una stessa sequenza di
 osservazioni~\cite{demichelisIPPacketDelayVariation2002,mortonPacketDelayVariation2009}.
 
-Nel contesto specifico della sincronizzazione temporale, il jitter introduce rumore nelle
+Nello specifico della sincronizzazione temporale, si ha che il jitter va ad introdurre rumore nelle
 osservazioni successive utilizzate dai demoni per stimare offset e delay. 
-Indipendentemente dalla presenza di una variazione sistemica o di una reale asimmetria
+Quindi indipendentemente dalla presenza di una probabile variazione
+sistemica o di una reale asimmetria
 tra andata e ritorno, i differenti pacchetti possono attraversare la rete con differenti tempi
-di percorrenza. Di conseguenza, le stime prodotte dal protocollo possono
-oscillare nel tempo, riducendo la stabilità della misura e rendendo meno precisa
-la correzione del clock locale.
+di percorrenza. 
+Come conseguenza si ha che le stime prodotte dal protocollo possono oscillare nel tempo, andando a
+ridurre la stabilità delle misure e conseguentemente riducendo la precisione del clock locale.
 
-Nel caso specifico di questa tesi, tale misura si interpreta come indicatore della
-regolarità temporale del percorso di rete. Valori contenuti indicano ritardi
-relativamente stabili tra osservazioni successive, mentre valori elevati
-segnalano una maggiore variabilità del delay.
+In questa tesi, questa misura viene interpretata come indicatore della regolarità temporale del percorso.
 
 L'incremento di delay medio modifica il livello del ritardo stimato, ma è
 facilmente compensabile se il fenomeno assume forma regolare nel tempo. Diverso avviene
@@ -296,20 +274,18 @@ stima dell'offset, perché altera in modo diverso i due versi dello scambio temp
 
 \section{Perdita, riordinamento dei pacchetti e limitazione di banda}
 Vi sono altri impairment che possono alterare la rete agendo sulla disponibilità,
-l'ordine e la regolarità delle informazioni temporali. Nel dettaglio, perdita di
-pacchetti, riordinamento e limitazione della banda non agiscono necessariamente sul
-valore nominale del clock, ma sulla qualità della sequenza di messaggi
-attraverso cui il protocollo ricostruisce la relazione tra clock locale e
-sorgente di riferimento.
+l'ordine e la regolarità delle informazioni temporali.
+Si ha che questi impairment agiscono non necessariamente sul valore nominale del clock, 
+ma piuttosto sulla qualità della sequenza dei messaggi. I quali servono al protocollo per poter
+ ricostruire la relazione che c'è tra il clock locale e quello di riferimento.
 
-La perdita di pacchetti va a ridurre il numero di campioni utilizzabile dal
+Essa va a ridurre il numero di campioni utilizzabile dal
 demone di sincronizzazione. Nei protocolli basati sulla periodicità della ricezione
 dei messaggi, ogni pacchetto è ricevuto contribuisce in termini proporzionali
 alla stima. Se una percentuale importante viene persa, il protocollo dispone di
 una sequenza meno densa e regolare di campioni, non riuscendo a ricostruire una misura
-perfetta della differenza temporale rispetto alla sorgente. L'effetto indiretto
-è un aumento dell'incertezza, poiché il demone deve continuare a produrre delle misure
-su una quantità inferiore di informazioni.
+perfetta della differenza temporale rispetto alla sorgente.
+Indirettamente si produce un aumento dell'incertezza.
 
 Perdite isolate possono essere mitigate dalla struttura algoritmica del protocollo
 stesso, senza compromettere la sincronizzazione, soprattutto se le osservazioni precedenti
@@ -323,7 +299,7 @@ raggiungibilità della sorgente o sullo stato della sessione, la perdita può qu
 incidere non solo sulle metriche numeriche, ma anche sulla logica di selezione e
 validazione della sorgente temporale.
 
-Il riordinamento dei pacchetti introduce una differente criticità; nello scambio temporale,
+Si ha un'altra difficoltà nel caso del riordinamento dei pacchetti. Nello scambio temporale,
 l'ordine di ricezione dei messaggi è parte integrante della struttura
 informativa utilizzata dal protocollo. Timestamp di invio, ricezione e le
 risposte assumo un significato fondamentale in relazione alla sequenza degli
@@ -332,10 +308,10 @@ invio, o tal volta quello previsto, i quali possono effettivamente differire, il
 demone può dover scartare osservazioni, ricostruire correttamente la corrispondenza
 tra messaggi correlati, o marcare campioni come non utilizzabili, filtrandoli.
 Nei casi in cui il riordinamento non venisse preventivato o eliminato potrebbe
-costituire problematiche di incoerenza delle misure ricostruite, introducendo discontinuità.
-Dal punto di vista statistico, il riordinamento tende a manifestarsi come irregolarità
+costituire problematiche di incoerenza delle misure ricostruite portando a discontinuità.
+Da un punto di vista statistico si ha che il riordinamento tende a manifestarsi come irregolarità
 della serie osservata più che come semplice aumento del valore medio di una metrica.
-Per questo motivo, nelle analisi sperimentali, i suoi effetti possono risultare
+Per cui nelle analisi sperimentali, i suoi effetti possono risultare
 più visibili nelle bande di dispersione, nei percentili estremi o nella presenza di
 outlier che non nella sola media aggregata.
 
@@ -343,9 +319,7 @@ Infine vi è la limitazione di banda, la quale agisce invece attraverso la
 capacità del collegamento. Nel momento in cui la banda di rete viene ridotta, da
 cause endogene al sistema o esogene come nel caso di impairment volontariamente
 introdotti, i pacchetti possono accumularsi nelle code dei dispositivi di rete o dell'interfaccia
-di uscita. Questo scenario introduce una componente di ritardo variabile non
-solo dipendente dal traffico presente ma anche dallo stato delle code e dalle
-politiche di scheduling.
+di uscita.
 
 In presenza di accodamento, la ricezione dei pacchetti può essere assoggetta a intervalli
 regolari dal demone, alterando la periodicità effettivamente osservata dallo
