@@ -13,13 +13,19 @@
 % Chapter
 \usepackage{titlesec}
 \singlespacing
+\raggedbottom
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
-% Letter
-\usepackage[utf8]{inputenc}
 % Language
 \usepackage[italian]{babel}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
 % PDF/A
+% PDF/A
+\ifdefined\creationdate
+  \let\pdfcreationdate\creationdate
+\fi
 \usepackage[a-1b]{pdfx}
 % Image
 \usepackage{graphicx}
@@ -74,9 +80,9 @@
 \usepackage{caption}
 \usepackage{placeins}
 
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\floatsep}{8pt plus 2pt minus 2pt}
-\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt}
+\setlength{\floatsep}{8pt}
+\setlength{\intextsep}{8pt}
 
 \captionsetup{skip=4pt}
 \captionsetup[subfigure]{skip=2pt}

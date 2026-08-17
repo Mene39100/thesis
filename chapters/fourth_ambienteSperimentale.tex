@@ -673,9 +673,11 @@ direttiva \texttt{allow 10.0.10.0/24} autorizza i nodi della rete A a interrogar
 il server Chrony. La specifica \texttt{bindaddress 0.0.0.0} abilita l'ascolto sulle
 interfacce disponibili del container.
 
-Il client Chrony è configurato per utilizzare come sorgente il nodo \texttt{servergm},
-raggiungibile all'indirizzo \texttt{10.0.10.1}. La configurazione è presente nel file
-\texttt{client\_chrony.conf}.
+\begin{sloppypar}
+  Il client Chrony è configurato per utilizzare come sorgente il nodo \texttt{servergm},
+  raggiungibile all'indirizzo \texttt{10.0.10.1}. La configurazione è presente nel file
+  \texttt{client\_chrony.conf}.
+\end{sloppypar}
 
 \begin{lstlisting}[language=bash,caption={Configurazione Chrony del nodo clientchrony.},label={lst:chrony-client}]
 server 10.0.10.1 iburst minpoll 1 maxpoll 2
@@ -1040,11 +1042,13 @@ temporale interna.
 
 \section{Automazione e raccolta dei log}
 
-Il flusso logico di esecuzione del testbed è realizzato con uno script Bash
-principale, denominato \texttt{bootstrapT3\_V2.sh}. Coordina l'intera ciclo di funzionalità
-precedentemente descritte: dalla pulizia/creazione della topologia, alla logica dell'applicazione
-degli impairment, fino alla raccolta dati, garantendo ripetibilità e separazione funzionale
-tra le run sperimentali.
+\begin{sloppypar}
+  Il flusso logico di esecuzione del testbed è realizzato con uno script Bash
+  principale, denominato \texttt{bootstrapT3\_V2.sh}. Coordina l'intera ciclo di funzionalità
+  precedentemente descritte: dalla pulizia/creazione della topologia, alla logica dell'applicazione
+  degli impairment, fino alla raccolta dati, garantendo ripetibilità e separazione funzionale
+  tra le run sperimentali.
+\end{sloppypar}
 
 Così facendo, sì è ridotto al minimo l'intervento manuale, evitando errori di alcun
 tipo, e soprattutto si è garantito l'assenza di interferenza tra processi residui o
@@ -1219,9 +1223,11 @@ kathara exec -d "$TOPOLOGY_DIR" clientptp -- bash -lc \
 \label{lst:auto-ptp-start}
 \end{listing}
 
-I log standard prodotti da \texttt{ptp4l} vengono rediretti nei file \texttt{ptp\_server.log},
-\texttt{ptp\_boundary.log} e \texttt{ptp\_client.log}. Dopo l'avvio dei processi,
-lo script attende una fase di stabilizzazione prima di chiudere la topologia.
+\begin{sloppypar}
+  I log standard prodotti da \texttt{ptp4l} vengono rediretti nei file \texttt{ptp\_server.log},
+  \texttt{ptp\_boundary.log} e \texttt{ptp\_client.log}. Dopo l'avvio dei processi,
+  lo script attende una fase di stabilizzazione prima di chiudere la topologia.
+\end{sloppypar}
 
 \begin{listing}[H]
 \begin{minted}[
@@ -1307,10 +1313,12 @@ kathara lclean -d "$TOPOLOGY_DIR"
 \label{lst:auto-ntpsec-sleep}
 \end{listing}
 
-In Chrony la funzione che applica il degrado su \texttt{servergm} costruisce la
-directory di output nella gerarchia \texttt{chrony\_servergm}. La funzione che
-applica il degrado su \texttt{clientchrony} utilizza invece la gerarchia \texttt{chrony\_clientchrony}.
-Questa distinzione consente di mantenere separati i dati delle due modalità sperimentali.
+\begin{sloppypar}
+  In Chrony la funzione che applica il degrado su \texttt{servergm} costruisce la
+  directory di output nella gerarchia \texttt{chrony\_servergm}. La funzione che
+  applica il degrado su \texttt{clientchrony} utilizza invece la gerarchia \texttt{chrony\_clientchrony}.
+  Questa distinzione consente di mantenere separati i dati delle due modalità sperimentali.
+\end{sloppypar}
 
 \begin{listing}[H]
 \begin{minted}[
