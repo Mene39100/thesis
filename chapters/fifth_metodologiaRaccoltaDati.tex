@@ -443,11 +443,13 @@ def summarize_client(run: ParsedRun) -> pd.DataFrame:
 \label{lst:ptp-client-summary}
 \end{listing}
 
-Per il client vengono calcolate statistiche relative a \texttt{rms\_ns},
-\texttt{max\_ns} e \texttt{path\_delay\_ns}. Viene inoltre registrato il numero
-di eventi di selezione del best master clock, indicato nello script come
-\texttt{best\_master\_reselection\_count}. Evidenziando eventuali instabilità 
-nella gerarchia PTP osservate durante la run.
+\begin{sloppypar}
+  Per il client vengono calcolate statistiche relative a \texttt{rms\_ns},
+  \texttt{max\_ns} e \texttt{path\_delay\_ns}. Viene inoltre registrato il numero
+  di eventi di selezione del best master clock, indicato nello script come
+  \texttt{best\_master\_reselection\_count}. Evidenziando eventuali instabilità 
+  nella gerarchia PTP osservate durante la run.
+\end{sloppypar}
 
 \begin{listing}[H]
 \begin{minted}[
@@ -576,16 +578,19 @@ ptp/
 
 \section{Metodologia di analisi Chrony}
 
+\begin{sloppypar}
+  L'analisi dei dati prodotta da \texttt{chrony\_analysis\_v3.py} si concentra sulle
+  informazioni relative al nodo \texttt{clientchrony} nei due scenari di impairment, 
+  lato client e lato server. Distinzione non direttamente codificata nello script.
+\end{sloppypar}
 
-L'analisi dei dati prodotta da \texttt{chrony\_analysis\_v3.py} si concentra sulle
-informazioni relative al nodo \texttt{clientchrony} nei due scenari di impairment, 
-lato client e lato server. Distinzione non direttamente codificata nello script.
-
-La versione finale dello script usa i file \texttt{chrony\_tracking\_series.txt} e
-\texttt{chrony\_sourcestats\_series.txt}. I file
-\texttt{chrony\_sources\_series.txt} e \texttt{chrony\_activity\_series.txt}
-sono raccolti durante le run, ma non costituiscono l'input principale del parser
-\texttt{chrony\_analysis\_v3.py}.
+\begin{sloppypar}
+  La versione finale dello script usa i file \texttt{chrony\_tracking\_series.txt} e
+  \texttt{chrony\_sourcestats\_series.txt}. I file
+  \texttt{chrony\_sources\_series.txt} e \texttt{chrony\_activity\_series.txt}
+  sono raccolti durante le run, ma non costituiscono l'input principale del parser
+  \texttt{chrony\_analysis\_v3.py}.
+\end{sloppypar}
 
 La struttura attesa:
 

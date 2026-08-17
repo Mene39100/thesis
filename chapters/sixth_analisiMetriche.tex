@@ -87,13 +87,15 @@ tra le condizioni di rete considerate e valutarne gli effetti sul comportamento 
 demone.
 
 \subsection{\texttt{clientntp}}
-L'analisi effettuata sul nodo \texttt{clientntp} è caratterizzata da uno stato
-di inizializzazione, identificato da \texttt{refid=.INIT.}, \texttt{stratum=16}, \texttt{selected=False}
-e \texttt{reach=0}. L'intervallo non è rappresentativo del regime operativo
-della sincronizzazione, pertanto non viene considerato nel confronto tra scenari,
-il quale viene condotto a partire dal primo campione valido. Ai fini interpretativi,
-l'attenzione è principalmente rivolta alla porzione \texttt{post-selected} della serie,
-cioè ai campioni successivi alla selezione del peer di riferimento.
+\begin{sloppypar}
+  L'analisi effettuata sul nodo \texttt{clientntp} è caratterizzata da uno stato
+  di inizializzazione, identificato da \texttt{refid=.INIT.}, \texttt{stratum=16}, \texttt{selected=False}
+  e \texttt{reach=0}. L'intervallo non è rappresentativo del regime operativo
+  della sincronizzazione, pertanto non viene considerato nel confronto tra scenari,
+  il quale viene condotto a partire dal primo campione valido. Ai fini interpretativi,
+  l'attenzione è principalmente rivolta alla porzione \texttt{post-selected} della serie,
+  cioè ai campioni successivi alla selezione del peer di riferimento.
+\end{sloppypar}
 \subsubsection{Analisi metrica: \texttt{delay}}
 \begin{figure}[H]
   \centering
@@ -410,8 +412,10 @@ dati sono coerenti con il sistema.
 L'analisi è quindi orientata principalmente a verificare la coerenza tra tale
 aspettativa teorica e i dati effettivamente osservati.
 
-È utile notare che nell'analisi il tempo di peer-selection differente rispetto a
-quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
+\begin{sloppypar}
+  È utile notare che nell'analisi il tempo di peer-selection differente rispetto a
+  quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
+\end{sloppypar}
 
 \subsubsection{Analisi metriche: \texttt{delay, jitter, offset}}
 \begin{figure}[H]
