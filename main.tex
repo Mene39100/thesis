@@ -31,7 +31,10 @@
 \usepackage{xurl}
 \usepackage[pdfa]{hyperref}
 \usepackage{subcaption}
-\hypersetup{breaklinks=true}
+\hypersetup{
+  breaklinks=true,
+  hidelinks
+}
 % List
 \usepackage{enumitem}
 
@@ -120,6 +123,7 @@
   \input{etc/acknowledgements}
   \clearpage
   \pagestyle{plain}
+  \input{etc/ai.tex}
 
   % Table of Contents
   \frontmatter
@@ -143,6 +147,7 @@
 
   % Abstract
   % \input{etc/abstract.tex}
+
 
   % Chapters
   \input{chapters/first_introduzione.tex}
