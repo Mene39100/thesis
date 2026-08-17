@@ -10,7 +10,7 @@ tuttavia, non esiste garanzia che i clock locali siano sincroni o allineati.
 
 Alla base dei problemi di sincronizzazione temporale vi è quindi la necessità di mantenere
 i clock locali dei nodi sufficientemente vicini ad un riferimento temporale comune.
-Non è limitata alla inizializzazione di essi, ma nel richiede un processo continuo
+Non è limitata alla inizializzazione di essi, ma richiede un processo continuo
 di correzione, poiché i clock locali tendono per loro natura a divergere nel
 tempo. La divergenza è dovuta al fatto che gli oscillatori hardware non hanno frequenza
 perfettamente identica e possono essere influenzati da condizioni operative differenti,
@@ -24,8 +24,8 @@ Nel contesto delle reti, la sincronizzazione temporale viene generalmente
 ottenuta mediante lo scambio di messaggistica tra un nodo che intende
 sincronizzarsi e una sorgente temporale di riferimento. Questo introduce un'ulteriore
 difficoltà: l'informazione temporale non vien osservata direttamente, ma trasmessa
-attraverso una rete soggetta a ritardi variazioni del ritardo, perdita di
-pacchetti, riordinamento e congestione. Di conseguenza, la qualità delle sincronizzazione
+attraverso una rete soggetta a ritardi, variazioni del ritardo, perdita di
+pacchetti, riordinamento e congestione. Di conseguenza, la qualità della sincronizzazione
 dipende sia dalla stabilità dei clock locali sia dalle condizioni del percorso di
 rete attraverso cui avviene lo scambio dei messaggi. Quest'ultimo problema è
 alla base dell'analisi sperimentale condotta nella seguente tesi.
@@ -67,7 +67,7 @@ un range accettabile dal sistema in cui si opera.
 
 Nel contesto sperimentale di questa tesi, come precedentemente evidenziato, tale distinzione
 è fondamentale: le metriche che sono state osservate non descrivono
-semplicemente il valore assoluto dell'orologio di una macchina, mai il comportamento
+semplicemente il valore assoluto dell'orologio di una macchina, ma il comportamento
 del processo di sincronizzazione rispetto a una sorgente temporale. Nel dettaglio, l'ambiente di prova è stato configurato rispetto a nodi
 che per ragione operative e implementative condividono la stessa base temporale del
 sistema host e non dispongono quindi di oscillatori hardware fisicamente indipendenti.
@@ -90,8 +90,8 @@ stesso istante, l'offset può essere espresso come
   \theta(t) = C_{r}(t) - C_{l}(t).
 \]
 
-Se il valore di $\theta(t)$ è positiva, questo indica che il clock locale è in anticipo
-rispetto al riferimento, invece se il valore è negativo è sintomo di ritardo. L'obiettivo
+Se il valore di $\theta(t)$ è positiva, questo indica che il clock locale è in ritardo
+rispetto al riferimento, invece se il valore è negativo è in anticipo. L'obiettivo
 dei differenti protocolli è mantenere tale scostamento entro limiti compatibili
 con i requisiti del sistema considerato.
 
@@ -110,7 +110,7 @@ di riferimento, rappresentata appunto dall'offset. La stabilità, invece, descri
 quanto il clock e le metriche di sincronizzazione rimangono regolari nel tempo.
 Un sistema può avere un offset medio ridotto ma oscillazioni elevate, risultando quindi
 poco stabile, al contrario, può avere un offset medio non nullo ma molto regolare,
-indicando un comportamento stabile ma affetto da un bias sistemico.
+indicando un comportamento stabile ma affetto da un bias sistematico.
 
 \section{L'informazione nella sincronizzazione}
 
@@ -221,13 +221,13 @@ mediante messaggi aggiuntivi, secondo meccanismi end-to-end o peer-to-peer.
 \section{Delay, jitter e asimmetria di rete}
 Nei modelli di sincronizzazione tramite rete, il ritardo di comunicazione non
 costituisce solamente una proprietà del collegamento stesso, ma entra direttamente
-nella stima effettuata dall'offset tra il clock locale e la sorgente temporale di
+nella stima dall'offset tra il clock locale e la sorgente temporale di
 riferimento.
 
 Denominando con $d_{1}$ il ritardo rispetto alla direzione nodo locale ${->}$ nodo
 sorgente, mentre con $d_{2}$ indicando la direzione nodo sorgente ${->}$ nodo
 locale, la stima del tempo dipende dalla capacità del protocollo nel separare la componente
-del offset puro, quindi scostamento tra i clock, da quella dei ritardi di propagazione
+dell'offset puro, quindi scostamento tra i clock, da quella dei ritardi di propagazione
 dei messaggi. Nei sistemi bidirezionali, come quelli alla base di NTP e di diverse
 applicazioni del protocollo PTP, tale separazione viene effettuata assumendo
 alla base che il ritardo complessivo osservato possa essere utilizzato per
@@ -248,7 +248,7 @@ instabilità della misura in sé, ma come bias sistematico dell'offset stimato. 
 può quindi produrre una sequenza di stime regolare e poco dispersa, pur
 rimanendo stabilmente disallineato rispetto alla sorgente temporale.
 
-Il jitter rappresenta un differente ruolo, cioè nello specifico delle reti a pacchetto 
+Il jitter svolge un differente ruolo, cioè nello specifico delle reti a pacchetto 
 viene inteso come la variabilità del ritardo sperimentato dai pacchetti durante la trasmissione.
 Più formalmente, questo fenomeno si può ricondurre alle metriche
 di \emph{Packet Delay Variation} (PDV), che descrivono la variazione del
@@ -279,7 +279,7 @@ Si ha che questi impairment agiscono non necessariamente sul valore nominale del
 ma piuttosto sulla qualità della sequenza dei messaggi. I quali servono al protocollo per poter
  ricostruire la relazione che c'è tra il clock locale e quello di riferimento.
 
-Essa va a ridurre il numero di campioni utilizzabile dal
+Essa va a ridurre il numero di campioni utilizzabili dal
 demone di sincronizzazione. Nei protocolli basati sulla periodicità della ricezione
 dei messaggi, ogni pacchetto è ricevuto contribuisce in termini proporzionali
 alla stima. Se una percentuale importante viene persa, il protocollo dispone di
@@ -304,7 +304,7 @@ l'ordine di ricezione dei messaggi è parte integrante della struttura
 informativa utilizzata dal protocollo. Timestamp di invio, ricezione e le
 risposte assumo un significato fondamentale in relazione alla sequenza degli
 eventi a cui essi appartengono. Se l'ordine di ricezione non coincide con quello di
-invio, o tal volta quello previsto, i quali possono effettivamente differire, il
+invio, o talvolta quello previsto, i quali possono effettivamente differire, il
 demone può dover scartare osservazioni, ricostruire correttamente la corrispondenza
 tra messaggi correlati, o marcare campioni come non utilizzabili, filtrandoli.
 Nei casi in cui il riordinamento non venisse preventivato o eliminato potrebbe
@@ -321,6 +321,6 @@ cause endogene al sistema o esogene come nel caso di impairment volontariamente
 introdotti, i pacchetti possono accumularsi nelle code dei dispositivi di rete o dell'interfaccia
 di uscita.
 
-In presenza di accodamento, la ricezione dei pacchetti può essere assoggetta a intervalli
-regolari dal demone, alterando la periodicità effettivamente osservata dallo
+In presenza di accodamento, la ricezione dei pacchetti può essere soggetta a intervalli
+irregolari dal demone, alterando la periodicità effettivamente osservata dallo
 scambio temporale.

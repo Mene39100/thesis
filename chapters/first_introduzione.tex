@@ -11,23 +11,23 @@ servizi e valutare il comportamento complessivo di un'infrastruttura di rete.
 
 All'interno di sistemi distribuiti oppure nelle reti di calcolatori ogni macchina possiede
 un clock locale, necessario alla produzione dei riferimenti temporali che vengono associati 
-ad ogni tipo informazione. File, log, transazioni, messaggi e processi automatici sono 
+ad ogni tipo di informazione. File, log, transazioni, messaggi e processi automatici sono 
 sempre associati ai timestamp che servono da riferimento tra differenti macchine.
 Nel caso in cui il riferimento univoco cessasse allora si perderebbe la validità del 
 confronto.
 
 Alla base la difficoltà è molto più complessa di come viene descritta. Non esiste 
-un clock perfetto, e in quanto tale la stabilità e correttezza delle misure è incerta
+un clock perfetto, e in quanto tale la stabilità e correttezza delle misure sono incerta
 nel tempo. Gli oscillatori hardware possono subire deriva nel tempo, andando a discostarsi
 progressivamente dal tempo di riferimento. Quindi la sincronizzazione non è uno strumento utilizzato
-solo in fase di avvio, ma è strettamente necessario per compensare in modo continuo la deriva
+solo in fase di avvio, ma è strettamente necessaria per compensare in modo continuo la deriva
 tra differenti clock.
 
 L'importanza della sincronizzazione temporale è centrale in una moltitudine di
 ambiti applicativi. Nei sistemi di logging, auditing e monitoraggio, timestamp coerenti
 consentono di ordinare eventi prodotti da host diversi e di ricostruire correttamente
 il comportamento della rete. Nella diagnosi dei guasti, la possibilità di correlare
-temporalmente eventi registrati da server, router e altri dispositivi riducendo
+temporalmente eventi registrati da server, router e altri dispositivi, riducendo
 drasticamente l'ambiguità nell'identificazione della causa del problema. Servizi come
 quelli di directory, autenticazione, operazioni schedulate, ambienti
 virtualizzati, posta elettronica e sistemi transazionali dipendono, in
@@ -76,7 +76,7 @@ molto elevata e una forte stabilità temporale
 
 %problema affrontato
 Fondamentalmente la qualità della sincronizzazione temporale dipende in modo
-primario dalle condizioni della rete e attraverso la quale avviene lo scambio di
+primario dalle condizioni della rete attraverso la quale avviene lo scambio di
 messaggi. I protocolli di sincronizzazione stimano sulla base della invio e della
 ricezione della messaggistica lo scostamento tra clock locale di sistema e il clock
 di riferimento nella rete considerata.
@@ -140,5 +140,5 @@ La tesi si strutturerà come segue. Verranno descritti i protocolli e i demoni a
 motivandone le scelte. Sarà descritta la fase di sperimentazione che ha portato alla
 raccolta dati e come essi sono stati analizzati, quindi tutta la fase di
 scripting. Infine sarà fatta un analisi dati complessiva mettendo a confronto i protocolli
-testati nei differenti scenari di rete. Nella capitolo conclusivo verranno fatte
+testati nei differenti scenari di rete. Nel capitolo conclusivo verranno fatte
 le considerazioni finali.

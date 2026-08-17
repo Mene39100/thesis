@@ -93,9 +93,9 @@ e \texttt{clientntp}. Per Chrony non è stato necessario il suo utilizzo.
 
 Per ragioni configurative, si è reso necessario separare la sorgente temporale
 in due nodi differenti, distinguendo tra PTP e Chrony da un lato, e NTPsec dall'altro.
-Conflitti di configurazione, installazione e permessi rendevano incompatibile l'installazione
-di implementazioni software differenti sullo stesso nodo, soprattutto nei casi in
-cui più servizi potevano tentare di intervenire sullo stesso clock locale.Inoltre
+Conflitti di configurazione, e permessi rendevano problematica l'esecuzione
+simultanea sullo stesso nodo, soprattutto nei casi in
+cui più servizi potevano tentare di intervenire sullo stesso clock locale. Inoltre
 la separazione logica delle rete permette di avere una distinzione più chiara tra
 le diverse catene di sincronizzazione analizzate nel testbed.
 
@@ -161,7 +161,7 @@ ip link set eth1 up
 \end{lstlisting}
 
 Per quanto riguarda la risoluzione locale dei nomi, ogni nodo mantiene un file \texttt{/etc/hosts}
-che associa gli hostname ai rispettivi indirizzi IP, evitando problematiche derivate
+che associa gli hostname ai rispettivi indirizzi IP, evitando problematiche derivanti
 dalla dipendenza da servizi DNS esterni e rende esplicita la corrispondenza tra hostname
 e indirizzi IP della topologia.
 
@@ -199,7 +199,7 @@ clientptp[volume]=/home/gabrielemenestrina/tesi_sync_lab|/tesi_sync_lab|rw
 L'obiettivo alla base di tale scelta è duplice. Se da un lato permette di mantenere
 tutti i file di configurazione all'interno della repository del progetto e copiarli
 nei differenti container in fase di avvio, allo stesso modo consente ai demoni e
-agli script di scrivere i log in una directory persistente accessibile dal host,
+agli script di scrivere i log in una directory persistente accessibile dall'host,
 evitando problematicità dovute alla chiusura della topologia.
 
 Ad esempio, il nodo \texttt{servergm} installa Chrony e linuxptp, copia la
@@ -540,7 +540,7 @@ sleep 5
 Togliendo connettività esterna, garantiamo che disturbi non controllati possono essere
 introdotti all'interno del testbed, e allo stesso modo garantiamo che i
 riferimenti temporali siano interni rispetto ai nodi preventivamente stabiliti, quali
-sono rispettivametne i nodi \texttt{servergm} e \texttt{serverntp}.
+sono rispettivamente i nodi \texttt{servergm} e \texttt{serverntp}.
 
 \section{Configurazione logica dei protocolli}
 Come è stato precedentemente descritto, vi sono tre percorsi logici distinti. Le differenti
@@ -563,13 +563,13 @@ per NTPsec.
 
 \subsection{Configurazione PTP}
 
-Nella configurazione PTP, costrutia tramtie il software linuxptp, in particolare
+Nella configurazione PTP, costruita tramite il software linuxptp, in particolare
 tramite il demone \texttt{ptp4l}, vi è il nodo \texttt{servergm} che opera come grandmaster
 interno del dominio PTP, il nodo \texttt{boundary} che rappresenta il boundary clock
-del sistema tra la rete A e la rete B, ed infinte si ha il \texttt{clientptp} ovvero
+del sistema tra la rete A e la rete B, ed infine si ha il \texttt{clientptp} ovvero
 il nodo slave finale sulla rete B.
 
-Nel dominio PTP si è utilizzato il dominio 24, ed in tutte le configurazione si
+Nel dominio PTP si è utilizzato il dominio 24, ed in tutte le configurazioni si
 è adottato il meccanismo di delay end-to-end e il timestamping software, coerente
 con la strutta dei container stessi, assenti di timestamping hardware dedicato.
 
@@ -641,12 +641,11 @@ logSyncInterval 0
 [eth0]
 \end{lstlisting}
 
-Impostantdo il parametro \texttt{slaveOnly 1} si impedisce al client di
+Impostando il parametro \texttt{slaveOnly 1} si impedisce al client di
 candidarsi come master, vincolandolo alla sincronizzazione rispetto al nodo upstream
-selezionato nel dominio PTP. Per quanto rigurda i parametri rivolti agli
+selezionato nel dominio PTP. Per quanto riguarda i parametri rivolti agli
 intervalli dei messaggi e al livello di logging, sono stati opportunamente modificati
-per ottenre un comportamente osservabile più coerente con le neccessità dell'
-analisi dati.
+per ottenere un comportamento osservabile più coerente con le necessità dell'analisi dati.
 
 \subsection{Configurazione Chrony}
 
@@ -686,7 +685,7 @@ log measurements statistics tracking refclocks
 logchange 0.01
 \end{lstlisting}
 
-L'opzione di \texttt{iburst} peremette al client del dominio di acquisire più
+L'opzione di \texttt{iburst} permette al client del dominio di acquisire più
 rapidamente la sorgente nella fase iniziale. I parametri \texttt{minpoll 1} e
 \texttt{maxpoll 2} limitano l'intervallo di polling, mantenendo una frequenza di
 campionamento elevata rispetto alla durata delle run sperimentali. La direttiva \texttt{driftfile}
@@ -698,7 +697,7 @@ clock locale.
 Nella configurazione NTPsec, realizzata tramite \texttt{ntpd}, si ha come
 riferimento temporale il nodo \texttt{serverntp}, utilizzando il clock locale. Il
 nodo \texttt{boundary} si sincronizza con \texttt{serverntp} sulla rete A e rende
-disponibile il servizio NTPsec verso la rete B vero il nodo \texttt{clientntp}, collocato
+disponibile il servizio NTPsec verso la rete B verso il nodo \texttt{clientntp}, collocato
 sulla rete B.
 
 La catena logica è:
@@ -763,7 +762,7 @@ nodo intermedio e non come boundary clock nel senso del protocollo IEEE 1588.
 
 Per la valutazione del comportamento adottato dai demoni di sincronizzazione in condizioni
 non ideali, sono stati introdotti impairment di rete controllati attraverso l'ausilio
-di Linux Traffic Control. La topologia di rete è rimasta invariata in tutte la run,
+di Linux Traffic Control. La topologia di rete è rimasta invariata in tutte le run,
 garantendo omogeneità, ma allo stesso tempo sono cambiati i parametri degli impairment
 stessi.
 
@@ -821,7 +820,7 @@ dello scenario risulta idempotente rispetto alla configurazione della qdisc
 principale.
 
 \texttt{tc qdisc add} è il comando adottato all'aggiunta della qdisc figlia alla root,
-agganciandola al parent \texttt{1:}, riuscendo cosi ad introdurre sia
+agganciandola al parent \texttt{1:}, riuscendo così ad introdurre sia
 perturbazioni temporali e probabilistiche, sia una limitazione del rate.
 
 Per avere un quadro più chiaro, nei file del testbed sono presenti 
@@ -921,7 +920,7 @@ distingue tre scenari (livelli) di degrado progressivo, identificati come
 
 Per quanto riguarda l'applicazione degli impairment, si è deciso di degradare il
 tratto di rete tra il nodo boundary e il client finale, sia per PTP che per NTPsec.
-Questo asseconda la logica di \texttt{qdisc} che si applica sulla traffico in uscita
+Questo asseconda la logica di \texttt{qdisc} che si applica sul traffico in uscita
 da un'interfaccia di rete, cioè in egress. Nei due scenari quindi, si è
 applicato gli impairment sull'interfaccia \texttt{eth1} del nodo \texttt{boundary}.
 Tale interfaccia collega il boundary alla rete B e rappresenta quindi il ramo downstream
@@ -1041,14 +1040,14 @@ temporale interna.
 
 \section{Automazione e raccolta dei log}
 
-Il flusso logico di esecuzione del testbed è realizzato con un script Bash
+Il flusso logico di esecuzione del testbed è realizzato con uno script Bash
 principale, denominato \texttt{bootstrapT3\_V2.sh}. Coordina l'intera ciclo di funzionalità
 precedentemente descritte: dalla pulizia/creazione della topologia, alla logica dell'applicazione
 degli impairment, fino alla raccolta dati, garantendo ripetibilità e separazione funzionale
 tra le run sperimentali.
 
 Così facendo, sì è ridotto al minimo l'intervento manuale, evitando errori di alcun
-tipo, e soprattuto si è garantito interferenza tra processi residui o
+tipo, e soprattutto si è garantito l'assenza di interferenza tra processi residui o
 configurazioni differenti, semplificando anche quella che poi è stata l'analisi dati
 \ref{cha:AnalisiSperimentale}.
 

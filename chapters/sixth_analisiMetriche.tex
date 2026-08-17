@@ -90,7 +90,7 @@ demone.
 L'analisi effettuata sul nodo \texttt{clientntp} è caratterizzata da uno stato
 di inizializzazione, identificato da \texttt{refid=.INIT.}, \texttt{stratum=16}, \texttt{selected=False}
 e \texttt{reach=0}. L'intervallo non è rappresentativo del regime operativo
-della sincronizzazione, per tanto non viene considerato nel confronto tra scenari,
+della sincronizzazione, pertanto non viene considerato nel confronto tra scenari,
 il quale viene condotto a partire dal primo campione valido. Ai fini interpretativi,
 l'attenzione è principalmente rivolta alla porzione \texttt{post-selected} della serie,
 cioè ai campioni successivi alla selezione del peer di riferimento.
@@ -168,7 +168,7 @@ scenari.
 
 Nello scenario \texttt{low}, il delay assume valori contenuti e presenta un
 andamento sostanzialmente regolare. La curva media si colloca stabilmente in una fascia
-di circa 6–8 ms, con oscillazioni sufficientemente moderante con delle bande di
+di circa 6–8 ms, con oscillazioni sufficientemente moderate con delle bande di
 dispersione relativamente strette. Il delay medio è circa 7.00 ms, con una
 mediana 6.82 ms e un intervallo inter-quartile uguale ~1.95 ms. La media della
 banda inter-quartile di circa 1.43 ms, invece la larghezza media della banda p10–p90
@@ -188,7 +188,7 @@ valori molto elevati, spesso compresi tra ~(40-65) ms, con oscillazioni ampie e 
 forte eterogeneità tra run, evidenziato dall'ampliamento delle bande di
 dispersione. Il livello medio è verso valori ~(10–15) ms. Il delay medio è pari a ~35.0
 ms, con mediana 46.7 ms e l'intervallo inter-quartile molto ampio, pari a ~59.9 ms.
-Le statistiche della curva aggregata vanno confermano il trend, infatti si ha una
+Le statistiche della curva aggregata confermano il trend, infatti si ha una
 larghezza media della banda IQR è ~31.0 ms e quella p10–p90 ~59.4 ms.
 
 Nel confronto tra scenari si evidenzia una progressione complessivamente coerente
@@ -270,7 +270,7 @@ misura sia della sua regolarità temporale.
 \end{figure}
 
 L'analisi del jitter mostra un incremento di degrado attraverso un progressivo
-aumento dell'livello medio e della variabilità.
+aumento del livello medio e della variabilità.
 
 Nello scenario \texttt{low} il valore medio risulta ~1.05 ms, con una dispersione
 moderata. La banda inter-quartile media della curva aggregata è pari a ~0.65 ms,
@@ -638,7 +638,7 @@ ordine di grandezza.
 
 Andamento analogo è osservabile per il jitter. I valori medi sono di circa 0.446
 ms in low, 0.442 ms in medium e 0.473 ms in high. Differenze ridotte, evidenziando
-una assenza di degrado del nodo \texttt{boundary}.La variabilità delle curve
+un'assenza di degrado del nodo \texttt{boundary}.La variabilità delle curve
 aggregate resta limitata, suggerendo un comportamento omogeneo nei tre casi.
 
 Infine l'offset, con valori anche essi contenuti in tutti gli scenari. La media di
@@ -755,7 +755,7 @@ $613.0\,\mu s$ e $672.3\, \mu s$, invece le bande di variabilità sono mediament
 ampie. L'ampiezza dell'IQR, cosi come quella della fascia $p10$--$p 90$, segnalano una
 minore regolarità della stima del ritardo di percorso.
 
-Vi è un chiaro aumento del degrado tra i primi due scenari, in termini misurazioni
+Vi è un chiaro aumento del degrado tra i primi due scenari, in termini di misurazioni
 ottenute. Nonostante il degrado della rete non produce un forte aumento del
 valore medio del \texttt{path delay}, ma si riflette soprattutto in una maggiore
 variabilità delle misurazioni. La metrica risulta quindi sensibile al peggioramento
@@ -1134,7 +1134,7 @@ al caso \texttt{low}, ma i grafici evidenziano dei picchi più accentuati. La
 mediana è ~\texttt{-0.073 \,$\mu$s}, il primo quartile ~\texttt{-1.075 \,$\mu$s} e
 il terzo quartile ~\texttt{-0.004 \,$\mu$s}. Il peggioramento è principalmente
 evidente nella variabilità. L'ampiezza media della banda \texttt{p10-p90} è di ~\texttt{6.266
-\,$\mu$s}. La banda inter-quartile media cresce a \texttt{1.804 \,$\mu$s}; inoltre,
+\,$\mu$s}. La banda inter-quartile media cresce a \texttt{1.804 \,$\mu$s}.Inoltre,
 il valore massimo dell'IQR raggiunge \texttt{10.978 \,$\mu$s}, segnale che in
 alcuni punti il comportamento tra le run diventa più irregolare.
 

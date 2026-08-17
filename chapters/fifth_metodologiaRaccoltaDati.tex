@@ -58,7 +58,7 @@ analysis/raw_logs/T3_multiplerun/
 \label{lst:pipeline-log-structure}
 \end{listing}
 
-Inizialmente viene fatto il parsing dei log. Espressioni regolari vengono utilizzata 
+Inizialmente viene fatto il parsing dei log. Espressioni regolari vengono utilizzati 
 per riconoscere righe rilevanti dei log, estraendo campi numerici o simbolici necessari, 
 informazioni superflue vengono ignorate permettendo di isolare solamente le informazioni 
 utili al fine della costruzione di metriche.
@@ -110,7 +110,7 @@ A partire dalla deviazione standard viene stimato l'intervallo di confidenza al
 dove $t_{0.975,n-1}$ indica il quantile della distribuzione t di Student con
 $n-1$ gradi di libertà. 
 Negli script, con un massimo di 30 osservazioni, viene utilizzata una tabella
-interna di valori critici; altrimenti viene utilizzata l'approssimazione
+interna di valori critici, altrimenti viene utilizzata l'approssimazione
 normale pari a 1.96.
 
 Vengono calcolati, inoltre, i diversi quantili della distribuzione empirica. 
@@ -182,7 +182,7 @@ Gli output prodotti sono di due tipi. File CSV per-run, ovvero la conversione
 strutturata del raw-log e poi i file aggregati, salvati in una
 directory \texttt{\_aggregated}. Cioè il riassunto dell'andamento delle
 metriche per scenario e ruolo, combinando le differenti run. A partire da 
-quest'ultimi sono prodotti i grafici, rappresentati da due tipi di visualizzazione. 
+questi ultimi sono prodotti i grafici, rappresentati da due tipi di visualizzazione. 
 
 La prima mostra la media della metrica con l'intervallo di confidenza al 95\%. 
 La seconda mostra la media insieme all'intervallo inter-quartile e alla banda 
@@ -363,7 +363,7 @@ def _normalize_time(df: pd.DataFrame, t_col: str = "t") -> pd.DataFrame:
 
 Come file prodotti si hanno per il BC: 
 \texttt{parsed\_boundary\_samples.csv} e
-\texttt{parsed\_boundary\_events.csv}; per il client:
+\texttt{parsed\_boundary\_events.csv}, per il client:
 \texttt{parsed\_client\_samples.csv} e \texttt{parsed\_client\_events.csv}.
 Questi file costituiscono una rappresentazione strutturata dei log originali.
 
@@ -416,8 +416,8 @@ Le statistiche calcolate per il boundary includono media, deviazione standard,
 mediana, percentile 95, percentile 99 e massimo valore assoluto dell'offset.
 Vengono inoltre calcolate media e deviazione standard del path delay.
 
-In modo analogo si stimata la convergenza del client che nel caso sia presente
-la run viene marcata come \texttt{locked}; le statistiche post convergenza sono
+In modo analogo si stima la convergenza del client che nel caso sia presente
+la run viene marcata come \texttt{locked}, le statistiche post convergenza sono
 calcolate considerando i campioni con tempo relativo maggiore o uguale al tempo
 di convergenza. Escludendo le osservazioni precedenti all'aggancio del client 
 alla gerarchia PTP.
@@ -479,7 +479,7 @@ if client_summaries:
 
 La fase di aggregazione, rispetto a \texttt{sample\_idx}, confronta run 
 appartenenti allo stesso scenario e allo stesso ruolo. Per il boundary 
-vengono aggregate le metriche \texttt{offset\_ns} e \texttt{path\_delay\_ns}; 
+vengono aggregate le metriche \texttt{offset\_ns} e \texttt{path\_delay\_ns}, 
 per il client vengono aggregate \texttt{rms\_ns} e \texttt{path\_delay\_ns}.
 
 \begin{listing}[H]
@@ -855,7 +855,7 @@ sourcestats_metrics = {
 
 Anche in questo caso, le metriche elencate vengono elaborate tramite la funzione
 comune di aggregazione descritta nella Pipeline generale. L'aggregazione è
-effettuata rispetto a \texttt{sample\_idx}; nel caso di
+effettuata rispetto a \texttt{sample\_idx}, nel caso di
 \texttt{sourcestats}, viene mantenuta anche la distinzione per sorgente.
 
 \begin{listing}[H]

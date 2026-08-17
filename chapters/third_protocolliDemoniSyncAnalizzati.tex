@@ -17,15 +17,15 @@ In senso lato, un protocollo di comunicazione definisce la struttura ex ante, la
 quale può essere adatta ad ogni sua possibile interpretazione attraverso l'implementazione
 pratica, delineando alla base le regole logiche dello scambio di messaggi, il
 formato delle informazioni trasmesse, il modello di sincronizzazione e più in generale,
-il comportamento atteso dai nodi coinvolte. \cite{ProtocolloDiRete2026}
+il comportamento atteso dai nodi coinvolti. \cite{ProtocolloDiRete2026}
 
-L'implementazione software invece è la realizzazione effettiva del protocollo all'interno si un SO.
+L'implementazione software invece è la realizzazione effettiva del protocollo all'interno di un SO.
 
 Il demone invece è il programma che si esegue in background, quindi non direttamente controllato dall'utente, 
 \cite{DaemonComputing2026}, e nel caso specifico è responsabile dell'applicazione dell'algoritmo
 di sincronizzazione e della gestione del clock locale.
 
-Nella sincronizzazione temporale, i protocolli presi ad esame sono NTP e PTP. Network Time Protocol, definito nella sua
+Nella sincronizzazione temporale, i protocolli presi in esame sono NTP e PTP. Network Time Protocol è definito nella sua
 versione 4, dalla specifica \texttt{\textbf{RFC 5905}}.
 
 Si fa una ulteriore distinzione tra i protocolli e le implementazioni software di quest'ultimi
@@ -33,7 +33,7 @@ Si fa una ulteriore distinzione tra i protocolli e le implementazioni software d
 
 NTPsec e Chrony sono due distribuzioni che implementano NTPv4 secondo RFC 5905,
 con NTPsec che è un fork di NTP Classic, l'originale di Dave Mills, orientato a una
-realizzazione più moderna e mantenibile del protocollo.\cite{SecureNetworkTime}.
+realizzazione più moderna e mantenibile del protocollo.\cite{SecureNetworkTime}
 
 Il servizio di sincronizzazione fornito da NTPsec viene eseguito tramite il
 demone \texttt{ntpd}, cioè il processo che opera sul nodo e mantiene il clock
@@ -46,7 +46,7 @@ command-line che può essere utilizzato per monitorare le prestazioni di chronyd
 modificare di vari parametri operativi mentre è in esecuzione. \cite{ChronyIntroduction}
 
 
-Anche se NTPsec e Chrony sono entrambi implementazioni di NTP, i demoni differiscono avendo differenti 
+Anche se NTPsec e Chrony sono entrambe implementazioni di NTP, i demoni differiscono avendo differenti 
 strutture e metriche. Tuttavia vi sono grandezze misurate che sono concettualmente analoghe (offset, jitter, delay, ecc.) e quindi confrontabili, 
 altre invece sono specifiche dell'implementazione, rappresentative di come le implementazioni 
 vanno a rappresentare lo stato del clock, la qualità della sorgente e il processo interno di stima.
@@ -108,7 +108,7 @@ del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 \end{table}
 
 Nella variante \texttt{client/server}, un client persistente invia pacchetti di
-modalità 4 a un server, che restituisce pacchetti di modalità 3. I server forniscono
+modalità 3 a un server, che restituisce pacchetti di modalità 4. I server forniscono
 sincronizzazione a uno o più client, ma non accettano sincronizzazione da loro. Un
 server può anche essere un driver di orologio di riferimento che ottiene il tempo
 direttamente da una fonte standard come un ricevitore GPS o un servizio di modem telefonico.
@@ -315,7 +315,7 @@ delle misure utilizzate dal demone.
 \subsection{Caratteristiche generali di PTP}
 
 \begin{sloppypar}
-PTP noto come \texttt{Precision Time Protocol}, delineato dallo standard IEEE 1588, 
+PTP, noto come \texttt{Precision Time Protocol}, delineato dallo standard IEEE 1588, 
 è stato sviluppato con l'obiettivo di offrire una sincronizzazione temporale accurata e precisa.
 Realizzato per reti a commutazione di pacchetto, includendo reti Ethernet, supportando 
 comunicazioni multicast, unicast o talvolta una loro combinazione.
@@ -359,7 +359,7 @@ Vi è inoltre previsto dallo standard la possibilità che un nodo rilevi nuovi p
 Nello standard IEEE 1588 sono definiti due clock. L'\texttt{ordinary clock} 
 è equipaggiato di una singola porta di rete, con capacità operative come sorgente oppure come 
 destinatario della sincronizzazione, però appartenendo ad un solo segmento PTP alla volta. 
-In un rete elementare, caratterizzata da un solo segmento, si ha che l'architettura 
+In una rete elementare, caratterizzata da un solo segmento, si ha che l'architettura 
 può essere rappresentata da un insieme di nodi formato da grandmaster e da (n-1) ordinary 
 clock che necessitano di essere sincronizzati.
 
@@ -411,7 +411,7 @@ meccanismo delay request-response. Nel caso invece della porta \texttt{peer-to-p
 
 \subsection{Messaggi PTP e meccanismo di sincronizzazione}
 
-Vi sono diverse classi di messaggi, ognuno con una opportuna funzionalità, definite all'interno 
+Vi sono diverse classi di messaggi, ognuna con una opportuna funzionalità, definite all'interno 
 dello standard. Vi si distingue inizialmente tra \texttt{event messages} e \texttt{general messages}. 
 I primi sono messaggi per i quali il time stamp di trasmissione o ricezione è rilevante ai fini della
 sincronizzazione, da qui la necessità di essere marcati temporalmente con più accuratezza possibile.
@@ -426,7 +426,7 @@ di un timestamp accurato dell'evento fisico di invio o ricezione \cite{IEEEStand
   Nella classe di messaggi generali invece si ha: \texttt{Announce}, \texttt{Follow\_Up},
   \texttt{Delay\_Resp}, \texttt{Pdelay\_Resp\_Follow\_Up}, \texttt{Management} e \texttt{Signaling}.
   I seguenti messaggi: \texttt{Follow\_Up}, \texttt{Delay\_Resp} e \texttt{Pdelay\_Resp\_Follow\_Up}, rientrano però 
-  nei messaggi temporali PTP, in quanto si occupano di trasportare informazioni necessari al calcolo della sincronizzazione.
+  nei messaggi temporali PTP, in quanto si occupano di trasportare informazioni necessarie al calcolo della sincronizzazione.
   Il messaggio di sync viene utilizzato per trasferire l'informazione temporale dal master verso lo slave.
   Nel meccanismo di clock \texttt{one-step}, il timestamp viene inserito direttamente nel messaggio \texttt{sync}.
   Nel caso invece di clock \texttt{two-step}, il messaggio  di\texttt{Sync} viene seguito da
@@ -443,7 +443,7 @@ Qui oltre ai messaggi di \texttt{Sync} e, se necessario, \texttt{Follow\_Up},
 vengono utilizzati i messaggi \texttt{Delay\_Req} e \texttt{Delay\_Resp}. Lo slave
 invia una richiesta di delay verso il master e il master risponde comunicando le informazioni
 temporali necessarie alla stima del ritardo di percorso. 
-Andando a combinare tute le informazioni che provengono dai messaggi di sync e da quelli di 
+Andando a combinare tutte le informazioni che provengono dai messaggi di sync e da quelli di 
 delay, lo slave è capace di stimare il vero scostamento del clock locale rispetto al master, 
 applicando le opportune correzioni.\cite{IEEEStandardPrecision2020}.
 
