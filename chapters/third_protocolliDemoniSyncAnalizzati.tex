@@ -441,10 +441,10 @@ sincronizzazione degli \texttt{ordinary clock} e dei \texttt{boundary clock}.
 Qui oltre ai messaggi di \texttt{Sync} e, se necessario, \texttt{Follow\_Up},
 vengono utilizzati i messaggi \texttt{Delay\_Req} e \texttt{Delay\_Resp}. Lo slave
 invia una richiesta di delay verso il master e il master risponde comunicando le informazioni
-temporali necessarie alla stima del ritardo di percorso. Combinando le
-informazioni provenienti dai messaggi di sincronizzazione e da quelli di delay, lo
-slave può stimare lo scostamento del proprio clock rispetto al master e applicare
-le correzioni opportune. \cite{IEEEStandardPrecision2020}.
+temporali necessarie alla stima del ritardo di percorso. 
+Andando a combinare tute le informazioni che provengono dai messaggi di sync e da quelli di 
+delay, lo slave è capace di stimare il vero scostamento del clock locale rispetto al master, 
+applicando le opportune correzioni.\cite{IEEEStandardPrecision2020}.
 
 Differenti messaggi svolgono il messaggio di supporto. 
 \texttt{Announce} viene definito per stabilire la gerarchia di sincronizzazione, supportando
@@ -464,11 +464,14 @@ Tramite questa interazione viene stimato il ritardo medio del percorso.
 
 Nel caso peer-to-peer avviene un differente approccio con una stima tra porte PTP adiacenti.
 
-La misura avviene tramite i messaggi \texttt{Pdelay\_Req}, \texttt{Pdelay\_Resp} e, se richiesto, \texttt{Pdelay\_Resp\_Follow\_Up}.
-Il risultato è una stima del \texttt{PTP Link delay}, cioè del ritardo del collegamento
-tra due porte PTP vicine. Tale stima può essere utilizzata per correggere le
-informazioni temporali contenute nei messaggi \texttt{Sync} e \texttt{Follow\_Up}
-trasmessi lungo i link PTP. \cite{IEEEStandardPrecision2020}.
+\begin{sloppypar}
+  La misura avviene tramite i messaggi \texttt{Pdelay\_Req}, \texttt{Pdelay\_Resp} 
+  e, se richiesto, \texttt{Pdelay\_Resp\_Follow\_Up}.
+  Il risultato è una stima del \texttt{PTP Link delay}, cioè del ritardo del collegamento
+  tra due porte PTP vicine. Tale stima può essere utilizzata per correggere le
+  informazioni temporali contenute nei messaggi \texttt{Sync} e \texttt{Follow\_Up}
+  trasmessi lungo i link PTP. \cite{IEEEStandardPrecision2020}.
+\end{sloppypar}
 
 Quindi nel end-to-end si considera il percorso tra ricevitore e master, nel peer-to-peer
 invece tra nodi adiacenti.
@@ -505,86 +508,54 @@ invece, porte diverse possono assumere stati diversi: una porta può
 sincronizzarsi come slave verso monte, mentre altre porte possono operare come master
 verso i segmenti downstream.
 
---------------
---------------
+I criteri di \texttt{grandmasterIdentity},\texttt{clockIdentity} e \texttt{portIdentity} 
+sono tra i principali nella scelta della selezione. Sono fondamentali nel 
+distinguere univocamente i clock e le porte PTP coinvolte nella selezione.
 
-I seguenti criteri sono utilizzati al fine della selezione. 
-\texttt{grandmasterIdentity},\texttt{clockIdentity} e \texttt{portIdentity}. Tali
-identificativi permettono di distinguere univocamente i clock e le porte PTP
-coinvolte nella selezione.
+Ulteriori criteri sono talvolta considerati come quello di \texttt{priority1}, cioè 
+un parametro configurabile che permette di assegnare una priorità amministrativa ad un clock, 
+indipendentemente dai suoi valori temporali intrinsechi. Vi sono ulteriori parametri 
+che possono essere coinvolti come quello di \texttt{clockClass} che indica la classe e 
+lo stato di sincronizzazione del clock. \texttt{clockAccuracy} rappresenta invece l'accuratezza
+dichiarata del clock rispetto a un riferimento temporale. Infine un altro parametro accessorio è
+quello di \texttt{offsetScaledLogVariance} il quale fornisce un'indicazione della stabilità stessa
+del clock.
 
-Vi sono ulteriori criteri come quello di \texttt{priority1}, un valore configurabile che
-consente di assegnare una priorità amministrativa a un clock, indipendentemente dalle
-sue caratteristiche temporali intrinseche. Seguono poi i parametri che
-descrivono la qualità del clock: \texttt{clockClass}, che indica la classe del clock
-e il suo stato di sincronizzazione; \texttt{clockAccuracy}, che rappresenta l'accuratezza
-dichiarata del clock rispetto a un riferimento temporale; e \texttt{offsetScaledLogVariance},
-che fornisce un'indicazione della stabilità del clock.
-
-Infine, il parametro \texttt{priority2} introduce una seconda priorità configurabile,
-utilizzata come criterio di discriminazione quando i parametri precedenti
-risultano equivalenti. In caso di ulteriore parità, viene utilizzato \texttt{clockIdentity}
-come criterio finale di selezione. In generale, per questi campi un valore numericamente
-più basso corrisponde a una preferenza maggiore nel processo di selezione.
-\cite{PTP_net}
+Il parametro di \texttt{priority2} può essere introdotto per una seconda priorità configurabile, 
+venendo utilizzato come criterio discriminante rispetto ai parametri precedenti.\cite{PTP_net}
 
 \subsection{Timestamping e accuratezza}
 
-L'accuratezza della sincronizzazione PTP dipende in modo diretto dalla qualità
-dei timestamp associati ai messaggi temporali. La stima delle offset e delay si basa
-infatti sugli istanti di trasmissione e ricezione dei messaggi PTP, e ogni
-incertezza introdotta nella generazione del timestamp si va a riflettere
-direttamente sulla qualità della sincronizzazione. Questo è il motivo per cui
- il protocollo distingue in messaggi per i quali il timestamp è critico,
-cioè gli \texttt{event messages}, e messaggi che trasportano informazioni di
+Nella sincronizzazione PTP è fondamentale la qualità stessa dei timestamp che 
+vengono associati ai messaggi. I parametri stimati ne sono una conseguenza diretta, ed
+ogni incertezza che si introduce farà divergere dal corretto valore tali parametri.
+Nasce da qui la necessità, precedentemente descritta, nel distinguere tra messaggi di tipo
+ \texttt{event messages}, e messaggi che trasportano informazioni di
 supporto ma non richiedono la stessa accuratezza temporale, cioè i \texttt{general
 messages} \cite{IEEEStandardPrecision2020}
 
-La distinzione tra clock \texttt{one-step} e \texttt{two-step} è direttamente connessa
-alla gestione dei timestamp. Nel primo, il timestamp preciso di trasmissione viene
-inserito direttamente nel messaggio \texttt{Sync}. Nei clock two-step, invece, il
-messaggio \texttt{Sync} viene inviato prima e il timestamp effettivo di
-trasmissione viene comunicato successivamente attraverso un messaggio \texttt{Follow\_Up}.
-Questa modalità è utile quando il timestamp preciso viene determinato solo dopo
-la trasmissione del messaggio, ad esempio perché generato a livello hardware.
+I dispositivi intermedi possono anche essi influenzare l'accuratezza della sincronizzazione, ed
+in una rete non necessariamente compatibile con PTP, eventuali switch e bridge possono essere 
+la causa di ritardi variabili. Differentemente accade se i dispositivi sono PTP-aware, come 
+per esempio i boundary clock oppure i transparent clock, i quali contribuiscono attivamente limitando
+oppure compensando il ritardo.
 
-Anche i dispositivi intermedi possono influenzare l'accuratezza della sincronizzazione.
-In una rete non compatibile con PTP, switch e bridge possono introdurre ritardi variabili
-non direttamente osservabili dal protocollo. Al contrario, dispositivi PTP-aware,
-come boundary clock e transparent clock, possono contribuire a limitare o compensare
-tali errori. In particolare, un transparent clock misura il tempo di permanenza dei
-messaggi PTP al proprio interno e aggiorna il campo \texttt{correctionField}, rendendo
-esplicito il ritardo introdotto dal dispositivo.
-
-La scelta della struttura di base adottata per l'implementazione del protocollo
-è fondamentale al fine di ottenere una sincronizzazione accurata. Timestamping
-hardware, dispositivi intermedi compatibili con PTP, stima corretta del path
-delay e riduzione delle asimmetrie di rete contribuiscono complessivamente a
-migliorare la precisione della sincronizzazione. Timestamping
-software, code di rete, jitter, congestione e dispositivi non PTP-aware possono aumentare
-l'incertezza delle misure e degradare la qualità della sincronizzazione.
+Anche la scelta dell'implementazione del protocollo è fondamentale. Un timestamping
+hardware contribuisce a migliorare la sincronizzazione, al contrario del semplice
+timestamping software.
 
 \subsection{linuxptp e il demone \texttt{ptp4l}}
 \label{subsec:linuxptp_ptp4l}
 
-\texttt{linuxptp} è una suite software per sistemi Linux che implementa il \texttt{Precision
-Time Protocol} secondo lo standard IEEE 1588. Il progetto è orientato a fornire
-una implementazione robusta del protocollo utilizzando le API disponibili nel
-kernel Linux. \cite{IEEEStandardPrecision2020}.
+\texttt{linuxptp} è l'implementazione software per i sistemi Linux del protocollo PTP
+secondo lo standard IEEE 1588. È un progetto nato con l'intenzione di fornire un implementazione
+robusta lavorando con le API disponibili nel kernl linux.
 
-Il componente principale della suite è \texttt{ptp4l}, un demone che implementa
-PTP su una o più interfacce di rete Linux. Secondo la documentazione ufficiale,
-\texttt{ptp4l} può operare come \texttt{Ordinary Clock}, \texttt{Boundary Clock}
-oppure \texttt{Transparent Clock}, rendendolo adatto a diverse configurazioni di
-rete PTP \cite{PrecisionTimeProtocol2026}. Nel caso di un ordinary clock, il nodo partecipa
-alla sincronizzazione attraverso una singola porta PTP; nel caso di un boundary clock,
-il demone gestisce più porte e può ricevere sincronizzazione su una porta e
-distribuirla su altre; nel caso di un transparent clock, il nodo contribuisce
-invece alla compensazione dei ritardi introdotti dal dispositivo sul percorso
-dei messaggi PTP.
+La sua componente principale è \texttt{ptp4l}, cioè il demone che implementa PTP su 
+una o più interfacce di rete Linux, seguendo le logiche precedentemente descritte sulla 
+struttura stessa di un classico dominio PTP.\cite{PrecisionTimeProtocol2026}.
 
-Dal punto di vista del trasporto, \texttt{linuxptp} supporta l'esecuzione di PTP
-su UDP/IPv4, UDP/IPv6 e direttamente su Ethernet a livello 2. Questa flessibilità
-riflette le modalità previste dallo standard e consente di adattare il demone a reti
-PTP realizzate sopra infrastrutture IP oppure direttamente su collegamenti Ethernet
-\cite{IEEEStandardPrecision2020}.
+Da un punto di vista del trasporto la suite supporta l'esecuzione di PTP
+su UDP/IPv4, UDP/IPv6 e direttamente su Ethernet a livello 2.
+Adattando il demone PTP ad operare su infrastrutture IP oppure direttamente 
+su collegamenti Ethernet\cite{IEEEStandardPrecision2020}.

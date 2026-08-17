@@ -9,20 +9,19 @@ temporale condiviso, diventa più complesso correlare eventi prodotti da macchin
 ordinare correttamente operazioni distribuite, analizzare log, coordinare
 servizi e valutare il comportamento complessivo di un'infrastruttura di rete.
 
-Nei sistemi distribuiti e nelle reti di calcolatori, ogni macchina è dotata di clock
-locale, necessario a produrre riferimenti temporali associabili ad ogni tipo di
-informazione. I timestamp associati a file, log, transazioni, messaggi e
-processi automatici, fungono da riferimento tra macchine differenti; tuttavia, se
-il riferimento univoco cessasse, allora il confronto non avrebbe più alcuna
-validità.
+All'interno di sistemi distribuiti oppure nelle reti di calcolati ogni macchina possiede
+un clock locale, necessario alla produzione dei riferimenti temporali che vengono associati 
+ad ogni tipo informazione. File, log, transazioni, messaggi e processi automatici sono 
+sempre associati ai timestamp che servono da riferimento tra differenti macchine.
+Nel caso in cui il riferimento univoco cessasse allora si perderebbe la validità del 
+confronto.
 
-La difficolta alla base è più complessa di quanto possa sembrare. I clock locali non
-sono strumenti perfetti, e in quanto tale la loro stabilità e correttezza nel
-tener conto della misura del tempo può essere incerta. Gli oscillatori hardware possono
-accumulare deriva nel tempo, generando scostamenti progressivi rispetto ad un
-tempo di riferimento. La sincronizzazione, quindi, non è solamente uno strumento di
-inizializzazione per l'orologio di una macchina, ma è uno strumento necessario
-per compensare in modo continuo la deriva tra orologi diversi.
+Alla base la difficoltà è molto più complessa di come viene descritta. Non esiste 
+un clock perfetto, e in quanto tale la stabilità e correttezza delle misure è incerta
+nel tempo. Gli oscillatori hardware possono subire deriva nel tempo, andando a discostarsi
+progressivamente dal tempo di riferimento. Quindi la sincronizzazione non è uno strumento utilizzato
+solo in fase di avvio, ma è strettamente necessario per compensare in modo continuo la deriva
+tra differenti clock.
 
 L'importanza della sincronizzazione temporale è centrale in una moltitudine di
 ambiti applicativi. Nei sistemi di logging, auditing e monitoraggio, timestamp coerenti
@@ -37,10 +36,10 @@ condizioni differenti, da una base di riferimento comune.
 Una sbagliata sincronizzazione può essere causa di problematicità, la quale può
 avere dimensioni differenti rispetto all'ambito di riferimento in cui si opera. Vi
 sono sistemi che sono dotati di tolleranze agli errori, arrivando a
-differenze fino all'ordine di millisecondi, tuttavia trascurabili. In questi
-casi non viene violata l'integrità del sistema ma piuttosto, l'analisi dei guasti
-può essere compromessa, in quanto la sequenza temporale degli eventi potrebbe
-risultare ambigua.
+differenze fino all'ordine di millisecondi, tuttavia trascurabili. 
+In queste situazioni l'integrità del sistema non è a rischio, ma piuttosto problematiche
+legate all'analisi possono essere compromesse, in quanto la sequenza temporale
+degli eventi potrebbe risultare ambigua.
 
 Vi sono poi scenari in cui l'impatto può avere criticità più rilevanti. Nei servizi
 di autenticazione e nei sistemi distribuiti che fanno utilizzo di ticket, token
@@ -70,13 +69,10 @@ di eventi economicamente impattanti. La correttezza della sincronizzazione
 temporale è alla base del loro funzionamento. In presenza di eventi molto ravvicinati
 nel tempo, una sincronizzazione insufficiente può essere compromettente.
 
-Di conseguenza, non esiste un solo ed unico livello di sincronizzazione adeguato per
-ogni applicazione. Vi sono sistemi che hanno un elevato grado di tollerabilità
-arrivando all'ordine dei millisecondi, soprattutto quando il tempo viene utilizzato
-come strumento di logging e monitoraggio oppure correlazione approssimata tra gli
-eventi. In altri scenari invece, come sistemi industriali, telecomunicazioni, applicazioni
-real-time e infrastrutture come quelle finanziarie, sono richiesti precisione
-elevata e stabilità temporale.
+Quindi non esiste un solo ed unico livello di sincronizzazione che si adatta ad ogni 
+applicazione. Esistono sistemi dotati di un elevato grado di tollerabilità che arriva
+all'ordine di millisecondi, mentre esistono altri scenari in cui si richiede una precisione
+molto elevata e una forte stabilità temporale
 
 %problema affrontato
 Fondamentalmente la qualità della sincronizzazione temporale dipende in modo
@@ -85,13 +81,14 @@ messaggi. I protocolli di sincronizzazione stimano sulla base della invio e dell
 ricezione della messaggistica lo scostamento tra clock locale di sistema e il clock
 di riferimento nella rete considerata.
 
-In condizioni nominali, il normale funzionamento dei protocolli garantisce una
-sincronizzazione sufficientemente accurata e stabile. Tuttavia, in presenza in
-impariment di rete più severi, il comportamento può essere negativamente condizionato.
-Tendenzialmente i protocolli sono sviluppati a mitigare tale eventualità, o talvolta
-soccombere qualora essa non sia evitabile. L'analisi delle metriche in
-situazioni di stress può mettere quindi in evidenza il comportamento tra i
-diversi protocolli di sincronizzazione.
+In condizioni nominali viene garantito dai protocolli una sufficiente e corretta sincronizzazione.
+Succede però che in presenza di impairment di rete più severi, può essere negativamente condizionato 
+il comportamento di essi.
+Solitamente sono sviluppati per mitigare queste eventualità, ma succede che talvolta essi possano
+soccombere qualora la risoluzione dei problemi non fosse possibile. Andare ad analizzare 
+le metriche in situazioni di stress, può quindi mettere in evidenza il differente comportamento
+tra i protocolli di sincronizzazione.
+
 %obiettivo del lavoro
 L'obiettivo alla base della tesi è l'analisi sperimentale del comportamento di differenti
 demoni di sincronizzazione temporale in presenza di condizioni di degrado controllato
@@ -117,14 +114,13 @@ intermedio. Per Chrony è stato deciso una strada più conservativa lavorando su
 classica configurazione client-server, valutando separatamente il caso di
 applicazione di impairment (lato client o lato server).
 
-Il degrado di rete è stato introdotto con l'ausilio di strumenti di traffic
-control, configurando i tre scenari sperimentali precedentemente definiti con intensità
-crescente di impairments. Per ciascuno sono state effettuate differenti run
-indipendenti, isolando opportunamente da rumore esterno e raccogliendo una base sufficiente
-per il successivo confronto statistico. I log prodotti dai demoni sono stati
-successivamente raccolti ed elaborati tramite appositi script di parsing e
-analisi, ottenendo serie numeriche aggregate per nodo, scenario ed infine per
-metrica.
+Tramite gli strumenti di TC, cioè traffic control, si è andato ad introdurre
+il degrado di rete andando a configurare i tre scenari sperimentali precedentemente definiti con intensità
+crescente di impairments. 
+Sono state effettuate differenti run per ciascuno, isolando opportunamente da rumore esterno e 
+raccogliendo una base sufficiente di dati per un successivo confronto statistico.
+I log derivanti dai demoni sono stati elaborati con script di parsing e analisi, 
+andando ad ottenere serie numeriche aggregate per nodo, scenario ed infine per metrica.
 
 %anticipazione dell'analisi dati finale
 L'analisi dei dati raccolti si basa su due livelli complementari. Da una parte sono

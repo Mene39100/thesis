@@ -101,9 +101,9 @@ le diverse catene di sincronizzazione analizzate nel testbed.
 
 \section{Ambiente testbed}
 
-Il testbed è realizzato tramite la creazione di una topologia di rete
-"containerizzato" attraverso l'ausilio di Kathará, cioè un sistema di emulazione di
-rete open source basato su container. Questa scelta ha reso possibile la
+Attraverso la creazione di una topologia di rete "containerizzata" e l'ausilio di Katharà 
+è stato realizzato il testbed. Katharà è un sistema di emulazione di rete open source 
+basato su container. Questa scelta ha reso possibile la
 riproduzione di una rete composta da un insieme di nodi Linux isolati, ognuno dotato
 di una sua interfaccia, di file di configurazioni personalizzati e degli
 specifici demoni di sincronizzazione. L'utilizzo dei container ha permesso inoltre
@@ -789,7 +789,7 @@ separati dal codice di esecuzione.
 Linux Traffic Control, viene richiamato tramite il comando \texttt{tc}.
 
 Le due qdisc sono state combinate, la prima qdisc \texttt{netem} è stata
-applicata come root. Diversamente la seconda è stata agganciata come qdisc figlia
+applicata come root. Diversamente la seconda è stata attaccata come qdisc figlia
 della prima. La struttura logica si configura come segue: qdisc root di tipo \texttt{netem}
 con handle \texttt{1:}, e qdisc figlia di tipo \texttt{tbf} con handle \texttt{10:}.
 
