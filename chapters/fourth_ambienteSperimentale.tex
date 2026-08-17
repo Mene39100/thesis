@@ -179,7 +179,7 @@ Distinguendo tra \texttt{boundary0} e \texttt{boundary1} si riesce a
 identificare in modo chiaro le due interfacce del nodo \texttt{boundary}.
 \texttt{boundary0} corrisponde all'interfaccia sulla rete A (\texttt{10.0.10.2}),
 mentre \texttt{boundary1} corrisponde all'interfaccia sulla rete B (\texttt{10.0.20.1}).
-Ciò è utile ai fini del testNTPsec, nei quali il nodo \texttt{clientntp}
+Ciò è utile ai fini del test NTPsec, nei quali il nodo \texttt{clientntp}
 utilizza il boundary come sorgente temporale raggiungibile sulla rete B.
 
 All'interno del file \texttt{lab.conf} viene montata una directory del progetto all'interno
@@ -259,7 +259,7 @@ chronyd &
 
 In NTPsec, il nodo \texttt{serverntp} installa il pacchetto \texttt{ntpsec},
 copia la configurazione server e avvia \texttt{ntpd}. Una procedura simile viene
-adottata per il nodo\texttt{clientntp} che però utilizza una confiurazione lato
+adottata per il nodo\texttt{clientntp} che però utilizza una configurazione lato
 client. Per quanto riguarda invece il nodo \texttt{boundary} si ha sia la
 configurazione PTP sia la configurazione NTPsec, ma i demoni non vengono mantenuti
 attivi simultaneamente in quanto potrebbero essere causa di conflitti interni,
@@ -349,9 +349,9 @@ Ogni esecuzione dei demoni di sincronizzazione richiede specifici privilegi all'
 dei container, e lo stesso accade per l'applicazione degli impairment di rete introdotti,
 da qui nasce la necessità di avviare in modalità privilegiata la topologia e di
 assegnare capability aggiuntive ai nodi, \texttt{--privileged}. Così facendo si sono
-ridotti problemi leagti alle restrizioni imposte dal runtime dei container.
+ridotti problemi legati alle restrizioni imposte dal runtime dei container.
 
-Le capacibility sono un meccanismo del kernel Linux che consente di concedere privilegi
+Le capability sono un meccanismo del kernel Linux che consente di concedere privilegi
 specifici a processi o container senza dover concedere loro l'accesso completo come
 utente root. Di seguito sono riportate le capability principali utilizzate nel
 testbed: \texttt{SYS\_TIME}, \texttt{NET\_RAW} e \texttt{NET\_ADMIN}.
@@ -389,7 +389,7 @@ printf 'n\n' | sudo -n kathara lstart -d "$TOPOLOGY_DIR" --privileged
 \end{listing}
 
 Nella fase di testbed la topologia viene "ripulita" e riavviata prima di ogni
-scenario o run. È stato effettuato tramite \texttt{kathara lclean} elimnando i
+scenario o run. È stato effettuato tramite \texttt{kathara lclean} eliminando i
 container della run precedente, evitando che processi attivi, configurazioni
 residue o discipline di coda rimangano applicate all'esecuzione successiva.
 
@@ -459,7 +459,7 @@ all'assenza iniziale di una sorgente temporale.
 
 Nella fase di avvio si è reso necessario mantenere la connettività 
 verso l'esterno per consentire l'installazione dei pacchetti necessari, 
-quali \texttt{chrony}, \texttt{ntpsec} e \texttt{linuxptp}, e l'aggiornametno 
+quali \texttt{chrony}, \texttt{ntpsec} e \texttt{linuxptp}, e l'aggiornamento 
 delle repository. Questo spiega la presenza di bridge temporanei verso l'esterno,
  che vengono successivamente disabilitati per garantire l'isolamento del testbed.
 
@@ -472,7 +472,7 @@ clientntp[bridged]=true
 clientptp[bridged]=true
 \end{lstlisting}
 
-Successivamente, terminata l'inzializzazione della T2, la connettività esterna è stata
+Successivamente, terminata l'inizializzazione della T2, la connettività esterna è stata
 disabilitata utilizzando lo script \texttt{endInternetConnection.sh}.
 
 Lo script disabilita l'interfaccia esterna sui nodi dotati di una sola
@@ -815,7 +815,7 @@ tc qdisc add dev $IFACE parent 1: handle 10: tbf \
 \label{lst:tc-netem-tbf-generale}
 \end{listing}
 
-\texttt{tc qdisc replace} è un comado utilizzato per sostituire o per creare in
+\texttt{tc qdisc replace} è un comando utilizzato per sostituire o per creare in
 caso non esistesse la qdisc root sull'interfaccia. Così facendo, l'applicazione
 dello scenario risulta idempotente rispetto alla configurazione della qdisc
 principale.
@@ -845,7 +845,7 @@ tc qdisc del dev <interface> root
 \end{listing}
 
 Necessitando però l'aggiunta simultanea di più parametri, gli script di supporto non
-vegono quindi gestiti direttamente dallo script princpale. Lo stesso avviene per
+vengono quindi gestiti direttamente dallo script principale. Lo stesso avviene per
 la rimozione in quanto andando a chiudere i container ogni run, le qdisc vengono automaticamente
 rimosse.
 
@@ -866,10 +866,10 @@ scripts/netem/
 |   `-- scenario_matrix.md
 |-- apply_netem.sh
 |-- cleanup_netem.sh
-`-- bootstrapT3.sh
+`-- bootstrapT3_V2.sh
 \end{lstlisting}
 
-Nella seguente tabella venogno riportati i parametri utilizzati~\ref{tab:parametri-degrado}.
+Nella seguente tabella vengono riportati i parametri utilizzati~\ref{tab:parametri-degrado}.
 
 \begin{table}[H]
   \centering
@@ -923,7 +923,7 @@ Per quanto riguarda l'applicazione degli impairment, si è deciso di degradare i
 tratto di rete tra il nodo boundary e il client finale, sia per PTP che per NTPsec.
 Questo asseconda la logica di \texttt{qdisc} che si applica sulla traffico in uscita
 da un'interfaccia di rete, cioè in egress. Nei due scenari quindi, si è
-applicato gli impairmentsull'interfaccia \texttt{eth1} del nodo \texttt{boundary}.
+applicato gli impairment sull'interfaccia \texttt{eth1} del nodo \texttt{boundary}.
 Tale interfaccia collega il boundary alla rete B e rappresenta quindi il ramo downstream
 verso i client \texttt{clientptp} e \texttt{clientntp}. In questo modo, la sorgente
 temporale sulla rete A rimane non perturbata, mentre viene degradato il
@@ -1417,7 +1417,7 @@ done
 \caption{Raccolta periodica delle metriche Chrony.}
 \label{lst:auto-chrony-loop}
 \end{listing}
-Nella parte del main Bash, si ha un eseguzione sistematica di tutte le
+Nella parte del main Bash, si ha un'esecuzione sistematica di tutte le
 combinazioni di scenario e run.
 
 \begin{listing}[H]
@@ -1486,7 +1486,7 @@ analysis/raw_logs/T3_multiplerun/
 analysis/raw_logs/T3_multiplerun/ptp/low/run01/
 \end{lstlisting}
 
-Nella dirctory PTP i file prodotti sono lo stato della qdisc e i tre log dei processi.
+Nella directory PTP i file prodotti sono lo stato della qdisc e i tre log dei processi.
 
 \begin{lstlisting}[caption={File prodotti da una run PTP.},label={lst:auto-ptp-files}]
 ptp_server.log

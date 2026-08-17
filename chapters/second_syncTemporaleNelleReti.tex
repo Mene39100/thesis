@@ -68,7 +68,7 @@ un range accettabile dal sistema in cui si opera.
 Nel contesto sperimentale di questa tesi, come precedentemente evidenziato, tale distinzione
 è fondamentale: le metriche che sono state osservate non descrivono
 semplicemente il valore assoluto dell'orologio di una macchina, mai il comportamento
-del processo di sincronizzazione rispetto a una sorgete temporale. Nel dettaglio, l'ambiente di prova è stato configurato rispetto a nodi
+del processo di sincronizzazione rispetto a una sorgente temporale. Nel dettaglio, l'ambiente di prova è stato configurato rispetto a nodi
 che per ragione operative e implementative condividono la stessa base temporale del
 sistema host e non dispongono quindi di oscillatori hardware fisicamente indipendenti.
 Di conseguenza viene da se far notare come le divergenze osservata non fossero
@@ -87,7 +87,7 @@ con rispettivamente le due misure come $C_{l}(t)$ il e $C_{r}(t)$ le due misure 
 stesso istante, l'offset può essere espresso come
 
 \[
-  \theta(t) = C_{l}(t) - C_{r}(t).
+  \theta(t) = C_{r}(t) - C_{l}(t).
 \]
 
 Se il valore di $\theta(t)$ è positiva, questo indica che il clock locale è in anticipo

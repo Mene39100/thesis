@@ -516,7 +516,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
   \end{subfigure}
 
   \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{boundary} metrica:
-  \texttt{delay}}
+  \texttt{jitter}}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -550,7 +550,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
   \end{subfigure}
 
   \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}
-  metrica: \texttt{delay}}
+  metrica: \texttt{jitter}}
   \label{fig:scenario_comparison}
 \end{figure}
 
@@ -587,7 +587,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
   \end{subfigure}
 
   \caption{Media con intervallo di confidenza al 95\% - nodo: \texttt{boundary} metrica:
-  \texttt{delay}}
+  \texttt{offset}}
   \label{fig:scenario_comparison}
 \end{figure}
 \begin{figure}[H]
@@ -621,7 +621,7 @@ quello osservato sul nodo \texttt{clientntp} è tenuto in considerazione.
   \end{subfigure}
 
   \caption{Media con banda inter-quartile e banda p10-p90 - nodo: \texttt{boundary}
-  metrica: \texttt{delay}}
+  metrica: \texttt{offset}}
   \label{fig:scenario_comparison}
 \end{figure}
 
@@ -741,7 +741,7 @@ ritardo stimato lungo il percorso di sincronizzazione tra il client e il master.
 Nello scenario \texttt{low} vi è un andamento mediamente regolare, collocandosi su
 valori nell'ordine di centinaia di microsecondi. La curva aggregata ha un valore
 medio ~$606.8\,\mu s$ e la mediana è di ~$602.5\,\mu s$. La distribuzione dei valori
-centrali piuttosto contenuta, con un intervallo inter-quartile nell'intervallo
+centrali è piuttosto contenuta, con il primo e terzo quartile rispettivamente a
 $575.8\,\mu s$ e $638.6\,\mu s$. L'analisi dei grafici conferma un andamento stabile,
 pur con oscillazioni locali non trascurabili, ma complessivamente compatibili con
 una condizione di rete moderatamente controllata.
@@ -750,9 +750,9 @@ Nel caso \texttt{medium}, si ha un livello medio crescente ma sempre contenuto.
 La curva aggregata ha un valore medio di ~$6 42.2\,\mu s$, con mediana pari a ~$6
 45 .5\,\mu s$. L'incremento rispetto allo scenario precedente è nell'ordine di
 decine di microsecondi. Questo scenario, comunque, mostra una dispersione più elevata.
-L'intervallo inter-quartile della curva centrale è nell'intervallo di
+Il primo e il terzo quartile della curva centrale sono rispettivamente pari a
 $613.0\,\mu s$ e $672.3\, \mu s$, invece le bande di variabilità sono mediamente più
-ampie. L'ampiezza dell'IQR sia quella della fascia $p10$--$p 90$, segnalando una
+ampie. L'ampiezza dell'IQR, cosi come quella della fascia $p10$--$p 90$, segnalano una
 minore regolarità della stima del ritardo di percorso.
 
 Vi è un chiaro aumento del degrado tra i primi due scenari, in termini misurazioni
@@ -1256,7 +1256,7 @@ scenario.
 \paragraph*{Confronto:}
 L'impairment introdotto su \texttt{clientchrony} si hanno valori sulla metrica più
 coerenti: al crescere dello scenario si osserva un progressivo peggioramento, con
-medie che si spostano verso valori più negativi e con un aumento della dispersioneNel
+medie che si spostano verso valori più negativi e con un aumento della dispersione. Nel
 caso invece di \texttt{servergm}, il comportamento appare meno regolare e non monotono.
 In sintesi, applicando il degrado sul lato client si manifestano dati più coerenti
 con le aspettative.
@@ -1327,7 +1327,7 @@ con le aspettative.
   \label{fig:scenario_comparison}
 \end{figure}
 \paragraph*{clientchrony - netem/tc:}
-Per la metrica \texttt{stddev\_us}, il caso \texttt{clientchrony} è presente una variazione
+Per la metrica \texttt{stddev\_us}, il caso \texttt{clientchrony} non è presente una variazione
 monotona crescente, ma piuttosto una risposta non lineare della variabilità
 stimata rispetto alla sorgente. In tutti i casi i valori restano dell'ordine delle
 centinaia di microsecondi.
@@ -1356,7 +1356,7 @@ mostrano una riduzione del livello medio, con media complessiva \texttt{95.787
 \,$\mu$s}, mediana \texttt{88 \,$\mu$s} e massimo \texttt{410 \,$\mu$s}.
 
 Lo scenario \texttt{medium} è quello che presenta il livello medio più elevato,
-texttt{low} occupa una posizione intermedia e \texttt{high} mostra invece valori
+\texttt{low} occupa una posizione intermedia e \texttt{high} mostra invece valori
 medi più contenuti. Anche sul piano della dispersione intra-curva e inter-run non
 si osserva una crescita progressiva con l'intensità del degrado. Pertanto, per questa
 metrica, il degrado applicato su \texttt{clientchrony} non produce una risposta semplicemente
@@ -1535,7 +1535,7 @@ con degrado applicato sul nodo client evidenzia un comportamento più regolare r
 ad altre metriche.
 
 Nel caso \texttt{low} la media aggregata è di ~\texttt{-25.284 \,$\mu$s}. La deviazione
-standard delle medie è di \texttt{9.885 \,$\mu$s}. I grafici evideniano oscillazioni
+standard delle medie è di \texttt{9.885 \,$\mu$s}. I grafici evidenziano oscillazioni
 locali. L'IQR medio è pari a \texttt{35.089 \,$\mu$s}. L'ampiezza media dell'intervallo
 \texttt{p10-p90} raggiunge \texttt{73.456 \,$\mu$s}, con picchi fino a \texttt{144.596
 \,$\mu$s}. Nei dati globali si ha una mediana \texttt{-13.664 \,$\mu$s}, primo quartile

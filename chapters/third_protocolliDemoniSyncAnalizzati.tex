@@ -32,7 +32,7 @@ Si fa una ulteriore distinzione tra i protocolli e le implementazioni software d
 . Nel dettaglio abbiamo NTPsec, Chrony e linuxptp.
 
 NTPsec e Chrony sono due distribuzioni che implementano NTPv4 secondo RFC 5905,
-derivate da NTP Classic, l'originale di Dave Mills, orientate a una
+con NTPsec che è un fork di NTP Classic, l'originale di Dave Mills, orientato a una
 realizzazione più moderna e mantenibile del protocollo.\cite{SecureNetworkTime}.
 
 Il servizio di sincronizzazione fornito da NTPsec viene eseguito tramite il
@@ -86,19 +86,19 @@ di ritardo e offset tra un clock locale e la sua sorgente di riferimento.
 \subsection{Modalità operative e topologia gerarchica}
 Vi sono tre differenti modalità operative di NTP, rispettivamente simmetrico,
 client/server e broadcast. 
-Esse associano un diverso insieme di modalità di paccehtto che sono indicate in un campo specifico all'interno
+Esse associano un diverso insieme di modalità di pacchetto che sono indicate in un campo specifico all'interno
 del pacchetto NTP. \ref{tab:ntp_association_packet_modes}.
 
 \begin{table}[H]
   \centering
   \begin{tabular}{lcc}
     \hline
-    \textbf{Association Mode} & \textbf{Assoc. Mode Value} & \textbf{Packet Mode Value} \\
+    \textbf{Association Mode} & \textbf{Assoc. Mode Value} & \textbf{Received Packet Mode} \\
     \hline
     Symmetric Active          & 1                          & 1 or 2                     \\
     Symmetric Passive         & 2                          & 1                          \\
-    Client                    & 3                          & 4                          \\
-    Server                    & 4                          & 3                          \\
+    Client                    & 3                          & 3                          \\
+    Server                    & 4                          & 4                          \\
     Broadcast Server          & 5                          & 5                          \\
     Broadcast Client          & 6                          & N/A                        \\
     \hline
@@ -173,8 +173,9 @@ All'interno di un pacchetto NTP i campi più rilevanti per l'analisi finale sono
 \texttt{mode}, che identifica la modalità del pacchetto, \texttt{stratum}, indicativa della distanza dalla 
 sorgente, \texttt{rootdelay} e \texttt{rootdisp}, rappresentative del ritardo e della dispersione accumulata 
  verso la sorgente primaria.
-Il pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec}, \texttt{xmt}
-e \texttt{dst}, corrispondenti ai quattro istanti utilizzati nel modello di stima
+Il pacchetto include inoltre i timestamp \texttt{org}, \texttt{rec} e \texttt{xmt}
+mentre il timestamp \texttt{dst} viene registrato localmente nel momento di 
+ricezione del pacchetto. Questi quattro istanti vengono utilizzati nel modello di stima
 di delay e offset. \cite{martinNetworkTimeProtocol2010}
 
 
@@ -326,7 +327,7 @@ Differentemente da NTP, PTP non è orientato a contesti general-purpose, ma piut
 indicato ad operare su livelli di precisione elevati e con un integrazione dell'infrastruttura di base 
 più articolata. PTP supporta sync nel ordine del sub-microsecondo in reti progettate e configurate ad hoc, 
 limitando la quantità di banda e di risorse computazionali dedicate alla gestione del clock locale.
-Tuttavia l'accuratezza dipende direttamente sia dalle caratteristiche intrinseche della rete, dal supporto timestampin
+Tuttavia l'accuratezza dipende direttamente sia dalle caratteristiche intrinseche della rete, dal supporto timestamping
  e soprattutto dai dispositivi coinvolti e volti alla distribuzione del tempo. ~\cite{IEEEStandardPrecision2020}.
 
 \begin{sloppypar}
@@ -508,21 +509,19 @@ invece, porte diverse possono assumere stati diversi: una porta può
 sincronizzarsi come slave verso monte, mentre altre porte possono operare come master
 verso i segmenti downstream.
 
-I criteri di \texttt{grandmasterIdentity},\texttt{clockIdentity} e \texttt{portIdentity} 
-sono tra i principali nella scelta della selezione. Sono fondamentali nel 
-distinguere univocamente i clock e le porte PTP coinvolte nella selezione.
+Il BMCA confronta, secondo un ordine prestabilito, i criteri: \texttt{priority1}, \texttt{clockClass},
+\texttt{clockAccuracy}, \texttt{offsetScaledLogVariance}, \texttt{priority2} ed infine \texttt{clockIdentity}.
 
-Ulteriori criteri sono talvolta considerati come quello di \texttt{priority1}, cioè 
+\texttt{priority1}, cioè 
 un parametro configurabile che permette di assegnare una priorità amministrativa ad un clock, 
-indipendentemente dai suoi valori temporali intrinsechi. Vi sono ulteriori parametri 
-che possono essere coinvolti come quello di \texttt{clockClass} che indica la classe e 
+indipendentemente dai suoi valori temporali intrinsechi. \texttt{clockClass} indica la classe e 
 lo stato di sincronizzazione del clock. \texttt{clockAccuracy} rappresenta invece l'accuratezza
-dichiarata del clock rispetto a un riferimento temporale. Infine un altro parametro accessorio è
-quello di \texttt{offsetScaledLogVariance} il quale fornisce un'indicazione della stabilità stessa
+dichiarata del clock rispetto a un riferimento temporale. \texttt{offsetScaledLogVariance} il quale fornisce un'indicazione della stabilità stessa
 del clock.
 
-Il parametro di \texttt{priority2} può essere introdotto per una seconda priorità configurabile, 
-venendo utilizzato come criterio discriminante rispetto ai parametri precedenti.\cite{PTP_net}
+Il parametro di \texttt{priority2} costituisce un parametro ulteriore configurabile, 
+che viene utilizzato come criterio discriminante rispetto ai parametri precedenti.\cite{PTP_net}
+
 
 \subsection{Timestamping e accuratezza}
 
@@ -549,7 +548,7 @@ timestamping software.
 
 \texttt{linuxptp} è l'implementazione software per i sistemi Linux del protocollo PTP
 secondo lo standard IEEE 1588. È un progetto nato con l'intenzione di fornire un implementazione
-robusta lavorando con le API disponibili nel kernl linux.
+robusta lavorando con le API disponibili nel kernel linux.
 
 La sua componente principale è \texttt{ptp4l}, cioè il demone che implementa PTP su 
 una o più interfacce di rete Linux, seguendo le logiche precedentemente descritte sulla 
