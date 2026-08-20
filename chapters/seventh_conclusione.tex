@@ -42,15 +42,21 @@ linuxptp risulta particolarmente sensibile allo scenario
 mostra invece una buona capacità di mantenere attiva la sincronizzazione, ma con
 risposte non sempre monotone rispetto agli scenari di degrado.
 
-Va evidenziato che i risultati ottenuti vanno interpretati alla luce dei limiti
-dell'ambiente sperimentale precedentemente descritto.
+È importante evidenziare come i risultati ottenuti siano da interpretare alla luce dei limiti dell'ambiente
+sperimentale precedentemente descritto. La progettazione del testbed è stata fatta con l'obiettivo di 
+osservare la risposta operativa dei demoni al progressivo degrado della comunicazione di rete, 
+attraverso le metriche e gli stati da essi riportati. 
+Quindi alla base non vi era l'obiettivo di misurare l'accuratezza ottenibile tra clock hardware fisicamente indipendenti, 
+ma piuttosto analizzare il meccanismo di scambio, selezione, stima e filtraggio e il loro comportamento nell'ambiente virtualizzato.
 
-In conclusione si ha che la qualità della sincronizzazione temporale dipende sia 
-condizioni della rete sia dal modo in cui i demoni elaborano le misure temporali.
-I valori medi delle metriche, l'ampliamento della variabilità inter-run e tal volta
-l'assenza di stabilizzazione del client sono l'effetto diretto del degrado del percorso.
-Nell'analisi condotta si evidenzia, inoltre, come il degrado non produce un effetto comune su tutti i nodi.
+Un altro limite presente riguarda la gestione del tempo nell'ambiente containerizzato. I container, condividendo 
+il \texttt{CLOCK\_REALTIME} del kernel della VM host, e per via dei privilegi configurati dipesi da necessità implementative,
+i demoni potevano agire sulla stesa base temporale. Ciò non annulla la validità delle osservazioni sul comportamento dei demoni, 
+ma impedisce di isolare completamente l'effetto degli impairment di rete, limitando di poter generalizzare i risultati
+a sistemi dotati di clock fisici indipendenti e timestamping hardware.
 
-I risultati indicano anche come i meccanismi interni di stima,
-filtraggio e correzione possono influenzare in modo significativo la robustezza
-del sistema anche in presenza di degrado di rete.
+In conclusione, si evidenzia come il comportamento del processo di sincronizzazione dipende sia dalle condizioni 
+di rete sia dal modo in cui i demoni elaborano le misure temporali.
+
+I risultati indicano anche che i meccanismi interni di stima, filtraggio e correzione possono 
+influenzare in modo significativo la robustezza del sistema in presenza di degrado della rete.
